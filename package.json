@@ -1,0 +1,44 @@
+{
+  "name": "sacoin",
+  "version": "1.0.0",
+  "description": "An educational JS blockchain aimed at being usable in productions",
+  "main": "index.js",
+  "directories": {
+    "doc": "doc",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint -c ./cfg/.eslintrc.js --fix",
+    "doc": "jsdoc -c ./cfg/jsdoc.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Berkmann18/SaCoin.git"
+  },
+  "keywords": [
+    "blockchain",
+    "cryptocurrency",
+    "education",
+    "production",
+    "javascript",
+    "nodejs",
+    "es6"
+  ],
+  "author": "Berkmann18",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Berkmann18/SaCoin/issues"
+  },
+  "homepage": "https://github.com/Berkmann18/SaCoin#readme",
+  "dependencies": {
+    "crypto-js": "^3.1.9-1",
+    "jsrsasign": "^8.0.12"
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-plugin-security": "^1.4.0",
+    "jest": "^23.1.0",
+    "jsdoc": "^3.5.5"
+  }
+}
