@@ -6,3 +6,4 @@
 - [ ] P2P using websocket (ws package)
 - [ ] DB to save the blockchain and the wallets (to avoid loosing progress)
 - [ ] GUI for the blockchain
+- [ ] Use Merkel trees (such as https://github.com/miguelmota/merkle-tree)
