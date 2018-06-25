@@ -1,6 +1,6 @@
 'use strict';
 
-const {TRANSACTION_FEE} = require('./config'), {verify} = require('./crypto'), SHA256 = require('crypto-js/sha256');
+const {TRANSACTION_FEE} = require('./config'), {verify, sign} = require('./crypto'), SHA256 = require('crypto-js/sha256');
 
 /** @private */
 let prvProps = new WeakMap();
