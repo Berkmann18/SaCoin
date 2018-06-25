@@ -27,6 +27,6 @@ test('Signatures et al', () => {
     .then(signed => expect(trans.hasValidSignature()).toBeTruthy())
     .then(correct => {
       expect(verify(fromKP.pk, trans.hash, trans.signature)).toBeTruthy();
-    })sr
+    })
     .catch(err => console.log('This went wrong:', err))
 });

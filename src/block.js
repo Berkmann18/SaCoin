@@ -1,9 +1,10 @@
 'use strict';
-const SHA256 = require('crypto-js/sha256'), Transaction = require('./transaction'), {DIFFICULTY} = require('./config'), {TransactionError} = require('./error');
+const SHA256 = require('crypto-js/sha256'), Transaction = require('./transaction'), {TransactionError} = require('./error'),
+  {BANK, MINING_REWARD, DIFFICULTY} = require('./config');
 
 /** @private */
 let prvProps = new WeakMap();
-const GENESIS_HASH = 'b076b4ac5dfd570677538e23b54818022a379d2e8da1ef6f1b40f08965b528ff';
+const ROOT_HASH = 'b076b4ac5dfd570677538e23b54818022a379d2e8da1ef6f1b40f08965b528ff';
 
 class Block {
   /**
@@ -12,8 +13,9 @@ class Block {
    * @param {Transaction[]} [transactions=[]] List of transactions inside the block
    * @param {number} [nonce=0] Nonce associated to the block
    * @param {number} [height=0] Height of the block within a chain
+   * @param {Key} [beneficiary=null] Public key (wallet address) of the beneficiary of the block (miner)
    */
-  constructor(prevHash = GENESIS_HASH, transactions = [], nonce = 0, height = 0) {
+  constructor(prevHash = ROOT_HASH, transactions = [], nonce = 0, height = 0, beneficiary = BANK) {
     prvProps.set(this, {
       prevHash,
       difficulty: DIFFICULTY,
@@ -21,7 +23,8 @@ class Block {
       nonce,
       timestamp: Date.now(),
       hash: '',
-      height: 0
+      height: 0,
+      beneficiary
     });
 
     this.updateHash()
@@ -60,10 +63,26 @@ class Block {
   }
 
   /**
+   * @description Get the beneficiary's public key.
+   * @return {Key} Beneficiary
+   */
+  get beneficiary() {
+    return prvProps.get(this).beneficiary;
+  }
+
+  /**
    * @description Get the block's height within a chain.
    */
   get height() {
     return prvProps.get(this).height;
+  }
+
+  get difficulty() {
+    return prvProps.get(this).difficulty;
+  }
+
+  get nonce() {
+    return prvProps.get(this).nonce;
   }
 
   /**
@@ -103,9 +122,8 @@ class Block {
    */
   isValid() {
     let actualHash = this.calculateHash(), actualPad = '0'.repeat(prvProps.get(this).difficulty);
-    let correctHash = this.hash === actualHash, correctPadding = this.hash.substring(0, prvProps.get(this).difficulty) === actualPad,
-      correctParent = this.prevHash === GENESIS_HASH;
-    return correctHash && correctPadding && correctParent;
+    let correctHash = this.hash === actualHash, correctPadding = this.hash.substring(0, prvProps.get(this).difficulty) === actualPad;
+    return correctHash && correctPadding;
   }
 
   /**
@@ -113,7 +131,7 @@ class Block {
    * @return {boolean} Genesis block?
    */
   isGenesis() {
-    return this.prevHash === GENESIS_HASH
+    return this.prevHash === ROOT_HASH
   }
 
   /**
@@ -121,11 +139,15 @@ class Block {
    * @param {string} beneficiarySig Signature of the beneficiary
    */
   mine(beneficiarySig) {
-    while (this.hash.substring(0, prvProps.get(this).difficulty) !== '0'.repeat(prvProps.get(this).difficulty)) {
-      prvProps.get(this).nonce++;
+    let nonce = prvProps.get(this).nonce, diff = prvProps.get(this).difficulty, pad = '0'.repeat(prvProps.get(this).difficulty);
+    console.log('Starting with', nonce, 'diff=', diff);
+    while (this.hash.substring(0, diff) !== pad) {
+      ++nonce;
       this.updateHash();
+      console.log('Mining', nonce, this.hash);
     }
-    // this.addTransaction(new Transaction(BANK.pk, this.beneficiary, MINING_REWARD, beneficiarySig))
+    console.log('Block mined:', this.hash);
+    this.addTransaction(new Transaction(BANK.pk, this.beneficiary, MINING_REWARD, beneficiarySig))
   }
 
 }
