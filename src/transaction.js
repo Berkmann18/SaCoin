@@ -1,6 +1,6 @@
 'use strict';
 
-const {TRANSACTION_FEE} = require('./config'), {verify} = require('./crypto');
+const {TRANSACTION_FEE} = require('./config'), {verify} = require('./crypto'), SHA256 = require('crypto-js/sha256');
 
 /** @private */
 let prvProps = new WeakMap();
@@ -32,7 +32,7 @@ class Transaction {
    * @return {string} Hash
    */
   calculateHash() {
-    return SHA256(this.type + this.from + this.to + this.amount + this.fee + this.timestamp).toString();
+    return SHA256(this.fromPubKey + this.toPubKey + this.amount + this.fee + this.timestamp).toString();
   }
 
   /**
@@ -120,7 +120,7 @@ class Transaction {
    * @return {boolean} Validity
    */
   hasValidSignature() {
-    return this.signature && verify(this.from, this.hash, this.signature);
+    return this.signature && verify(this.fromPubKey, this.hash, this.signature);
   }
 
   /**
