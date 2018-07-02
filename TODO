@@ -1,7 +1,7 @@
-- [ ] Add Elliptic Curve DSA
-- [ ] Add wallets with addresses and PK/SK pairs
+- [X] Add Elliptic Curve DSA
+- [X] Add wallets with addresses and PK/SK pairs
 - [ ] Prevent double-spending
-- [ ] Make sure that only available coins can be spent and that there's enough fee which goes to the correct place
+- [X] Make sure that only available coins can be spent and that there's enough fee which goes to the correct place
 - [ ] REST interface
 - [ ] P2P using websocket (ws package)
 - [ ] DB to save the blockchain and the wallets (to avoid loosing progress)
