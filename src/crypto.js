@@ -22,7 +22,7 @@ const KEY_CONFIGS = {
 /**
  * @description Generate a public and private key pair using a specified algorithm.
  * @param {{type:string, name:string}} [opts=KEY_CONFIGS.EC256r1] Options containing the type (e.g.: RSA, EC) and name (keylength or curve)
- * @return {{pk: *, sk: *}}
+ * @return {{pk: Key, sk: Key}}
  */
 const genKey = (opts = KEY_CONFIGS.EC256r1) => {
   let kp = KEYUTIL.generateKeypair(opts.type, opts.name);

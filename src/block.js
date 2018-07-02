@@ -1,6 +1,8 @@
 'use strict';
-const SHA256 = require('crypto-js/sha256'), Transaction = require('./transaction'), {TransactionError} = require('./error'),
-  {BANK, MINING_REWARD, DIFFICULTY} = require('./config');
+const SHA256 = require('crypto-js/sha256'), Transaction = require('./transaction'), {DIFFICULTY, BANK, MINING_REWARD} = require('./config'), {TransactionError} = require('./error'),
+  {setColours, colour} = require('./cli');
+
+setColours();
 
 /** @private */
 let prvProps = new WeakMap();
@@ -9,13 +11,18 @@ const ROOT_HASH = 'b076b4ac5dfd570677538e23b54818022a379d2e8da1ef6f1b40f08965b52
 class Block {
   /**
    * @description Block.
-   * @param {string} [prevHash=GENESIS_HASH] Previous hash
+   * @param {string} [prevHash=ROOT_HASH] Previous hash
    * @param {Transaction[]} [transactions=[]] List of transactions inside the block
    * @param {number} [nonce=0] Nonce associated to the block
    * @param {number} [height=0] Height of the block within a chain
-   * @param {Key} [beneficiary=null] Public key (wallet address) of the beneficiary of the block (miner)
+   * @param {string} [beneficiaryAddr=BANK.address] Address of the beneficiary
    */
-  constructor(prevHash = ROOT_HASH, transactions = [], nonce = 0, height = 0, beneficiary = BANK) {
+  constructor(prevHash = ROOT_HASH, transactions = [], nonce = 0, height = 0, beneficiaryAddr = BANK.address) {
+
+    if (transactions.length) transactions.forEach(tx => {
+      if (!tx.isValid()) throw new TransactionError(`Invalid transaction ant-Block creation: ${tx.toString()}`);
+    });
+
     prvProps.set(this, {
       prevHash,
       difficulty: DIFFICULTY,
@@ -23,8 +30,8 @@ class Block {
       nonce,
       timestamp: Date.now(),
       hash: '',
-      height: 0,
-      beneficiary
+      height,
+      beneficiaryAddr
     });
 
     this.updateHash()
@@ -55,19 +62,11 @@ class Block {
   }
 
   /**
-   * @description Get the block's hash.
+   * @description Get the block's hash which also acts as its header.
    * @return {*} Hash
    */
   get hash() {
     return prvProps.get(this).hash
-  }
-
-  /**
-   * @description Get the beneficiary's public key.
-   * @return {Key} Beneficiary
-   */
-  get beneficiary() {
-    return prvProps.get(this).beneficiary;
   }
 
   /**
@@ -77,12 +76,12 @@ class Block {
     return prvProps.get(this).height;
   }
 
-  get difficulty() {
-    return prvProps.get(this).difficulty;
-  }
-
-  get nonce() {
-    return prvProps.get(this).nonce;
+  /**
+   * @description Get the block's beneficiary's address.
+   * @return {string} Address
+   */
+  get beneficiaryAddr() {
+    return prvProps.get(this).beneficiaryAddr;
   }
 
   /**
@@ -101,18 +100,24 @@ class Block {
 
   /**
    * @description String representation of a block.
+   * @param {boolean} [cliColour=true] Add the CLI colour.
    * @return {string} Block
    */
-  toString() {
-    return `Block(transactions=[${this.transactions.map(trans => trans.toString())}], timestamp=${this.timestamp}, prevHash=${this.prevHash}, hash=${this.hash})`
+  toString(cliColour = true) {
+    let str = `Block(transactions=[${this.transactions.map(trans => trans.toString())}], timestamp=${this.timestamp}, prevHash=${this.prevHash}, hash=${this.hash})`;
+    return cliColour ? colour('block', str) : str;
   }
 
   /**
    * @description Add a transaction to this block.
    * @param {Transaction} transaction New transaction
+   * @throws {TransactionError} Invalid transaction
+   * @throws {Error} Transaction already added
+   * @deprecated
    */
   addTransaction(transaction) {
-    if (!transaction.isValid()) throw new TransactionError(`The transaction almost added to the block ${this.hash} is invalid`);
+    if (!transaction.isValid()) throw new TransactionError(`The transaction nearly added is invalid: ${transaction.toString()}`);
+    if (this.transactions.includes(transaction)) throw new Error(`The transaction already in the block: ${transaction.toString()}`);
     prvProps.get(this).transactions.push(transaction)
   }
 
@@ -136,18 +141,16 @@ class Block {
 
   /**
    * @description Increment the nonce until a valid hash is obtained with enough 0's at the beginning (based on the difficulty).
-   * @param {string} beneficiarySig Signature of the beneficiary
    */
-  mine(beneficiarySig) {
-    let nonce = prvProps.get(this).nonce, diff = prvProps.get(this).difficulty, pad = '0'.repeat(prvProps.get(this).difficulty);
-    console.log('Starting with', nonce, 'diff=', diff);
-    while (this.hash.substring(0, diff) !== pad) {
-      ++nonce;
+  mine() {
+    while (this.hash.substring(0, prvProps.get(this).difficulty) !== '0'.repeat(prvProps.get(this).difficulty)) {
+      prvProps.get(this).nonce++;
       this.updateHash();
-      console.log('Mining', nonce, this.hash);
     }
-    console.log('Block mined:', this.hash);
-    this.addTransaction(new Transaction(BANK.pk, this.beneficiary, MINING_REWARD, beneficiarySig))
+    /*let rewardTx = new Transaction(BANK.address, BANK.pk, this.beneficiaryAddr, MINING_REWARD);
+    rewardTx.sign(sk);
+    this.addTransaction(rewardTx);
+    this.updateHash();*/
   }
 
 }
