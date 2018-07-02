@@ -1,5 +1,5 @@
 /** Taken from ServerBuilder's utils.js file */
-const clr = require('colors');
+const clr = require('colors/safe');
 
 const clrScheme = {
   in: 'white',
@@ -8,7 +8,9 @@ const clrScheme = {
   err: 'red',
   warn: 'yellow',
   debug: 'grey',
-  spec: 'magenta'
+  block: 'bgCyan',
+  tx: ['white', 'underline'],
+  chain: ['green', 'bold']
 };
 
 /**
@@ -24,24 +26,10 @@ const setColours = () => clr.setTheme(clrScheme);
  * @return {*} Coloured output
  */
 const colour = (name, ...data) => {
-  switch (name) {
-    case 'in':
-      return clr.in(...data);
-    case 'out':
-      return clr.out(...data);
-    case 'inf':
-      return clr.inf(...data);
-    case 'err':
-      return clr.err(...data);
-    case 'warn':
-      return clr.warn(...data);
-    case 'debug':
-      return clr.debug(...data);
-    case 'spec':
-      return clr.spec(...data);
-    default:
-      return error(`The name ${name} isn't specified in the theme used`);
-  }
+  if (name in clrScheme) return eval(`clr.${name}(...data)`);
+  return console.error(clr.err(`The name ${name} isn't specified in the theme used`));
 };
 
-module.exports = setColours;
+/* @todo Add the commander/yarg function for CLI usage */
+
+module.exports = {setColours, colour, clrScheme};

@@ -1,4 +1,4 @@
-const {genKey, sign, verify, encrypt, decrypt, KEY_CONFIGS} = require('../src/crypto');
+const {genKey, sign, verify, encrypt, decrypt, KEY_CONFIGS} = require('../src/crypto'), BANK = require('../src/config').BANK;
 
 let pk, sk, len = 2048;
 
@@ -16,7 +16,7 @@ test('Sign and Vrf', () => {
     sk = kp.sk;
     pk = kp.pk;
   }
-  let bl = len / 4, m = 'Hello', sig = sign(sk, m, 512);
+  let bl = len / 4, m = 'Hello', sig = sign(sk, m, bl);
   expect(typeof sig).toBe('string');
   expect(sig.length).not.toBe(bl); //It should be equal for RSA but not ECDSA
   expect(sig.length >= 140).toBeTruthy(); //Usually 142-144
@@ -37,4 +37,9 @@ test('Enc & Dec', () => {
   expect(p).toBe(m);
   expect(c).not.toBe(encrypt(sk, m));
   //expect(p).not.toBe(decrypt(pk, c)); //Expected to throw 'Cipher.decrypt: unsupported key or algorithm'
+});
+
+test('BANK', () => {
+  let m = 'Welcome', sig = sign(BANK.sk, m);
+  expect(verify(BANK.pk, m, sig)).toBeTruthy();
 });

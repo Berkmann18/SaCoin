@@ -119,3 +119,47 @@ class Wallet {
   
 }
 ```
+
+And how is are the transactions reflected on the blockchain?
+Well they are placed in a pool of **pending transactions** within the blockchain and then placed into a new block that was mined;
+that using the Proof of Work
+```js
+//block.js
+/**
+   * @description Increment the nonce until a valid hash is obtained with enough 0's at the beginning (based on the difficulty).
+   * @param {string} beneficiarySig Signature of the beneficiary
+   */
+mine(beneficiarySig) {
+  while (this.hash.substring(0, prvProps.get(this).difficulty) !== '0'.repeat(prvProps.get(this).difficulty)) {
+    prvProps.get(this).nonce++;
+    this.updateHash();
+  }
+}
+
+//blockchain.js
+/**
+ * @description Add a transaction to the list of pending ones.
+ * @param {Transaction} transaction New transaction
+ * @throws {Error} Undeliverable transaction (negative amount or not enough funds)
+ */
+addTransaction(transaction) {
+  if (transaction.amount < 0) throw `Negative transactions aren\'t doable (from ${transaction.from} to ${transaction.to})`; //throw new Error('Negative transactions aren\'t doable');
+  //senderBalance is the balance of the sender
+  if (transaction.fromPubKey !== BANK && senderBalance < transaction.amount) throw `The transaction requires more coins than the sender (${transaction.from}) has (${transaction.amount}${this.currencySymbol} off ${senderBalance}${this.currencySymbol})`;//throw new Error(`The transaction requires more coins than the sender has (${transaction.amount} ${this.currencySymbol} off ${senderBalance} ${this.currencySymbol})`);
+  prvProps.get(this).pendingTransactions.push(transaction);
+}
+
+/**
+ * @description Mine a new block and send the reward to the miner.
+ * @param {(string|RSAKey|crypto.ECDSA)} miningRewardAddr Address of the miner who gained a mining reward
+ */
+minePendingTransaction(miningRewardAddr) {
+  //Create a new block with all pending transactions and mine it and add the newly mined block to the chain
+  this._add(prvProps.get(this).pendingTransactions, miningRewardAddr);
+   //Reset the pending transactions and send the mining reward
+  prvProps.get(this).pendingTransactions = [new Transaction(BANK.pk, miningRewardAddr, this.miningReward)];
+}
+```
+
+# Contributing
+If you think that I did/got something wrong or want to suggest X or Y changes/additions then feel free to create an issue or PR.
