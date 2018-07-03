@@ -40,17 +40,17 @@ let sender = new Wallet(null, 'se'), sHash = SHA256('se'), receiver = new Wallet
 let tx = new Transaction(sender.address, sender.publicKey, receiver.address, amt, sig);
 
 test('Init', () => {
- expect(tx.fromAddr).toBe(sender.address);
- expect(tx.fromPubKey).toBe(sender.publicKey);
- expect(tx.toAddr).toBe(receiver.address);
- expect(tx.amount).toBe(amt);
- expect(tx.timestamp <= Date.now()).toBeTruthy();
- expect(typeof tx.hash).toBe('string');
- expect(tx.fee).toBe(FEE);
- expect(tx.signature).toBe(sig);
- expect(tx.isValid()).toBeFalsy(); //tests calculateHash() so no need to test that
+  expect(tx.fromAddr).toBe(sender.address);
+  expect(tx.fromPubKey).toBe(sender.publicKey);
+  expect(tx.toAddr).toBe(receiver.address);
+  expect(tx.amount).toBe(amt);
+  expect(tx.timestamp <= Date.now()).toBeTruthy();
+  expect(typeof tx.hash).toBe('string');
+  expect(tx.fee).toBe(FEE);
+  expect(tx.signature).toBe(sig);
+  expect(tx.isValid()).toBeFalsy(); //tests calculateHash() so no need to test that
   expect(tx.toString()).toBe(colour('tx', `Transaction(fromAddr=${tx.fromAddr}, fromPubKey=${tx.fromPubKey}, toAddr=${tx.toAddr}, amount=${amt}, timestamp=${tx.timestamp}, fee=${FEE}, hash=${tx.hash})`));
- expect(tx.toString(false)).toBe(`Transaction(fromAddr=${tx.fromAddr}, fromPubKey=${tx.fromPubKey}, toAddr=${tx.toAddr}, amount=${amt}, timestamp=${tx.timestamp}, fee=${FEE}, hash=${tx.hash})`);
+  expect(tx.toString(false)).toBe(`Transaction(fromAddr=${tx.fromAddr}, fromPubKey=${tx.fromPubKey}, toAddr=${tx.toAddr}, amount=${amt}, timestamp=${tx.timestamp}, fee=${FEE}, hash=${tx.hash})`);
 });
 
 test('Signature et al', () => {

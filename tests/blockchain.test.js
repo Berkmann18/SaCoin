@@ -1,5 +1,5 @@
-const Chain = require('../src/blockchain'), {DIFFICULTY, MINING_REWARD, CURRENCY, BANK, TRANSACTION_FEE} = require('../src/config'), Block = require('../src/block'),
-  Transaction = require('../src/transaction'), {TransactionError} = require('../src/error'), gen = require('../src/crypto').genKey, UTPool = require('../src/UTPool'),
+const Chain = require('../src/blockchain'), {DIFFICULTY, MINING_REWARD, CURRENCY, BANK, TRANSACTION_FEE, init, BLOCKCHAIN} = require('../src/config'), Block = require('../src/block'),
+  Transaction = require('../src/transaction'), {TransactionError} = require('../src/error'), gen = require('../src/crypto').genKey, UTPool = require('../src/utpool'),
   Wallet = require('../src/wallet'), SHA256 = require('crypto-js/sha256'), {colour} = require('../src/cli');
 
 test('Init', () => {
@@ -32,10 +32,13 @@ test('Cont.', () => {
     tx.sign(BANK.sk);
     SXC._add([tx], BANK.sk);
   }).toThrowError(TransactionError); //Should throw since tx.amount = 0
+  expect(SXC.getBlockByHash(block.hash)).toBe(block);
 });
 
 test('Transactions', () => {
-  let SXC = new Chain(), tx = new Transaction(BANK.address, BANK.pk, BANK.address, MINING_REWARD * 2);
+  let SXC = new Chain();
+  init(SXC);
+  let tx = new Transaction(BANK.address, BANK.pk, BANK.address, MINING_REWARD * 2);
   expect(() => {
     SXC.addTransaction(tx)
   }).toThrowError(TransactionError);
@@ -43,21 +46,39 @@ test('Transactions', () => {
     tx.sign(BANK.sk);
     SXC.addTransaction(tx);
   }).not.toThrowError(TransactionError);
+  expect(SXC.getTransactionsByHash(tx.hash)).toStrictEqual([]);
+  expect(SXC.pendingTransactions.includes(tx)).toBeTruthy();
+  expect(SXC.pendingTransactions.length).toBe(1);
+  SXC.minePendingTransactions(BANK.wallet);
+  expect(SXC.pendingTransactions.length).toBe(1); //0 transaction + 1 reward transaction
+  expect(SXC.getTransactionsByHash(tx.hash)).toStrictEqual([tx]);
+  expect(SXC.getAllTransactions()).toStrictEqual([tx]);
+  expect(SXC.getAllTransactions(true)).toStrictEqual([tx.toString(false)]);
+  expect(SXC.getAllTransactions(true, true)).toStrictEqual([tx.toString()]);
 });
 
 test('Mining', () => {
-  let utp = BANK.pool, SXC = new Chain(DIFFICULTY, utp), me = new Wallet(SXC, '123'), transferred = 5, tx = new Transaction(BANK.address, BANK.pk, me.address, transferred);
+  let utp = BANK.pool, SXC = new Chain(DIFFICULTY, utp), transferred = 5;
   let hash = SHA256('123'), coin = 7;
+  init(SXC);
+  let me = new Wallet(SXC, '123'), tx = new Transaction(BANK.address, BANK.pk, me.address, transferred);
+  // SXC = BLOCKCHAIN;
   utp.addUT(me.address, coin);
+  expect(me.publicKey).not.toBe(BANK.pk);
+  // console.log('addr me/BANK', me.address, BANK.address);
+  // console.log('utp=', utp.toString());
+  // console.log('SXC pool=', SXC.utpool.toString());
   expect(SXC.utpool.pool[me.address]).toBe(coin);
   expect(SXC.utpool.pool[BANK.address]).toBe(BANK.amount);
-  me.signTransaction(tx, hash); //Will not2 work because BANK is the owner of the transaction
+  me.signTransaction(tx, hash); //Will not work because BANK is the owner of the transaction
+  expect(tx.isValid()).toBeFalsy();
   expect(() => SXC.addTransaction(tx)).toThrowError(TransactionError); //Should throw since the receiver can't sign that transaction
   tx.sign(BANK.sk);
   SXC.addTransaction(tx);
   expect(SXC.utpool.pool[me.address]).toBe(coin);
   expect(SXC.utpool.pool[BANK.address]).toBe(BANK.amount);
-  SXC.minePendingTransaction(me);
+  SXC.minePendingTransactions(me);
+
   // console.log('me=', me.address);
   // console.log('BANK=', BANK.address);
   // console.log('pending txs=', colour('tx', SXC.pendingTransactions.map(tx => tx.toString(false))));
@@ -71,10 +92,29 @@ test('Mining', () => {
   expect(SXC.utpool.pool[me.address]).toBe(myCoins);
   expect(SXC.utpool.pool[BANK.address]).toBe(bkCoins);
   expect(SXC.utpool.pool[him.address]).toBeUndefined();
-  SXC.minePendingTransaction(him);
-  expect(SXC.utpool.pool[me.address]).toBe(myCoins + transferred + MINING_REWARD);
-  expect(SXC.utpool.pool[BANK.address]).toBe(bkCoins - transferred - TRANSACTION_FEE - MINING_REWARD);
-  expect(SXC.utpool.pool[him.address]).toBe(TRANSACTION_FEE);
-});
+  expect(me.calculateBalance()).toBe(transferred);
+  expect(BANK.wallet.calculateBalance()).toBe(-transferred);
+  // console.log('me', myCoins, 'pool', SXC.utpool.pool[me.address], 'balance', me.calculateBalance(), 'ut', me.unspentBalance(utp));
+  // console.log('BANK', bkCoins, 'pool', SXC.utpool.pool[BANK.address], 'balance', BANK.wallet.calculateBalance(), 'ut', BANK.wallet.unspentBalance(utp));
+  SXC.minePendingTransactions(him);
 
-//todo: toString, getBlockByHash, getTransactionsByHash, getAllTransactions
+  myCoins += transferred + MINING_REWARD;
+  bkCoins -= (transferred + TRANSACTION_FEE + MINING_REWARD);
+  expect(SXC.utpool.pool[me.address]).toBe(myCoins);
+  expect(SXC.utpool.pool[BANK.address]).toBe(bkCoins);
+  expect(SXC.utpool.pool[him.address]).toBe(TRANSACTION_FEE);
+  // console.log('me', myCoins, 'pool', SXC.utpool.pool[me.address], 'balance', me.calculateBalance());
+  let balance = transferred * 2 + MINING_REWARD;
+  expect(me.calculateBalance()).toBe(balance); //Since the coins given by the UT pool aren't coming from the blockchain
+  // console.log('BANK', bkCoins, 'pool', SXC.utpool.pool[BANK.address], 'balance', BANK.wallet.calculateBalance());
+  expect(BANK.wallet.calculateBalance()).toBe(-balance);
+  expect(him.calculateBalance()).toBe(0); //Not in blockchain yet
+  SXC.minePendingTransactions(BANK.wallet);
+
+  bkCoins -= MINING_REWARD;
+  let hisCoins = TRANSACTION_FEE + MINING_REWARD;
+  expect(SXC.utpool.pool[me.address]).toBe(myCoins);
+  expect(SXC.utpool.pool[BANK.address]).toBe(bkCoins);
+  expect(SXC.utpool.pool[him.address]).toBe(hisCoins);
+
+});

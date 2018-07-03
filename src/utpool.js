@@ -1,21 +1,9 @@
 'use strict';
 
-const /*clone = require('./utils').clone*/ clone = require('lodash/clone'), {TransactionError} = require('./error');
+const clone = require('lodash/clone');
 
 /** @private */
 let prvProps = new WeakMap();
-
-class UnspentTransaction {
-  /**
-   * @description Unspent transaction object.
-   * @param {string} address Address
-   * @param {number} amount Amount of coins
-   */
-  constructor(address, amount) {
-    this.address = address;
-    this.amount = amount
-  }
-}
 
 class UTPool {
   /**

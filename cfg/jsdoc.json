@@ -5,7 +5,8 @@
   "source": {
     "includePattern": ".+\\.js(doc|x)?$",
     "excludePattern": "(^|\\/|\\\\)_|.+\\.min.js",
-    "exclude": [ "(.*)node_modules", "(.*?\/)helpers" ]
+    "exclude": [ "(.*)node_modules", "(.*?\/)helpers" ],
+    "include": [ "src/" ]
   },
   "plugins": ["plugins/summarize"],
   "templates": {

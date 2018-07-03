@@ -1,5 +1,5 @@
 const Block = require('../src/block'), SHA256 = require('crypto-js/sha256'), {/*DIFFICULTY, */BANK} = require('../src/config'), Transaction = require('../src/transaction'),
-gen = require('../src/crypto').genKey, {colour} = require('../src/cli');
+  gen = require('../src/crypto').genKey, {colour} = require('../src/cli');
 
 test('Block creation', () => {
   let block = new Block();

@@ -1,4 +1,4 @@
-const UTPool = require('../src/UTPool'), gen = require('../src/crypto').genKey;
+const UTPool = require('../src/utpool'), gen = require('../src/crypto').genKey;
 
 test('Init', () => {
   let utp = new UTPool(), pk = gen().pk;

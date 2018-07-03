@@ -1,23 +1,24 @@
 'use strict';
 
 const Block = require('./block'), {DIFFICULTY, MINING_REWARD, CURRENCY, BANK} = require('./config'), Transaction = require('./transaction'), {BlockError, TransactionError} = require('./error'),
-  flat = require('lodash/flatten'), UTPool = require('./UTPool'), {setColours, colour} = require('./cli');
+  flat = require('lodash/flatten'), UTPool = require('./utpool'), {setColours, colour} = require('./cli');
 
 setColours();
 
 /** @private */
 let prvProps = new WeakMap();
+const ROOT_HASH = 'b076b4ac5dfd570677538e23b54818022a379d2e8da1ef6f1b40f08965b528ff'; //Taken from block.js
 
 class Blockchain {
   /**
    * @description Creates a blockchain
    * @param {number} [difficulty=DIFFICULTY] Difficulty of the hashes
-   * @param {UTPool} [utpool=new UTPool()] Unspent transaction pool
-   * @param {Block} [genesisBlock=Blockchain.createGenesisBlock(difficulty)] Genesis block
+   * @param {UTPool} [utpool=BANK ? BANK.pool : new UTPool()] Unspent transaction pool
+   * @param {Block} [genesisBlock=Blockchain.createGenesisBlock()] Genesis block
    * @param {number} [reward=MINING_REWARD] Mining reward
    * @param {string} [currency=CURRENCY] Currency name
    */
-  constructor(difficulty = DIFFICULTY, utpool = new UTPool(), genesisBlock = Blockchain.createGenesisBlock(), reward = MINING_REWARD, currency = CURRENCY) {
+  constructor(difficulty = DIFFICULTY, utpool = BANK ? BANK.pool : new UTPool(), genesisBlock = Blockchain.createGenesisBlock(), reward = MINING_REWARD, currency = CURRENCY) {
     // genesisBlock.mine();
     prvProps.set(this, {
       chain: [genesisBlock],
@@ -79,10 +80,11 @@ class Blockchain {
 
   /**
    * @description Create the first (genesis) block.
+   * @param {string} [beneficiaryAddr=BANK ? BANK.address : 'null'] Address of the beneficiary
    * @return {Block} Genesis block
    */
-  static createGenesisBlock() {
-    return new Block();
+  static createGenesisBlock(beneficiaryAddr = BANK ? BANK.address : 'null') {
+    return new Block(ROOT_HASH, [], 0, 0, beneficiaryAddr);
   }
 
   /**
@@ -107,10 +109,13 @@ class Blockchain {
   /**
    * @description Get a block with a specific hash.
    * @param {string} hash Hash
-   * @return {Block[]} Block(s)
+   * @return {Block} Block
+   * @throws {BlockError} Duplicated hash
    */
   getBlockByHash(hash) {
-    return this.chain.filter(block => block.hash === hash);
+    let blocks = this.chain.filter(block => block.hash === hash);
+    if (blocks.length > 1) throw new BlockError(`Duplicated block hash found in the blockchain: ${this.toString()}`);
+    return blocks[0];
   }
 
   /**
@@ -205,10 +210,10 @@ class Blockchain {
   }
 
   /**
-   * @description Mine a new block and send the reward to the miner.
+   * @description Mine a new block and prepare the miner's reward.
    * @param {Wallet} minerWallet Wallet of the miner who gained a mining reward
    */
-  minePendingTransaction(minerWallet) {
+  minePendingTransactions(minerWallet) {
     //Create a new block with all pending transactions and mine it and add the newly mined block to the chain
     this._add(prvProps.get(this).pendingTransactions, minerWallet.address, Date.now());
 
