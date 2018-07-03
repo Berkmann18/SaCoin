@@ -116,7 +116,23 @@ That's where wallets come into play, but unlike real ones, they don't contain an
 how many coins people have.
 ```js
 class Wallet {
-  
+  /**
+   * @description Electronic wallet.
+   * @param {Blockchain} blockchain Blockchain associated
+   * @param {{pk: Key, sk: Key}} [keyPair=genKey()]
+   * @param {string} password Password to access fully access the wallet
+   * @param {string} [address=generateAddress(keyPair.pk)] Hex address
+   */
+  constructor(blockchain, password, keyPair = genKey(), address = Wallet.generateAddress(keyPair.pk, password)) {
+    prvProps.set(this, {
+        address,
+        password: SHA256(password),
+        keyPair,
+        blockchain,
+        balance: 0
+      }
+    );
+  }
 }
 ```
 

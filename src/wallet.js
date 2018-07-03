@@ -1,6 +1,6 @@
 'use strict';
 
-const {genKey} = require('./crypto'), Transaction = require('./transaction'), SHA256 = require('crypto-js/sha256'), UTPool = require('./UTPool');
+const {genKey} = require('./crypto'), Transaction = require('./transaction'), SHA256 = require('crypto-js/sha256'), UTPool = require('./utpool');
 
 /** @private */
 let prvProps = new WeakMap();
@@ -32,14 +32,14 @@ class Wallet {
    * @param {string} password Password to access fully access the wallet
    * @param {string} [address=generateAddress(keyPair.pk)] Hex address
    */
-  constructor(blockchain, password, keyPair = genKey(), address = Wallet.generateAddress(keyPair.pk)) {
+  constructor(blockchain, password, keyPair = genKey(), address = Wallet.generateAddress(keyPair.pk, password)) {
     prvProps.set(this, {
-        address,
-        password: SHA256(password),
-        keyPair,
-        blockchain,
-        balance: 0
-      }
+      address,
+      password: SHA256(password),
+      keyPair,
+      blockchain,
+      balance: 0
+    }
     );
     _setAttempt(address, 0);
   }
@@ -47,10 +47,11 @@ class Wallet {
   /**
    * @description Generate a Wallet address.
    * @param {Key} pubKey Public key of the wallet
+   * @param {string} pwd Password
    * @return {string} Address
    */
-  static generateAddress(pubKey) {
-    return SHA256(pubKey + Date.now()).toString();
+  static generateAddress(pubKey, pwd) {
+    return SHA256(pubKey + Date.now() + pwd).toString();
   }
 
   /**
@@ -75,7 +76,7 @@ class Wallet {
    * @private
    */
   _secretKey(pwd) {
-    if (_getAttempt(this.address) >= ATTEMPT_THRESHOLD) throw Error(`Secret key recovery attempt threshold exceeded.`);
+    if (_getAttempt(this.address) >= ATTEMPT_THRESHOLD) throw Error('Secret key recovery attempt threshold exceeded.');
     if (pwd.toString() !== prvProps.get(this).password.toString()) {
       _setAttempt(this.address, 1 + _getAttempt(this.address));
       throw Error(`A secret key recovery was attempted on the address ${this.address} with ${_getAttempt(this.address)} attempts`);
