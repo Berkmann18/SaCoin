@@ -178,4 +178,5 @@ minePendingTransaction(miningRewardAddr) {
 ```
 
 # Contributing
-If you think that I did/got something wrong or want to suggest X or Y changes/additions then feel free to create an issue or PR.
+If you think that I did/got something wrong or want to suggest X or Y changes/additions then feel free to create an issue or PR
+while following what [this](./wiki/CONTRIBUTING.md) says.

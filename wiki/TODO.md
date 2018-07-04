@@ -11,3 +11,4 @@
 - [ ] Add consensus to the chain (https://hackernoon.com/building-a-blockchain-the-grey-paper-5be456018040)
 - [ ] Adding Smart contracts
 - [ ] Changing BANK into a proper wallet (so hide the sk and promote its wallet to itself)
+- [ ] Making sure the documentation covers the source modules
