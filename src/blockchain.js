@@ -1,7 +1,7 @@
 'use strict';
 
-const Block = require('./block'), {DIFFICULTY, MINING_REWARD, CURRENCY, BANK} = require('./config'), Transaction = require('./transaction'), {BlockError, TransactionError} = require('./error'),
-  flat = require('lodash/flatten'), UTPool = require('./utpool'), {setColours, colour} = require('./cli');
+const Block = require('./block'), {DIFFICULTY, MINING_REWARD, CURRENCY, BANK, UTPOOL} = require('../cfg.json'), Transaction = require('./transaction'), {BlockError, TransactionError, OutOfBoundsError} = require('./error'),
+  flat = require('lodash/flatten'), UTPool = require('./utpool'), {setColours, colour} = require('./cli'), SHA256 = require('crypto-js/sha256');
 
 setColours();
 
@@ -9,17 +9,37 @@ setColours();
 let prvProps = new WeakMap();
 const ROOT_HASH = 'b076b4ac5dfd570677538e23b54818022a379d2e8da1ef6f1b40f08965b528ff'; //Taken from block.js
 
+// if (!DIFFICULTY || !BANK || !MINING_REWARD || !CURRENCY) console.error('No config.js:', {DIFFICULTY, BANK, MINING_REWARD, CURRENCY});
+/* Since there's an apparent issue in which wallet.test.js not finding the constants from config even tho it works on blockchain.test.js and on here,
+   I'm adding a snippet as a work-around.
+   @todo Fix this issue with a proper solution
+ */
+
+/*const DIFF = DIFFICULTY || 2, REWARD = MINING_REWARD || 12.5, CUR = CURRENCY || 'XSC', _BANK = BANK || (() => {
+  let Wallet = require('./wallet');
+  let key = require('./crypto').genKey(), bk = {
+    pk: key.pk,
+    sk: key.sk,
+    amount: 1e8,
+    pool: new UTPool(),
+    address: SHA256(key.pk, 'sxcBank')
+  };
+  bk.wallet = /!*Wallet ? new Wallet(null, 'sxcBank', key, bk.address) :*!/ {address: bk.address, publicKey: key.pk};
+  bk.pool.addUT(bk.address, bk.amount);
+  return bk;
+})();*/
+
 class Blockchain {
   /**
    * @description Creates a blockchain
    * @param {number} [difficulty=DIFFICULTY] Difficulty of the hashes
-   * @param {UTPool} [utpool=BANK ? BANK.pool : new UTPool()] Unspent transaction pool
+   * @param {UTPool} [utpool=new UTPool(UTPOOL)] Unspent transaction pool
    * @param {Block} [genesisBlock=Blockchain.createGenesisBlock()] Genesis block
    * @param {number} [reward=MINING_REWARD] Mining reward
    * @param {string} [currency=CURRENCY] Currency name
    */
-  constructor(difficulty = DIFFICULTY, utpool = BANK ? BANK.pool : new UTPool(), genesisBlock = Blockchain.createGenesisBlock(), reward = MINING_REWARD, currency = CURRENCY) {
-    // genesisBlock.mine();
+  constructor(difficulty = DIFFICULTY, utpool = new UTPool(UTPOOL), genesisBlock = Blockchain.createGenesisBlock(), reward = MINING_REWARD, currency = CURRENCY) {
+    genesisBlock.mine();
     prvProps.set(this, {
       chain: [genesisBlock],
       difficulty,
@@ -80,10 +100,10 @@ class Blockchain {
 
   /**
    * @description Create the first (genesis) block.
-   * @param {string} [beneficiaryAddr=BANK ? BANK.address : 'null'] Address of the beneficiary
+   * @param {string} [beneficiaryAddr] Address of the beneficiary
    * @return {Block} Genesis block
    */
-  static createGenesisBlock(beneficiaryAddr = BANK ? BANK.address : 'null') {
+  static createGenesisBlock(beneficiaryAddr) {
     return new Block(ROOT_HASH, [], 0, 0, beneficiaryAddr);
   }
 
@@ -101,8 +121,8 @@ class Blockchain {
    * @return {Block} Block
    */
   getBlock(index) {
-    let sz = this.size, chain = this.chain;
-    if (index > sz) throw new Error('Index out of bounds');
+    let chain = this.chain, sz = chain.length;
+    if (index >= sz) throw new OutOfBoundsError(`index (${index}) out of bounds`);
     else return (index < 0) ? chain[sz + index] : chain[index];
   }
 
@@ -110,11 +130,10 @@ class Blockchain {
    * @description Get a block with a specific hash.
    * @param {string} hash Hash
    * @return {Block} Block
-   * @throws {BlockError} Duplicated hash
    */
   getBlockByHash(hash) {
     let blocks = this.chain.filter(block => block.hash === hash);
-    if (blocks.length > 1) throw new BlockError(`Duplicated block hash found in the blockchain: ${this.toString()}`);
+    //It's not possible to get duplicate blocks so the check was removed
     return blocks[0];
   }
 
@@ -145,8 +164,9 @@ class Blockchain {
     let chain = this.chain;
     for (let i = 1; i < chain.length; ++i){
       const currentBlock = chain[i], prevBlock = chain[i - 1], pad = '0'.repeat(this.difficulty);
-      let incorrectPadding = (!currentBlock.hash.startsWith(pad) || !prevBlock.hash.startsWith(pad));
-      if (incorrectPadding || currentBlock.hash !== currentBlock.calculateHash() || currentBlock.prevHash !== prevBlock.hash) return false;
+      const incorrectPadding = (!currentBlock.hash.startsWith(pad) || !prevBlock.hash.startsWith(pad)),
+        incorrectHash = currentBlock.hash !== currentBlock.calculateHash(), incorrectFollow = currentBlock.prevHash !== prevBlock.hash;
+      if (incorrectPadding || incorrectHash || incorrectFollow) return false;
     }
     return true;
   }
@@ -165,9 +185,8 @@ class Blockchain {
    * @description Add a new block.
    * @param {Transaction[]} transactions Data contained in the block
    * @param {string} [beneficiaryAddr=this.getBlock(-1).beneficiaryAddr] Wallet address of the beneficiary
-   * @param {number} [timestamp=Date.now()] Timestamp associated to the block
    */
-  _add(transactions, beneficiaryAddr, timestamp = Date.now()) {
+  _add(transactions, beneficiaryAddr) {
     let prevBlock = this.getBlock(-1), ba = beneficiaryAddr || prevBlock.beneficiaryAddr, newBlock = new Block(prevBlock.hash, transactions, 0, prevBlock.height + 1, ba);
     newBlock.mine();
     prvProps.get(this).chain.push(newBlock);
@@ -187,7 +206,8 @@ class Blockchain {
    * @param {Block} block block
    */
   addBlock(block) {
-    if (!block.isValid() || block.prevHash !== this.getBlock(-1).hash) throw new BlockError(`Invalid block: ${block.toString()}`);
+    let wrongLink = block.prevHash !== this.getBlock(-1).hash;
+    if (!block.isValid() || wrongLink) throw new BlockError(`Invalid block: ${block.toString()}`);
     prvProps.get(this).chain.push(block);
   }
 
@@ -199,9 +219,9 @@ class Blockchain {
   addTransaction(transaction) {
     //Check the transaction
     if (!transaction.isValid()) throw new TransactionError(`Invalid transaction: ${transaction.toString()}`);
-    let senderBalance = this.utpool.pool[transaction.fromAddr];
+    let senderBalance = this.utpool.pool[transaction.fromAddr], spending = transaction.amount + transaction.fee;
     if (senderBalance === undefined) throw new Error(`The balance of the sender ${transaction.fromAddr} has no unspent coins`);
-    if (transaction.fromPubKey !== BANK && senderBalance < (transaction.amount + transaction.fee)) throw new TransactionError(`The transaction requires more coins than the sender (${transaction.fromPubKey}) has ((${transaction.amount} + ${transaction.fee})${this.currency} off ${senderBalance}${this.currency})`);
+    if (/*transaction.fromAddr !== BANK.address && */senderBalance < spending) throw new TransactionError(`The transaction requires more coins than the sender (${transaction.fromAddr}) has ((${transaction.amount} + ${transaction.fee})${this.currency} off ${senderBalance}${this.currency})`);
     if (this.getTransactionsByHash(transaction.hash).length) throw new TransactionError(`Transaction already in blockchain: ${transaction.toString()}`);
     if (this.pendingTransactions.includes(transaction)) throw new TransactionError(`Transaction already pending: ${transaction.toString()}`);
 
@@ -216,11 +236,12 @@ class Blockchain {
   minePendingTransactions(minerWallet) {
     //Create a new block with all pending transactions and mine it and add the newly mined block to the chain
     this._add(prvProps.get(this).pendingTransactions, minerWallet.address, Date.now());
-
+    // console.log('Block added');
     //Reset the pending transactions and send the mining reward
     let rewardTx = new Transaction(BANK.address, BANK.pk, minerWallet.address, this.miningReward, '', 0);
     rewardTx.sign(BANK.sk);
     prvProps.get(this).pendingTransactions = [rewardTx];
+    // console.log(`Transactions mined by ${minerWallet.toString()}`);
     // prvProps.get(this).utpool.addUT(minerWallet.address, this.miningReward);
   }
 }

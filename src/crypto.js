@@ -1,6 +1,6 @@
 'use strict';
 
-const {KEYUTIL, Signature, crypto} = require('jsrsasign');
+const {KEYUTIL, Signature, crypto, RSAKey} = require('jsrsasign');
 
 /**
  * A key
@@ -34,10 +34,11 @@ const genKey = (opts = KEY_CONFIGS.EC256r1) => {
  * @param {Key} sk Secret key
  * @param {string} msg Message
  * @param {number} [bitLen=512] Byte length associated to the SHA hash (1, 224, 256, 384, 512) and usually half the key length from genKey().
+ * @param {string} [alg='ECDSA'] Algorithm
  * @return {void|string} (byteLen / 2)-bite signature
  */
-const sign = (sk, msg, bitLen = 512) => {
-  let sig = new Signature({alg: `SHA${bitLen}withECDSA`});
+const sign = (sk, msg, bitLen = 512, alg = 'ECDSA') => {
+  let sig = new Signature({alg: `SHA${bitLen}with${alg}`});
   sig.init(sk);
   return sig.signString(msg);
 };
@@ -76,4 +77,21 @@ const encrypt = (pk, msg, alg = 'RSA') => crypto.Cipher.encrypt(msg, pk, alg);
  */
 const decrypt = (sk, cipher, alg = 'RSA') => crypto.Cipher.decrypt(cipher, sk, alg);
 
-module.exports = {genKey, sign, verify, encrypt, decrypt, KEY_CONFIGS};
+/*
+/!**
+ * @description Get the PEM data from a key.
+ * @param {RSAKey} keyObj Key object
+ * @return {string} PEM data
+ *!/
+const toPEM = (keyObj) => KEYUTIL.getPEM(keyObj);
+
+/!**
+ * @description Get the key from the PEM data.
+ * @param {string} PEM PEM data
+ * @return {RSAKey} RSA key
+ *!/
+const fromPEM = (PEM) => KEYUTIL.getKey(PEM);*/
+
+const cloneKey = (type, key) => type === 'EC' ? new crypto.ECDSA(key) : new RSAKey(key);
+
+module.exports = {genKey, sign, verify, encrypt, decrypt, KEY_CONFIGS, cloneKey};

@@ -1,6 +1,6 @@
 'use strict';
 
-const {genKey} = require('./crypto'), Transaction = require('./transaction'), SHA256 = require('crypto-js/sha256'), UTPool = require('./utpool');
+const {genKey} = require('./crypto'), SHA256 = require('crypto-js/sha256'), UTPool = require('./utpool'), {colour} = require('./cli');
 
 /** @private */
 let prvProps = new WeakMap();
@@ -71,11 +71,27 @@ class Wallet {
   }
 
   /**
+   * @description Get the associated blockchain.
+   * @return {Blockchain} Blockchain
+   */
+  get blockchain() {
+    return prvProps.get(this).blockchain;
+  }
+
+  /**
+   * @description Change the associated blockchain
+   * @param {Blockchain} chain
+   */
+  set blockchain(chain) {
+    console.log(`${this.toString()} ${colour('warn', 'changed to')} ${chain.toString()}`);
+    prvProps.get(this).blockchain = chain;
+  }
+
+  /**
    * @description Get the wallet's secret key.
    * @param {string} pwd Password
-   * @private
    */
-  _secretKey(pwd) {
+  secretKey(pwd) {
     if (_getAttempt(this.address) >= ATTEMPT_THRESHOLD) throw Error('Secret key recovery attempt threshold exceeded.');
     if (pwd.toString() !== prvProps.get(this).password.toString()) {
       _setAttempt(this.address, 1 + _getAttempt(this.address));
@@ -90,6 +106,7 @@ class Wallet {
    */
   reset(pwd) {
     if (pwd.toString() === prvProps.get(this).password.toString()) _setAttempt(this.address, 0);
+    else throw new Error(`Failed reset on ${this.toString()}`);
   }
 
   /**
@@ -103,12 +120,13 @@ class Wallet {
 
   /**
    * @description Calculate the wallet's balance by going through its associated blockchain.
+   * @param {Blockchain} [blockchain=this.blockchain] Blockchain to use
    * @return {number} Calculated balance
    */
-  calculateBalance() {
+  calculateBalance(blockchain = this.blockchain) {
     let balance = 0;
     //Loop over each block and each transaction inside the block
-    for (const block of this.blockchain.chain) {
+    for (const block of blockchain.chain) {
       for (const tx of block.transactions) {
         //If the given address is the sender -> reduce the balance
         if (tx.fromAddr === this.address) balance -= tx.amount;
@@ -120,41 +138,33 @@ class Wallet {
   }
 
   /**
-   * @description Get the associated blockchain.
-   * @return {Blockchain} Blockchain
-   */
-  get blockchain() {
-    return prvProps.get(this).blockchain;
-  }
-
-  /**
    * @description String representation of the wallet.
    * @param {boolean} [cliColour=true] Add CLI colours
    * @return {string} Wallet
    */
   toString(cliColour = true) {
-    return `Wallet(blockchain=${this.blockchain.toString()}, address=${this.address}, publicKey=${this.publicKey})`
+    return `Wallet(blockchain=${this.blockchain.toString(cliColour)}, address=${this.address}, publicKey=${this.publicKey})`
   }
-
-  /**
+  /*
+  /!**
    * @description Create and sign a transaction.
    * @param {string} receiverAddress Address of the receiver
    * @param {number} amount Amount of coins to send
    * @param {string} pwd Password
    * @return {Transaction} Transaction
-   */
+   *!/
   createTransaction(receiverAddress, amount, pwd) {
     let tx = new Transaction(this.address, this.publicKey, receiverAddress, amount);
-    tx.sign(this._secretKey(pwd));
+    tx.sign(this.secretKey(pwd));
     return tx
-  }
+  }*/
 
   /**
    * @description Get all the transactions coming from/to this wallet within its associated blockchain.
-   * @return {{in: Array, out: Array}}
-   * @todo Change Transaction's API to offer addresses for from/to instead of just PKs for this to work
+   * @param {Blockchain} [blockchain=this.blockchain] Blockchain to use
+   * @return {{in: Transaction[], out: Transaction[]}}
    */
-  getTransactions() {
+  getTransactions(blockchain = this.blockchain) {
     let txs = {
       'in': [],
       'out': []
@@ -174,9 +184,8 @@ class Wallet {
    * @param {string} pwd Password
    */
   signTransaction(tx, pwd) {
-    tx.sign(this._secretKey(pwd));
+    tx.sign(this.secretKey(pwd));
   }
-
 }
 
 module.exports = Wallet;

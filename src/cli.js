@@ -24,10 +24,11 @@ const setColours = () => clr.setTheme(clrScheme);
  * @param {string} name Name of the colour in the theme
  * @param {...*} data Data
  * @return {*} Coloured output
+ * @throws {Error} Unspecified name
  */
 const colour = (name, ...data) => {
   if (name in clrScheme) return eval(`clr.${name}(...data)`);
-  return console.error(clr.err(`The name ${name} isn't specified in the theme used`));
+  throw new Error(`The name ${name} isn't specified in the theme used`);
 };
 
 /* @todo Add the commander/yarg function for CLI usage */

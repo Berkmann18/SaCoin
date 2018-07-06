@@ -1,6 +1,6 @@
 'use strict';
-const SHA256 = require('crypto-js/sha256'), Transaction = require('./transaction'), {DIFFICULTY, BANK, MINING_REWARD} = require('./config'), {TransactionError} = require('./error'),
-  {setColours, colour} = require('./cli');
+const SHA256 = require('crypto-js/sha256'), Transaction = require('./transaction'), /*{DIFFICULTY, BANK} = require('./config'), */{TransactionError} = require('./error'),
+  {setColours, colour} = require('./cli'), {DIFFICULTY, BANK} = require('../cfg.json');
 
 setColours();
 
@@ -126,8 +126,9 @@ class Block {
    * @return {boolean} Validity
    */
   isValid() {
-    let actualHash = this.calculateHash(), actualPad = '0'.repeat(prvProps.get(this).difficulty);
-    let correctHash = this.hash === actualHash, correctPadding = this.hash.substring(0, prvProps.get(this).difficulty) === actualPad;
+    let diff = prvProps.get(this).difficulty, actualHash = this.calculateHash(), actualPad = '0'.repeat(diff);
+    let correctHash = this.hash === actualHash, correctPadding = this.hash.substring(0, diff) === actualPad;
+    // if (log) console.log('correctHash=', correctHash, 'correctPadding=', correctPadding);
     return correctHash && correctPadding;
   }
 
@@ -151,6 +152,7 @@ class Block {
     rewardTx.sign(sk);
     this.addTransaction(rewardTx);
     this.updateHash();*/
+    // console.log(`Block mined: ${this.toString()}`);
   }
 
 }
