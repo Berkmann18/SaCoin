@@ -1,5 +1,5 @@
-const Block = require('../src/block'), SHA256 = require('crypto-js/sha256'), {/*DIFFICULTY, */BANK} = require('../src/config'), Transaction = require('../src/transaction'),
-  gen = require('../src/crypto').genKey, {colour} = require('../src/cli');
+const Block = require('../src/block'), SHA256 = require('crypto-js/sha256'), {/*DIFFICULTY, */BANK} = require('../cfg.json'), Transaction = require('../src/transaction'),
+  gen = require('../src/crypto').genKey, {colour} = require('../src/cli'), TransactionError = require('../src/error').TransactionError, Wallet = require('../src/wallet');
 
 test('Block creation', () => {
   let block = new Block();
@@ -39,13 +39,16 @@ test('Linking', () => {
 });
 
 test('Transactions gone wrong', () => {
+  let bankPair = gen();
+  BANK.pk = bankPair.pk;
+  BANK.sk = bankPair.sk;
+  BANK.wallet = new Wallet({}, 'sxcBank', bankPair, BANK.address);
   //Test the block's ability to detect invalid transactions on creation on `addTransaction`
   let kp = gen();
   let tx = new Transaction(BANK.address, BANK.pk, kp.pk, 5);
   let block = new Block('root', []);
-});
-
-test('Mining', () =>  {
-  let genesis = new Block();
-  genesis.mine();
+  expect(() => block.addTransaction(tx)).toThrowError(TransactionError);
+  tx.sign(BANK.sk);
+  expect(() => block.addTransaction(tx)).not.toThrowError(TransactionError);
+  expect(() => block.addTransaction(tx)).toThrowError(Error);
 });

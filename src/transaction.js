@@ -1,7 +1,6 @@
 'use strict';
 
-const {TRANSACTION_FEE} = require('./config'), {verify, sign} = require('./crypto'), SHA256 = require('crypto-js/sha256'), Wallet = require('./wallet'),
-  {setColours, colour} = require('./cli');
+const {TRANSACTION_FEE} = require('./config'), {verify, sign} = require('./crypto'), SHA256 = require('crypto-js/sha256'), {setColours, colour} = require('./cli');
 
 setColours();
 

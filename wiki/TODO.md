@@ -12,3 +12,5 @@
 - [ ] Adding Smart contracts
 - [ ] Changing BANK into a proper wallet (so hide the sk and promote its wallet to itself)
 - [ ] Making sure the documentation covers the source modules
+- [ ] Create a logo for the coin
+- [X] Add a code coverage check

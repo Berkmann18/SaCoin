@@ -36,7 +36,7 @@ test('Signatures et al', () => {
 });*/
 
 //Version 2
-let sender = new Wallet(null, 'se'), sHash = SHA256('se'), receiver = new Wallet(null, 're'), rHash = SHA256('re'), amt = 5, sig = sign(sender._secretKey(sHash), amt.toString());
+let sender = new Wallet(null, 'se'), sHash = SHA256('se'), receiver = new Wallet(null, 're'), rHash = SHA256('re'), amt = 5, sig = sign(sender.secretKey(sHash), amt.toString());
 let tx = new Transaction(sender.address, sender.publicKey, receiver.address, amt, sig);
 
 test('Init', () => {
@@ -61,7 +61,7 @@ test('Signature et al', () => {
     expect(bool).toBeFalsy();
     return expect(verify(sender.publicKey, tx.hash, tx.signature)).toBeFalsy()
   })
-    .then(vrf => tx.sign(sender._secretKey(sHash)))
+    .then(vrf => tx.sign(sender.secretKey(sHash)))
     .then(signed => expect(tx.hasValidSignature()).toBeTruthy())
     .then(correct => {
       expect(verify(sender.publicKey, tx.hash, tx.signature)).toBeTruthy();

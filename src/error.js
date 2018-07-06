@@ -7,7 +7,7 @@ class ExtendedError extends Error {
     this.message = message;
     this.name = this.constructor.name;
     if (typeof Error.captureStackTrace === 'function') Error.captureStackTrace(this, this.constructor);
-    else this.stack = (new Error(message)).stack;
+    else this.stack = (new Error(message)).stack; //For IE and maybe Firefox
     this.context = context;
   }
 }

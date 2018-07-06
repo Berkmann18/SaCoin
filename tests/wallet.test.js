@@ -1,22 +1,28 @@
-const BANK = require('../src/config').BANK, Wallet = require('../src/wallet'), UTPool = require('../src/utpool'), Chain = require('../src/blockchain'),
+const Wallet = require('../src/wallet'), UTPool = require('../src/utpool'), Chain = require('../src/blockchain'), {BANK} = require('../cfg')/*{BANK, init} = require('../src/config')*/,
   TransactionError = require('../src/error').TransactionError, Transaction = require('../src/transaction'), SHA256 = require('crypto-js/sha256');
 
+let bankPair = require('../src/crypto').genKey();
+BANK.pk = bankPair.pk;
+BANK.sk = bankPair.sk;
+BANK.wallet = new Wallet(new Chain(), 'sxcBank', bankPair, BANK.address);
+
 test('Init', () => {
-  let chain = new Chain(), pw = 'pass', wlt = new Wallet(chain, pw), utp = new UTPool(), amt = 2, hash = SHA256(pw);
+  let chain = new Chain(1, BANK.pool), pw = 'pass', wlt = new Wallet(chain, pw), utp = new UTPool(), amt = 2, hash = SHA256(pw);
   expect(typeof wlt.address).toBe('string');
   expect(wlt.address).toBeDefined();
   expect(typeof wlt.keyPair).toBe('undefined');
   expect(wlt.keyPair).toBeUndefined();
   expect(typeof wlt.privateKey).toBe('undefined');
   expect(wlt.privateKey).toBeUndefined();
-  expect(wlt.secretKey).toBeUndefined();
+  expect(wlt.secretKey).toBeDefined();
+  expect(typeof wlt.secretKey).toBe('function');
   expect(wlt.password).toBeUndefined();
-  expect(typeof wlt._secretKey).toBe('function');
-  expect(() => wlt._secretKey(pw)).toThrowError(Error);
-  expect(typeof wlt._secretKey(hash)).toBe('object');
-  expect(() => wlt._secretKey(SHA256(pw + '0'))).toThrowError(Error);
-  expect(() => wlt._secretKey(hash ^ 0)).toThrowError(`A secret key recovery was attempted on the address ${wlt.address} with 3 attempts`);
-  expect(() => wlt._secretKey(hash ^ 1)).toThrowError('Secret key recovery attempt threshold exceeded.');
+  expect(typeof wlt.secretKey).toBe('function');
+  expect(() => wlt.secretKey(pw)).toThrowError(Error);
+  expect(typeof wlt.secretKey(hash)).toBe('object');
+  expect(() => wlt.secretKey(SHA256(pw + '0'))).toThrowError(Error);
+  expect(() => wlt.secretKey(String(hash ^ 0))).toThrowError(`A secret key recovery was attempted on the address ${wlt.address} with 3 attempts`);
+  expect(() => wlt.secretKey(String(hash ^ 1))).toThrowError('Secret key recovery attempt threshold exceeded.');
   expect(typeof wlt.publicKey).toBe('object');
   expect(wlt.publicKey).toBeDefined();
   expect(Wallet.generateAddress(wlt.publicKey)).not.toBe(wlt.address);
@@ -26,16 +32,26 @@ test('Init', () => {
   expect(wlt.calculateBalance()).toBe(0); //Not in blockchain so 0
   expect(wlt.blockchain).toBe(chain);
   expect(wlt.toString()).toBe(`Wallet(blockchain=${wlt.blockchain.toString()}, address=${wlt.address}, publicKey=${wlt.publicKey})`);
+  expect(wlt.toString(false)).toBe(`Wallet(blockchain=${wlt.blockchain.toString(false)}, address=${wlt.address}, publicKey=${wlt.publicKey})`);
   wlt.reset(hash);
-  let createTx = () => wlt.createTransaction(BANK.pk, -1, hash);
+  expect(typeof wlt.secretKey(hash)).toBe('object');
+  expect(() => wlt.reset(hash + 0)).toThrow(Error);
+  /*let createTx = () => wlt.createTransaction(BANK.address, -1, hash);
   expect(createTx).not.toThrowError(TransactionError);
-  let tx = createTx();
+  let tx = createTx();*/
+  let tx = new Transaction(wlt.address, wlt.publicKey, BANK.address, -1);
+  wlt.signTransaction(tx, hash);
   expect(tx instanceof Transaction).toBeTruthy();
   expect(tx.hasValidSignature()).toBeTruthy();
   expect(tx.isValid()).toBeFalsy(); //-1 < 0 so fail
+  tx = new Transaction(wlt.address, wlt.publicKey, BANK.address, 5);//wlt.createTransaction(BANK.address, 5, hash);
+  wlt.signTransaction(tx, hash);
+  expect(tx instanceof Transaction).toBeTruthy();
+  expect(tx.hasValidSignature()).toBeTruthy();
+  expect(tx.isValid()).toBeTruthy();
 });
 
-test('Integration', () => {
+test('Integration 1/2', () => {
   let utp = new UTPool(), chain = new Chain(2, utp), w0 = new Wallet(chain, 'z'), w1 = new Wallet(chain, 'o'), xch = 3,
     tx = new Transaction(w0.address, w0.publicKey, w1.address, xch), start = 10;
   utp.addUT(w0.address, start);
@@ -44,4 +60,32 @@ test('Integration', () => {
   expect(() => chain.addTransaction(tx)).not.toThrowError(TransactionError);
   expect(chain.getTransactionsByHash(tx.hash).length).toBe(0);
   expect(() => chain.addTransaction(tx)).toThrowError(`Transaction already pending: ${tx.toString()}`);
+  let txs = w0.getTransactions(), txs1 = w1.getTransactions();
+  expect('in' in txs).toBeTruthy();
+  expect('out' in txs).toBeTruthy();
+  expect(txs.out).toStrictEqual([]);
+  expect(txs1.in).toStrictEqual([]);
+  expect(txs.in).toStrictEqual([]);
+  expect(txs1.out).toStrictEqual([]);
+});
+
+test('Integration 2/2', () => {
+  let chain = new Chain(), xch = 5, pw0 = 'z', h0 = SHA256(pw0);
+  // init(chain);
+  expect(chain.chain.length).toBe(1);
+  expect(chain.difficulty).toBe(2);
+  expect(chain.miningReward).toBe(12.5);
+  expect(chain.currency).toBe('XSC');
+
+  let w0 = new Wallet(chain, pw0), w1 = new Wallet(chain, 'o'), tx = new Transaction(w0.address, w0.publicKey, w1.address, xch), start = 10;
+  chain.utpool.addUT(w0.address, start);
+  chain.utpool.addUT(w1.address, start);
+  w0.signTransaction(tx, h0);
+  // expect(() => chain.addTransaction(tx)).toThrowError(`Transaction already pending: ${tx.toString()}`);
+  chain.addTransaction(tx);
+  chain.minePendingTransactions(w1);
+  // chain._add(chain.pendingTransactions, w1.address, Date.now());
+  let txs = w0.getTransactions(), txs1 = w1.getTransactions();
+  expect('in' in txs).toBeTruthy();
+  expect('out' in txs).toBeTruthy();
 });
