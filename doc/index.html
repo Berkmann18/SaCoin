@@ -29,13 +29,13 @@
 
 
     <section>
-        <article><h1>SaCoin (XSC)</h1><p>With the increasing use and popularity around blockchain (and by extension, cryptocurrencies), I decided to learn more about it what better ways are there other than learning by building one?
+        <article><h1>SaCoin (XSC)</h1><p>With the increasing use and popularity around blockchain (and by extension, cryptocurrencies), I decided to learn more about it, what better ways are there other than learning that by building one?
 This project would mainly be for educational purposes whilst being usable for production purposes.</p>
 <h1>Introduction</h1><p><em>Blockchain, what is that?</em></p>
 <p>Well it's an immutable singly-linked <strong>chain of blocks</strong> but how is that different to data-structures like linked-lists and arrays?</p>
 <p><strong>Blocks</strong> are containers associated to a hash based on its information (such as the time it was created, the data it contains, the hash of the previous block, ...) which depends on the hash of the previous (parent) block it's connected to.
-<br>Blockchain is also (usually) decentralised, in other words built on a P2P (Peer-to-Peer) network but for the sake of understanding and experimentation, I will also try to build a REST-based version.</p>
-<p>There's several types of blockchain, the main one being the transaction based one (i.e. bitcoin and altcoin) which is what I'll be focusing on.</p>
+<br>A blockchain is also (usually) decentralised, in other words built on a P2P (Peer-to-Peer) network but for the sake of understanding and experimentation, I will also try to build a REST-based version.</p>
+<p>There's several types of blockchains, the main one being the transaction based one (i.e. bitcoin and altcoin) which is what I'll be focusing on.</p>
 <p>Also, isn't it just a single chain of blocks like linked-lists? No, it's more like a tree (a <a href="https://brilliant.org/wiki/merkle-tree/">merkel tree</a> to be exact) where the longest chain is considered as the blockchain while the rest are orphans.</p>
 <h1>Pre-requisite</h1><p>It would be preferable if you have a foundation in the following:</p>
 <ul>
@@ -107,31 +107,45 @@ hashes, tree based ones, ...</p>
 But since we're going on about blockchain, we can ignore the delete row.</p>
 <p>Why should you care about Merkel trees?
 As this <a href="https://www.quora.com/How-are-Merkle-trees-used-in-a-blockchain">thread</a> points out, it's what is the best when
-it comes to distributed crypto-systems but we'll also use arrays.</p>
+it comes to distributed crypto-systems but we'll also use arrays (at least for the blocks).</p>
 <h1>Step 1</h1><p>As mentioned above, the foundation of blockchain are blocks so we'll start with that:
-So here's the main part of the code:</p>
-<pre class="prettyprint source lang-js"><code>class Block {
+<br>So here's the main part of the code:</p>
+<pre class="prettyprint source lang-js"><code>const DIFFICULTY = require('./config').DIFFICULTY;
+
+let prvProps = new WeakMap();
+const ROOT_HASH = 'b076b4ac5dfd570677538e23b54818022a379d2e8da1ef6f1b40f08965b528ff';
+
+class Block {
   /**
    * @description Block.
-   * @param {string} prevHash Previous hash
+   * @param {string} [prevHash=ROOT_HASH] Previous hash
    * @param {Transaction[]} [transactions=[]] List of transactions inside the block
    * @param {number} [nonce=0] Nonce associated to the block
    * @param {number} [height=0] Height of the block within a chain
    */
-  constructor(prevHash, transactions = [], nonce = 0, height = 0) {
-    prvProps.set(this, {prevHash,
-    difficulty: 3,
-    transactions,
-    nonce,
-    timestamp: Date.now(),
-    hash: ''
+  constructor(prevHash = ROOT_HASH, transactions = [], nonce = 0, height = 0) {
+    prvProps.set(this, {
+      prevHash,
+      difficulty: DIFFICULTY,
+      transactions,
+      nonce,
+      timestamp: Date.now(),
+      hash: ''
    });
 
     this.updateHash();
   }</code></pre><p>So here you can see that each blocks has a previous hash, a list of transactions, difficulty (I'll come to this later),
 nonce (used to get a specific hash) and the height.</p>
-<p>Now we need the chain which is going to contain the blocks.</p>
-<pre class="prettyprint source lang-js"><code>const Block = require('./block'), DIFFICULTY = require('./config');
+<p><strong>Note</strong>: I'll be using a <code>WeakMap</code> (identified as <code>prvProps</code>) based approach to ensure the privacy of the fields by restricting what can be accessed
+and changed using <code>get</code>/<code>set</code> methods as such:</p>
+<pre class="prettyprint source lang-js"><code>/**
+ * @description Get the block's hash which also acts as its header.
+ * @return {*} Hash
+ */
+get hash() {
+  return prvProps.get(this).hash
+}</code></pre><p>Now we need the chain which is going to contain the blocks.</p>
+<pre class="prettyprint source lang-js"><code>const Block = require('./block'), DIFFICULTY = require('./config').DIFFICULTY;
 
 class Blockchain {
   /**
@@ -152,10 +166,48 @@ class Blockchain {
       });
     }
 }</code></pre><p>With that in mind we need the object that will allow coins to be moved from A to B, which is where transactions come into play:</p>
-<pre class="prettyprint source lang-js"><code>class Transaction {
-  constructor(fromPubKey, toPubKey, amount = 0, fee = 0) {
-
+<pre class="prettyprint source lang-js"><code>const {TRANSACTION_FEE} = require('./config'), {sign} = require('./crypto'), SHA256 = require('crypto-js/sha256');
+class Transaction {
+  /**
+   *@description Crypto transaction.
+   * @param {string} fromAddr Address of the sender
+   * @param {Key} fromPubKey Public key of the sender
+   * @param {string} toAddr Wallet of the receiver
+   * @param {number} amount Amount of coins
+   * @param {string=} signature Signature of the sender
+   * @param {number} [fee=0] Transaction fee
+   */
+  constructor(fromAddr, fromPubKey, toAddr, amount = 0, signature, fee = TRANSACTION_FEE) {
+    prvProps.set(this, {
+      fromAddr,
+      fromPubKey,
+      toAddr,
+      amount,
+      signature,
+      hash: null,
+      timestamp: Date.now(),
+      fee
+    });
+    this.updateHash();
   }
+}</code></pre><p>As you can see a transaction doesn't only require public keys (unlike some other blockchain implementations), this is because
+by adding addresses (<code>fromAddr</code> and <code>toAddr</code>, so a bit like what Bitcoin has), the visibility of both parties involved (read the sender and receiver) would be
+more anonymous and thus less likely to get spoofed by someone else (since their public keys are visible) so it ensures more security.
+There's only one public key (the sender's) because he/she owns the <code>amount</code> of coins being transferred so we'll need him/her to sign it
+but the problem is that he/she would need to do so when the transaction's hash is obtained from the other information as shown below:</p>
+<pre class="prettyprint source lang-js"><code>/**
+ * @description Calculate the hash of the transaction.
+ * @return {string} Hash
+ */
+calculateHash() {
+  return SHA256(this.fromAddr + this.toAddr + this.amount + this.fee + this.timestamp).toString();
+}</code></pre><p>So it could then be signed like so:</p>
+<pre class="prettyprint source lang-js"><code>/**
+ * @description Sign this transaction with a given private key.
+ * @param {Key} sk Secret key
+ */
+sign(sk) {
+  prvProps.get(this).signature = sign(sk, this.hash);
 }</code></pre><p>We also need to bar in mind that in order to add blocks we need to mine them which would generate a transaction with a reward
 for the miner as well as allowing him/her to keep fees on transactions within the block he/she mined.</p>
 <p>But wait, how can users know how much money they have without necessarily having to go through the whole chain and doing some
@@ -180,16 +232,50 @@ how many coins people have.</p>
       }
     );
   }
-}</code></pre><p>And how is are the transactions reflected on the blockchain?
-Well they are placed in a pool of <strong>pending transactions</strong> within the blockchain and then placed into a new block that was mined;
-that using the Proof of Work</p>
+
+  /**
+   * @description Generate a Wallet address.
+   * @param {Key} pubKey Public key of the wallet
+   * @param {string} pwd Password
+   * @return {string} Address
+   */
+  static generateAddress(pubKey, pwd) {
+    return SHA256(pubKey + Date.now() + pwd).toString();
+  }
+
+  /**
+   * @description Calculate the wallet's balance by going through its associated blockchain.
+   * @param {Blockchain} [blockchain=this.blockchain] Blockchain to use
+   * @return {number} Calculated balance
+   */
+  calculateBalance(blockchain = this.blockchain) {
+    let balance = 0;
+    //Loop over each block and each transaction inside the block
+    for (const block of blockchain.chain) {
+      for (const tx of block.transactions) {
+        //If the given address is the sender -> reduce the balance
+        if (tx.fromAddr === this.address) balance -= tx.amount;
+        //If the given address is the receiver -> increase the balance
+        if (tx.toAddr === this.address) balance += tx.amount;
+      }
+    }
+    return balance;
+  }
+}</code></pre><p>But wait, in order to know how much coin I has, my wallet would go through the <em>whole</em> chain every time I call that method.
+<br>There must be a way to save some computation time by saving those amounts into an object like a hash table that links
+addresses to amounts of unspent coins.</p>
+<p>And how is are the transactions reflected on the blockchain?
+Well they are placed in a pool of <strong>pending transactions</strong> within the blockchain and then placed into a new block that was mined.
+It's possible using the Proof of Work which would require the miner to prove that he/she has enough computational power to mine a block
+and add it to the chain (otherwise anyone could add any blocks and it would be a mess) but since it takes some computational power to do
+this, it's necessary to have an incentive for miners to mine blocks (in other words, a reward).</p>
 <pre class="prettyprint source lang-js"><code>//block.js
 /**
-   * @description Increment the nonce until a valid hash is obtained with enough 0's at the beginning (based on the difficulty).
-   * @param {string} beneficiarySig Signature of the beneficiary
-   */
-mine(beneficiarySig) {
-  while (this.hash.substring(0, prvProps.get(this).difficulty) !== '0'.repeat(prvProps.get(this).difficulty)) {
+ * @description Increment the nonce until a valid hash is obtained with enough 0's at the beginning (based on the difficulty).
+ */
+mine() {
+  let diff = prvProps.get(this).difficulty;
+  while (this.hash.substring(0, diff) !== '0'.repeat(diff)) {
     prvProps.get(this).nonce++;
     this.updateHash();
   }
@@ -209,14 +295,72 @@ addTransaction(transaction) {
 }
 
 /**
- * @description Mine a new block and send the reward to the miner.
- * @param {(string|RSAKey|crypto.ECDSA)} miningRewardAddr Address of the miner who gained a mining reward
+ * @description Mine a new block and prepare the miner's reward.
+ * @param {Wallet} minerWallet Wallet of the miner who gained a mining reward
  */
-minePendingTransaction(miningRewardAddr) {
+minePendingTransactions(minerWallet) {
   //Create a new block with all pending transactions and mine it and add the newly mined block to the chain
-  this._add(prvProps.get(this).pendingTransactions, miningRewardAddr);
-   //Reset the pending transactions and send the mining reward
-  prvProps.get(this).pendingTransactions = [new Transaction(BANK.pk, miningRewardAddr, this.miningReward)];
+  this._add(prvProps.get(this).pendingTransactions, minerWallet.address, Date.now());
+  //Reset the pending transactions and send the mining reward
+  let rewardTx = new Transaction(BANK.address, BANK.pk, minerWallet.address, this.miningReward, '', 0);
+  rewardTx.sign(BANK.sk);
+  prvProps.get(this).pendingTransactions = [rewardTx];
+}
+
+/**
+ * @description Add a new block.
+ * @param {Transaction[]} transactions Data contained in the block
+ * @param {string} [beneficiaryAddr=this.getBlock(-1).beneficiaryAddr] Wallet address of the beneficiary
+ */
+_add(transactions, beneficiaryAddr) {
+  let prevBlock = this.getBlock(-1), ba = beneficiaryAddr || prevBlock.beneficiaryAddr, newBlock = new Block(prevBlock.hash, transactions, 0, prevBlock.height + 1, ba);
+  newBlock.mine();
+  prvProps.get(this).chain.push(newBlock);
+
+  //Update the UT pool
+  let pool = this.utpool;
+  transactions.forEach(tx => {
+    let amt = tx.amount, fee = tx.fee; //Just to reduce calls
+    pool.addUT(tx.fromAddr, -(amt + fee));
+    pool.addUT(tx.toAddr, amt);
+    pool.addUT(ba, fee);
+  });
+}</code></pre><p>As you can see the UT (Unspent Transaction) pool is being used here to permit having an up-to-date idea of how many coins each
+addresses has that are interacting with that blockchain (this is what permits users in having an idea of how many coins they have
+without having to go through the whole chain even via Wallet.<code>calculateBalance()</code>).</p>
+<p>The way I went about this UT pool is as follows:</p>
+<pre class="prettyprint source lang-js"><code>class UTPool {
+  /**
+   * @description Unspent Transaction Pool.
+   * @param {Object} [pool={}] Pool where keys are wallet addresses and values are the amount of unspent coins
+   */
+  constructor(pool = {}) {
+    prvProps.set(this, {pool})
+  }
+
+  /**
+   * @description Get the UT's pool.
+   * @return {Object} pool
+   */
+  get pool() {
+    return prvProps.get(this).pool;
+  }
+
+  /**
+   * @description Add an unspent transaction
+   * @param {string} addr Wallet address
+   * @param {number} amount Amount of coins
+   * @throws {TypeError} amount isn't a number
+   */
+  addUT(addr, amount) {
+    if (typeof amount !== 'number') throw new TypeError(`The UT amount needs to be a number not ${amount}`);
+    let pool = prvProps.get(this).pool;
+
+    if (pool[addr]) {
+      if (typeof pool[addr] !== 'number') pool[addr] = Number(pool[addr]);
+      pool[addr] += amount;
+    } else pool[addr] = amount
+  }
 }</code></pre><h1>Contributing</h1><p>If you think that I did/got something wrong or want to suggest X or Y changes/additions then feel free to create an issue or PR
 while following what <a href="./wiki/CONTRIBUTING.md">this</a> says.</p></article>
     </section>
@@ -235,7 +379,7 @@ while following what <a href="./wiki/CONTRIBUTING.md">this</a> says.</p></articl
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Jul 06 2018 20:54:28 GMT+0100 (British Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat Jul 07 2018 09:34:42 GMT+0100 (British Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>
