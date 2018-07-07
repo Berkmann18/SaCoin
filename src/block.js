@@ -144,7 +144,8 @@ class Block {
    * @description Increment the nonce until a valid hash is obtained with enough 0's at the beginning (based on the difficulty).
    */
   mine() {
-    while (this.hash.substring(0, prvProps.get(this).difficulty) !== '0'.repeat(prvProps.get(this).difficulty)) {
+    let diff = prvProps.get(this).difficulty;
+    while (this.hash.substring(0, diff) !== '0'.repeat(diff)) {
       prvProps.get(this).nonce++;
       this.updateHash();
     }

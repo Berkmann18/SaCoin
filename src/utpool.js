@@ -14,6 +14,10 @@ class UTPool {
     prvProps.set(this, {pool})
   }
 
+  /**
+   * @description Get the UT's pool.
+   * @return {Object} pool
+   */
   get pool() {
     return prvProps.get(this).pool;
   }
@@ -31,8 +35,7 @@ class UTPool {
     if (pool[addr]) {
       if (typeof pool[addr] !== 'number') pool[addr] = Number(pool[addr]);
       pool[addr] += amount;
-    }
-    else pool[addr] = amount
+    } else pool[addr] = amount
   }
 
   /**
