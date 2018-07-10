@@ -25,7 +25,8 @@ test('Init', () => {
   expect(() => wlt.secretKey(String(hash ^ 1))).toThrowError('Secret key recovery attempt threshold exceeded.');
   expect(typeof wlt.publicKey).toBe('object');
   expect(wlt.publicKey).toBeDefined();
-  expect(Wallet.generateAddress(wlt.publicKey)).not.toBe(wlt.address);
+  expect(Wallet.generateAddress(wlt.publicKey, hash)).not.toBe(wlt.address);
+  expect(wlt.hasValidAddress()).toBeTruthy();
   expect(wlt.unspentBalance(utp)).toBeUndefined();
   utp.addUT(wlt.address, amt);
   expect(wlt.unspentBalance(utp)).toBe(amt);
@@ -81,11 +82,11 @@ test('Integration 2/2', () => {
   chain.utpool.addUT(w0.address, start);
   chain.utpool.addUT(w1.address, start);
   w0.signTransaction(tx, h0);
-  // expect(() => chain.addTransaction(tx)).toThrowError(`Transaction already pending: ${tx.toString()}`);
   chain.addTransaction(tx);
+
   chain.minePendingTransactions(w1);
-  // chain._add(chain.pendingTransactions, w1.address, Date.now());
   let txs = w0.getTransactions(), txs1 = w1.getTransactions();
   expect('in' in txs).toBeTruthy();
   expect('out' in txs).toBeTruthy();
+  expect(txs.in).toEqual([tx]);
 });
