@@ -37,7 +37,7 @@ class Transaction {
    * @return {string} Hash
    */
   calculateHash() {
-    return SHA256(this.fromAddr + this.toAddr + this.amount + this.fee + this.timestamp).toString();
+    return SHA256(this.fromAddr + this.toAddr + this.amount/* + this.fee*/ + this.timestamp).toString();
   }
 
   /**
@@ -105,6 +105,14 @@ class Transaction {
   }
 
   /**
+   * @description Change the transaction fee.
+   * @param {number} val New fee
+   */
+  set fee(val) {
+    prvProps.get(this).fee = val;
+  }
+
+  /**
    * @description Get the transaction's signature.
    * @return {string} Signature
    */
@@ -125,7 +133,7 @@ class Transaction {
    * @return {boolean} Validity
    */
   isValid() {
-    return this.hash === this.calculateHash() && this.hasValidSignature() && this.amount > 0
+    return this.hash === this.calculateHash() && this.hasValidSignature() && this.amount > 0 && this.fee >= 0
   }
 
   /**
