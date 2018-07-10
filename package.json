@@ -49,7 +49,16 @@
     "collectCoverageFrom": [
       "src/*.js",
       "test/*.js",
-      "!**/node_modules/**"
-    ]
+      "!**/node_modules/**",
+      "!**/_*.js"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 80,
+        "functions": 90,
+        "lines": 50,
+        "statements": 50
+      }
+    }
   }
 }

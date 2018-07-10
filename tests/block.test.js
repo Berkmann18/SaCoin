@@ -1,5 +1,6 @@
 const Block = require('../src/block'), SHA256 = require('crypto-js/sha256'), {/*DIFFICULTY, */BANK} = require('../cfg.json'), Transaction = require('../src/transaction'),
-  gen = require('../src/crypto').genKey, {colour} = require('../src/cli'), TransactionError = require('../src/error').TransactionError, Wallet = require('../src/wallet');
+  gen = require('../src/crypto').genKey, {colour} = require('../src/cli'), TransactionError = require('../src/error').TransactionError, Wallet = require('../src/wallet'),
+  UTPool = require('../src/utpool');
 
 test('Block creation', () => {
   let block = new Block();
@@ -17,6 +18,11 @@ test('Block creation', () => {
   expect(block.beneficiaryAddr).toBe(BANK.address);
   block.mine();
   expect(block.isValid()).toBeTruthy(); //This only works with the mining transaction reward commented out
+  expect(() => {
+    const h = block.hash;
+    block.updateHash();
+    return block.hash === h;
+  }).toBeTruthy();
 });
 
 test('Linking', () => {
@@ -24,6 +30,7 @@ test('Linking', () => {
   let block = new Block(genesis.hash, [], 0, 1);
   expect(block.prevHash).toBe(genesis.hash);
   expect(block.isValid()).toBeFalsy();
+  expect(block.isGenesis()).toBeFalsy();
   block.mine();
   expect(block.isValid()).toBeTruthy();
   let curGenHash = genesis.hash;
@@ -51,4 +58,22 @@ test('Transactions gone wrong', () => {
   tx.sign(BANK.sk);
   expect(() => block.addTransaction(tx)).not.toThrowError(TransactionError);
   expect(() => block.addTransaction(tx)).toThrowError(Error);
+});
+
+test('Transactions gone right', () => {
+  let chain = [], pw = 'pass', wlt = new Wallet(chain, pw), utp = new UTPool({
+    [wlt.address]: 10,
+    [BANK.address]: 100
+  });
+  // chain.utpool.addUT(wlt.address, 10);
+  // chain.utpool.addUT(BANK.address, 100);
+  let tx = new Transaction(BANK.address, BANK.pk, wlt.publicKey, 5);
+
+  expect(() => {
+    let block = new Block('genesis', [tx]);
+  }).toThrow(`Invalid transaction ant-Block creation: ${tx.toString()}`);
+  tx.sign(BANK.sk);
+  expect(() => {
+    let block = new Block('genesis', [tx]);
+  }).not.toThrow(`Invalid transaction ant-Block creation: ${tx.toString()}`);
 });

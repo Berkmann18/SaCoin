@@ -62,7 +62,7 @@ test('Cont.', () => {
   let wlt = new Wallet(SXC, ' ');
   tx = new Transaction(BANK.address, BANK.pk, wlt.address, 5);
   tx.sign(BANK.sk);
-  SXC._add([tx], BANK.address);
+  SXC._add([tx]);
 });
 
 test('Transactions', () => {
@@ -137,7 +137,7 @@ test('Mining', () => {
   expect(SXC.utpool.pool[me.address]).toBe(myCoins);
   expect(SXC.utpool.pool[BANK.address]).toBe(bkCoins);
   expect(SXC.utpool.pool[him.address]).toBeUndefined();
-  expect(me.calculateBalance()).toBe(transferred);
+  expect(me.calculateBalance()).toBe(transferred + TRANSACTION_FEE);
   expect(BANK.wallet.calculateBalance()).toBe(-transferred);
   // console.log('me', myCoins, 'pool', SXC.utpool.pool[me.address], 'balance', me.calculateBalance(), 'ut', me.unspentBalance(utp));
   // console.log('BANK', bkCoins, 'pool', SXC.utpool.pool[BANK.address], 'balance', BANK.wallet.calculateBalance(), 'ut', BANK.wallet.unspentBalance(utp));
@@ -149,11 +149,12 @@ test('Mining', () => {
   expect(SXC.utpool.pool[BANK.address]).toBe(bkCoins);
   expect(SXC.utpool.pool[him.address]).toBe(TRANSACTION_FEE);
   // console.log('me', myCoins, 'pool', SXC.utpool.pool[me.address], 'balance', me.calculateBalance());
-  let balance = transferred * 2 + MINING_REWARD;
+  let balance = transferred * 2 + MINING_REWARD + TRANSACTION_FEE;
   expect(me.calculateBalance()).toBe(balance); //Since the coins given by the UT pool aren't coming from the blockchain
+  expect(me.calculateBalance()).toBe(SXC.utpool.pool[me.address] - coin);
   // console.log('BANK', bkCoins, 'pool', SXC.utpool.pool[BANK.address], 'balance', BANK.wallet.calculateBalance());
-  expect(BANK.wallet.calculateBalance()).toBe(-balance);
-  expect(him.calculateBalance()).toBe(0); //Not in blockchain yet
+  expect(BANK.wallet.calculateBalance()).toBe(-balance + TRANSACTION_FEE);
+  expect(him.calculateBalance()).toBe(TRANSACTION_FEE); //Not in blockchain yet
   SXC.minePendingTransactions(BANK.wallet);
 
   bkCoins -= MINING_REWARD;

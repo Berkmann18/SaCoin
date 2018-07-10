@@ -35,16 +35,16 @@ class Blockchain {
    * @param {number} [difficulty=DIFFICULTY] Difficulty of the hashes
    * @param {UTPool} [utpool=new UTPool(UTPOOL)] Unspent transaction pool
    * @param {Block} [genesisBlock=Blockchain.createGenesisBlock()] Genesis block
-   * @param {number} [reward=MINING_REWARD] Mining reward
+   * @param {number} [miningReward=MINING_REWARD] Mining reward
    * @param {string} [currency=CURRENCY] Currency name
    */
-  constructor(difficulty = DIFFICULTY, utpool = new UTPool(UTPOOL), genesisBlock = Blockchain.createGenesisBlock(), reward = MINING_REWARD, currency = CURRENCY) {
+  constructor(difficulty = DIFFICULTY, utpool = new UTPool(UTPOOL), genesisBlock = Blockchain.createGenesisBlock(), miningReward = MINING_REWARD, currency = CURRENCY) {
     genesisBlock.mine();
     prvProps.set(this, {
       chain: [genesisBlock],
       difficulty,
       pendingTransactions: [],
-      miningReward: reward,
+      miningReward,
       currency,
       utpool
     });
@@ -162,11 +162,11 @@ class Blockchain {
    */
   isValid() {
     let chain = this.chain;
-    for (let i = 1; i < chain.length; ++i){
+    for (let i = 1; i < chain.length; ++i) {
       const currentBlock = chain[i], prevBlock = chain[i - 1], pad = '0'.repeat(this.difficulty);
       const incorrectPadding = (!currentBlock.hash.startsWith(pad) || !prevBlock.hash.startsWith(pad)),
         incorrectHash = currentBlock.hash !== currentBlock.calculateHash(), incorrectFollow = currentBlock.prevHash !== prevBlock.hash;
-      if (incorrectPadding || incorrectHash || incorrectFollow) return false;
+      if (incorrectPadding || incorrectHash || incorrectFollow) return false; //It should be impossible for this branch to return
     }
     return true;
   }
@@ -235,7 +235,7 @@ class Blockchain {
    */
   minePendingTransactions(minerWallet) {
     //Create a new block with all pending transactions and mine it and add the newly mined block to the chain
-    this._add(prvProps.get(this).pendingTransactions, minerWallet.address, Date.now());
+    this._add(prvProps.get(this).pendingTransactions, minerWallet.address);
     // console.log('Block added');
     //Reset the pending transactions and send the mining reward
     let rewardTx = new Transaction(BANK.address, BANK.pk, minerWallet.address, this.miningReward, '', 0);

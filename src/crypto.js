@@ -15,8 +15,8 @@ const KEY_CONFIGS = {
   RSA1024: {type: 'RSA', name: '1024'},
   RSA2048: {type: 'RSA', name: '2048'},
   EC256k1: {type: 'EC', name: 'secp256k1'}, //Here name is the curve
-  EC256r1: {type: 'EC', name: 'secp256r1'},
-  EC384r1: {type: 'EC', name: 'secp384r1'}
+  EC256r1: {type: 'EC', name: 'P-256', curve: 'secp256r1'},
+  EC384r1: {type: 'EC', name: 'P-384', curve: 'secp384r1'}
 };
 
 /**
@@ -92,6 +92,15 @@ const toPEM = (keyObj) => KEYUTIL.getPEM(keyObj);
  *!/
 const fromPEM = (PEM) => KEYUTIL.getKey(PEM);*/
 
-const cloneKey = (type, key) => type === 'EC' ? new crypto.ECDSA(key) : new RSAKey(key);
+/**
+ * @description Clone a key.
+ * @param {Key} key Original key
+ * @return {Key} clone
+ */
+const cloneKey = (key) => {
+  let clone = KEYUTIL.getKey(KEYUTIL.getJWKFromKey(key));
+  if (key.isPublic !== clone.isPublic) clone.isPublic = key.isPublic;
+  return clone;
+}; //(type, key) => type === 'EC' ? new crypto.ECDSA(key) : new RSAKey(key);
 
 module.exports = {genKey, sign, verify, encrypt, decrypt, KEY_CONFIGS, cloneKey};

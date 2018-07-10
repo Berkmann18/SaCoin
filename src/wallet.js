@@ -24,34 +24,52 @@ const _setAttempt = (addr, num) => prvProps.get(ATTEMPT)[addr] = num;
  */
 const _getAttempt = (addr) => prvProps.get(ATTEMPT)[addr];
 
+/**
+ * @description Calculate the address of a wallet.
+ * @param {Key} pubKey Public key
+ * @param {number|Date} time Timestamp to use for the generation
+ * @param {string|WordArray} pwd
+ */
+const calculateAddress = (pubKey, time, pwd) => SHA256(pubKey + time + pwd).toString();
+
 class Wallet {
   /**
    * @description Electronic wallet.
    * @param {Blockchain} blockchain Blockchain associated
    * @param {{pk: Key, sk: Key}} [keyPair=genKey()]
-   * @param {string} password Password to access fully access the wallet
-   * @param {string} [address=generateAddress(keyPair.pk)] Hex address
+   * @param {string|WordArray} password Password to access fully access the wallet
+   * @param {string} [address=calculateAddress(keyPair.pk, ts, hash)] Hex address
    */
-  constructor(blockchain, password, keyPair = genKey(), address = Wallet.generateAddress(keyPair.pk, password)) {
+  constructor(blockchain, password, keyPair = genKey(), address) {
+    let ts = Date.now(), hash = SHA256(password), addr = address || calculateAddress(keyPair.pk, ts, hash);
     prvProps.set(this, {
-      address,
-      password: SHA256(password),
+      password: hash,
+      creationTime: ts,
+      address: addr,
       keyPair,
       blockchain,
       balance: 0
     }
     );
-    _setAttempt(address, 0);
+    _setAttempt(addr, 0);
   }
 
   /**
    * @description Generate a Wallet address.
    * @param {Key} pubKey Public key of the wallet
-   * @param {string} pwd Password
+   * @param {string|WordArray} pwd Password
    * @return {string} Address
    */
   static generateAddress(pubKey, pwd) {
-    return SHA256(pubKey + Date.now() + pwd).toString();
+    return calculateAddress(pubKey, Date.now(), pwd);
+  }
+
+  /**
+   * @description Check if this wallet has a valid address.
+   * @return {boolean} Valid address
+   */
+  hasValidAddress() {
+    return this.address === calculateAddress(this.publicKey, prvProps.get(this).creationTime, prvProps.get(this).password);
   }
 
   /**
@@ -89,7 +107,7 @@ class Wallet {
 
   /**
    * @description Get the wallet's secret key.
-   * @param {string} pwd Password
+   * @param {string|WordArray} pwd Password
    */
   secretKey(pwd) {
     if (_getAttempt(this.address) >= ATTEMPT_THRESHOLD) throw Error('Secret key recovery attempt threshold exceeded.');
@@ -102,7 +120,7 @@ class Wallet {
 
   /**
    * @description Reset the recovery attempts to 0.
-   * @param {string} pwd Password
+   * @param {string|WordArray} pwd Password
    */
   reset(pwd) {
     if (pwd.toString() === prvProps.get(this).password.toString()) _setAttempt(this.address, 0);
@@ -132,6 +150,8 @@ class Wallet {
         if (tx.fromAddr === this.address) balance -= tx.amount;
         //If the given address is the receiver -> increase the balance
         if (tx.toAddr === this.address) balance += tx.amount;
+        //If the address is the fee receiver (block beneficiary) -> increase the balance
+        if (block.beneficiaryAddr === this.address) balance += tx.fee;
       }
     }
     return balance;
@@ -181,7 +201,7 @@ class Wallet {
   /**
    * @description Sign a transaction.
    * @param {Transaction} tx Transaction
-   * @param {string} pwd Password
+   * @param {string|WordArray} pwd Password
    */
   signTransaction(tx, pwd) {
     tx.sign(this.secretKey(pwd));
