@@ -1,6 +1,6 @@
 'use strict';
 const SHA256 = require('crypto-js/sha256'), Transaction = require('./transaction'), /*{DIFFICULTY, BANK} = require('./config'), */{TransactionError} = require('./error'),
-  {setColours, colour} = require('./cli'), {DIFFICULTY, BANK} = require('../cfg.json');
+  {setColours, colour} = require('./cli'), {DIFFICULTY, BANK, TRANSACTION_FEE} = require('../cfg.json');
 
 setColours();
 
@@ -16,11 +16,13 @@ class Block {
    * @param {number} [nonce=0] Nonce associated to the block
    * @param {number} [height=0] Height of the block within a chain
    * @param {string} [beneficiaryAddr=BANK.address] Address of the beneficiary
+   * @param {number} [txFee=TRANSACTION_FEE] Fee for each transaction that will be present in that block
    */
-  constructor(prevHash = ROOT_HASH, transactions = [], nonce = 0, height = 0, beneficiaryAddr = BANK.address) {
+  constructor(prevHash = ROOT_HASH, transactions = [], nonce = 0, height = 0, beneficiaryAddr = BANK.address, txFee = TRANSACTION_FEE) {
 
     if (transactions.length) transactions.forEach(tx => {
       if (!tx.isValid()) throw new TransactionError(`Invalid transaction ant-Block creation: ${tx.toString()}`);
+      tx.fee = txFee;
     });
 
     prvProps.set(this, {
@@ -31,7 +33,8 @@ class Block {
       timestamp: Date.now(),
       hash: '',
       height,
-      beneficiaryAddr
+      beneficiaryAddr,
+      txFee
     });
 
     this.updateHash()
@@ -85,6 +88,14 @@ class Block {
   }
 
   /**
+   * @description Get the transaction fee.
+   * @return {number}
+   */
+  get transactionFee() {
+    return prvProps.get(this).txFee;
+  }
+
+  /**
    * @description Calculate the hash.
    */
   calculateHash() {
@@ -104,7 +115,7 @@ class Block {
    * @return {string} Block
    */
   toString(cliColour = true) {
-    let str = `Block(transactions=[${this.transactions.map(trans => trans.toString())}], timestamp=${this.timestamp}, prevHash=${this.prevHash}, hash=${this.hash})`;
+    let str = `Block(transactions=[${this.transactions.map(trans => trans.toString())}], timestamp=${this.timestamp}, prevHash=${this.prevHash}, hash=${this.hash}, height=${this.height}, beneficiaryAddr=${this.beneficiaryAddr}, transactionFee=${this.transactionFee})`;
     return cliColour ? colour('block', str) : str;
   }
 
@@ -117,6 +128,7 @@ class Block {
    */
   addTransaction(transaction) {
     if (!transaction.isValid()) throw new TransactionError(`The transaction nearly added is invalid: ${transaction.toString()}`);
+    transaction.fee = this.transactionFee; //Change the transaction's fee to match the block's transaction fee (since it should be up to the block's owner).
     if (this.transactions.includes(transaction)) throw new Error(`The transaction already in the block: ${transaction.toString()}`);
     prvProps.get(this).transactions.push(transaction)
   }

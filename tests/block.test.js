@@ -1,4 +1,4 @@
-const Block = require('../src/block'), SHA256 = require('crypto-js/sha256'), {/*DIFFICULTY, */BANK} = require('../cfg.json'), Transaction = require('../src/transaction'),
+const Block = require('../src/block'), {BANK, TRANSACTION_FEE} = require('../cfg.json'), Transaction = require('../src/transaction'),
   gen = require('../src/crypto').genKey, {colour} = require('../src/cli'), TransactionError = require('../src/error').TransactionError, Wallet = require('../src/wallet'),
   UTPool = require('../src/utpool');
 
@@ -9,13 +9,14 @@ test('Block creation', () => {
   expect(block.prevHash).toEqual('b076b4ac5dfd570677538e23b54818022a379d2e8da1ef6f1b40f08965b528ff');
   expect(block.hash).toBe(block.calculateHash());
   expect(block.height).toBe(0);
-  expect(block.toString()).toBe(colour('block', `Block(transactions=[], timestamp=${block.timestamp}, prevHash=${block.prevHash}, hash=${block.hash})`));
-  expect(block.toString(false)).toBe(`Block(transactions=[], timestamp=${block.timestamp}, prevHash=${block.prevHash}, hash=${block.hash})`);
+  expect(block.toString()).toBe(colour('block', `Block(transactions=[], timestamp=${block.timestamp}, prevHash=${block.prevHash}, hash=${block.hash}, height=0, beneficiaryAddr=${block.beneficiaryAddr}, transactionFee=1)`));
+  expect(block.toString(false)).toBe(`Block(transactions=[], timestamp=${block.timestamp}, prevHash=${block.prevHash}, hash=${block.hash}, height=0, beneficiaryAddr=${block.beneficiaryAddr}, transactionFee=1)`);
   expect(block.isGenesis()).toBeTruthy();
   expect(block.isValid()).toBeFalsy();
   expect(block.nonce).toBe(undefined); //Instead of 0
   expect(block.difficulty).toBe(undefined); //Instead of DIFFICULTY
   expect(block.beneficiaryAddr).toBe(BANK.address);
+  expect(block.transactionFee).toBe(TRANSACTION_FEE);
   block.mine();
   expect(block.isValid()).toBeTruthy(); //This only works with the mining transaction reward commented out
   expect(() => {
@@ -76,4 +77,7 @@ test('Transactions gone right', () => {
   expect(() => {
     let block = new Block('genesis', [tx]);
   }).not.toThrow(`Invalid transaction ant-Block creation: ${tx.toString()}`);
+  expect(tx.fee).toBe(TRANSACTION_FEE);
+  let block = new Block('root', [tx], 0, 0, wlt.address, 2);
+  expect(tx.fee).toBe(2);
 });
