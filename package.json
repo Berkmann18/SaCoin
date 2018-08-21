@@ -38,7 +38,7 @@
   "devDependencies": {
     "eslint": "^5.4.0",
     "eslint-plugin-security": "^1.4.0",
-    "jest": "^23.4.2",
+    "jest": "^23.5.0",
     "jsdoc": "^3.5.5"
   }
 }
