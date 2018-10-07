@@ -1,8 +1,13 @@
-/** Taken from ServerBuilder's utils.js file */
+'use strict';
+/**
+ * @fileoverview CLI related functions.
+ * @module
+ */
+
+/* Taken from ServerBuilder's utils.js file */
 const clr = require('colors/safe');
 
-const clrScheme = {
-  in: 'white',
+const clrScheme = { in: 'white',
   out: 'cyan',
   inf: 'green',
   err: 'red',
@@ -33,4 +38,4 @@ const colour = (name, ...data) => {
 
 /* @todo Add the commander/yarg function for CLI usage */
 
-module.exports = {setColours, colour, clrScheme};
+module.exports = { setColours, colour, clrScheme };

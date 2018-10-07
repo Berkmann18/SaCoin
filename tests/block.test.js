@@ -66,8 +66,6 @@ test('Transactions gone right', () => {
     [wlt.address]: 10,
     [BANK.address]: 100
   });
-  // chain.utpool.addUT(wlt.address, 10);
-  // chain.utpool.addUT(BANK.address, 100);
   let tx = new Transaction(BANK.address, BANK.pk, wlt.publicKey, 5);
 
   expect(() => {

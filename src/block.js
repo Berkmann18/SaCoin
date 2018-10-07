@@ -1,13 +1,30 @@
 'use strict';
-const SHA256 = require('crypto-js/sha256'), Transaction = require('./transaction'), /*{DIFFICULTY, BANK} = require('./config'), */{TransactionError} = require('./error'),
-  {setColours, colour} = require('./cli'), {DIFFICULTY, BANK, TRANSACTION_FEE} = require('../cfg.json');
+
+/**
+ * @fileoverview Cryptographic blocks.
+ * @module
+ */
+
+const SHA256 = require('crypto-js/sha256'),
+  Transaction = require('./transaction'),
+  /*{DIFFICULTY, BANK} = require('./config'), */
+  { TransactionError } = require('./error'),
+  { setColours, colour } = require('./cli'),
+  { DIFFICULTY, BANK, TRANSACTION_FEE } = require('../cfg.json');
 
 setColours();
 
 /** @private */
 let prvProps = new WeakMap();
+/**
+ * @description Hash of the root of the chain.
+ * @private
+ */
 const ROOT_HASH = 'b076b4ac5dfd570677538e23b54818022a379d2e8da1ef6f1b40f08965b528ff';
 
+/**
+ * @class Block
+ */
 class Block {
   /**
    * @description Block.
@@ -17,6 +34,7 @@ class Block {
    * @param {number} [height=0] Height of the block within a chain
    * @param {string} [beneficiaryAddr=BANK.address] Address of the beneficiary
    * @param {number} [txFee=TRANSACTION_FEE] Fee for each transaction that will be present in that block
+   * @memberof Block
    */
   constructor(prevHash = ROOT_HASH, transactions = [], nonce = 0, height = 0, beneficiaryAddr = BANK.address, txFee = TRANSACTION_FEE) {
 
@@ -43,6 +61,7 @@ class Block {
   /**
    * @description Get the block's transactions.
    * @return {Transaction[]} Transaction
+   * @memberof Block
    */
   get transactions() {
     return prvProps.get(this).transactions;
@@ -51,6 +70,7 @@ class Block {
   /**
    * @description Get the timestamp associated to the block.
    * @return {number} Timestamp
+   * @memberof Block
    */
   get timestamp() {
     return prvProps.get(this).timestamp
@@ -59,6 +79,7 @@ class Block {
   /**
    * @description Get the previous hash.
    * @return {string} Previous hash
+   * @memberof Block
    */
   get prevHash() {
     return prvProps.get(this).prevHash
@@ -66,7 +87,8 @@ class Block {
 
   /**
    * @description Get the block's hash which also acts as its header.
-   * @return {*} Hash
+   * @return {Object} Hash
+   * @memberof Block
    */
   get hash() {
     return prvProps.get(this).hash
@@ -74,6 +96,8 @@ class Block {
 
   /**
    * @description Get the block's height within a chain.
+   * @returns {number} Height
+   * @memberof Block
    */
   get height() {
     return prvProps.get(this).height;
@@ -82,6 +106,7 @@ class Block {
   /**
    * @description Get the block's beneficiary's address.
    * @return {string} Address
+   * @memberof Block
    */
   get beneficiaryAddr() {
     return prvProps.get(this).beneficiaryAddr;
@@ -89,7 +114,8 @@ class Block {
 
   /**
    * @description Get the transaction fee.
-   * @return {number}
+   * @return {number} Fee
+   * @memberof Block
    */
   get transactionFee() {
     return prvProps.get(this).txFee;
@@ -97,6 +123,8 @@ class Block {
 
   /**
    * @description Calculate the hash.
+   * @returns {Object} SHA256 hash
+   * @memberof Block
    */
   calculateHash() {
     return SHA256(this.timestamp + JSON.stringify(this.transactions) + this.prevHash + prvProps.get(this).nonce).toString()
@@ -104,6 +132,7 @@ class Block {
 
   /**
    * @description Update the hash of the block.
+   * @memberof Block
    */
   updateHash() {
     prvProps.get(this).hash = this.calculateHash()
@@ -113,6 +142,7 @@ class Block {
    * @description String representation of a block.
    * @param {boolean} [cliColour=true] Add the CLI colour.
    * @return {string} Block
+   * @memberof Block
    */
   toString(cliColour = true) {
     let str = `Block(transactions=[${this.transactions.map(trans => trans.toString())}], timestamp=${this.timestamp}, prevHash=${this.prevHash}, hash=${this.hash}, height=${this.height}, beneficiaryAddr=${this.beneficiaryAddr}, transactionFee=${this.transactionFee})`;
@@ -125,6 +155,7 @@ class Block {
    * @throws {TransactionError} Invalid transaction
    * @throws {Error} Transaction already added
    * @deprecated
+   * @memberof Block
    */
   addTransaction(transaction) {
     if (!transaction.isValid()) throw new TransactionError(`The transaction nearly added is invalid: ${transaction.toString()}`);
@@ -136,10 +167,14 @@ class Block {
   /**
    * @description Check if the block is valid.
    * @return {boolean} Validity
+   * @memberof Block
    */
   isValid() {
-    let diff = prvProps.get(this).difficulty, actualHash = this.calculateHash(), actualPad = '0'.repeat(diff);
-    let correctHash = this.hash === actualHash, correctPadding = this.hash.substring(0, diff) === actualPad;
+    let diff = prvProps.get(this).difficulty,
+      actualHash = this.calculateHash(),
+      actualPad = '0'.repeat(diff);
+    let correctHash = this.hash === actualHash,
+      correctPadding = this.hash.substring(0, diff) === actualPad;
     // if (log) console.log('correctHash=', correctHash, 'correctPadding=', correctPadding);
     return correctHash && correctPadding;
   }
@@ -147,6 +182,7 @@ class Block {
   /**
    * @description Check if this block is a genesis block.
    * @return {boolean} Genesis block?
+   * @memberof Block
    */
   isGenesis() {
     return this.prevHash === ROOT_HASH
