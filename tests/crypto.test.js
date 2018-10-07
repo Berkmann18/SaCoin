@@ -96,7 +96,6 @@ test('EC clone', () => {
   let msg = 'Lorem';
   let sig = sign(kp.sk, msg), cSig = sign(prv, msg);
   let vrf = verify(kp.pk, msg, sig), cVrf = verify(pub, msg, cSig);
-  // expect(cSig).toEqual(sig);
   expect(vrf).toBeTruthy();
   expect(cVrf).toBeTruthy();
   let xVrf = verify(kp.pk, msg, cSig), xCVrf = verify(pub, msg, sig);

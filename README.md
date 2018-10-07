@@ -1,4 +1,9 @@
 # SaCoin (XSC)
+![XSC icon](./img/icon.png)
+
+[![BCH compliance](https://bettercodehub.com/edge/badge/Berkmann18/SaCoin?branch=master)](https://bettercodehub.com/)
+[![Build Status](https://travis-ci.org/Berkmann18/SaCoin.svg?branch=master)](https://travis-ci.org/Berkmann18/SaCoin)
+
 With the increasing use and popularity around blockchain (and by extension, cryptocurrencies), I decided to learn more about it, what better ways are there other than learning that by building one?
 This project would mainly be for educational purposes whilst being usable for production purposes.
 
@@ -232,7 +237,7 @@ addresses to amounts of unspent coins.
 
 And how is are the transactions reflected on the blockchain?
 Well they are placed in a pool of **pending transactions** within the blockchain and then placed into a new block that was mined.
-It's possible using the Proof of Work which would require the miner to prove that he/she has enough computational power to mine a block
+It's possible using the **P**roof **o**f **W**ork which would require the miner to prove that he/she has enough computational power to mine a block
 and add it to the chain (otherwise anyone could add any blocks and it would be a mess) but since it takes some computational power to do
 this, it's necessary to have an incentive for miners to mine blocks (in other words, a reward).
 ```js
@@ -338,3 +343,22 @@ class UTPool {
 # Contributing
 If you think that I did/got something wrong or want to suggest X or Y changes/additions then feel free to create an issue or PR
 while following what [this](./wiki/CONTRIBUTING.md) says.
+
+# Resources
+- http://www.darrenbeck.co.uk/blockchain/nodejs/nodejscrypto/
+- https://blog.cloudboost.io/build-a-bitcoin-blockchain-in-javascript-part-1-13d8ea2873ec
+- https://github.com/nambrot/blockchain-in-js
+- https://github.com/conradoqg/naivecoin
+- https://hackernoon.com/building-a-blockchain-the-grey-paper-5be456018040
+- https://hackernoon.com/how-to-run-a-blockchain-on-a-deserted-island-with-pen-and-paper-899949ec555b
+- https://blockgeeks.com/guides/code-a-bitcoin-blockchain-in-javascript/
+- https://www.quora.com/How-are-Merkle-trees-used-in-a-blockchain
+- https://www.savjee.be/2017/07/Writing-tiny-blockchain-in-JavaScript/
+- https://www.savjee.be/2017/09/Implementing-proof-of-work-javascript-blockchain/
+- https://www.savjee.be/2018/02/Transactions-and-mining-rewards/
+- https://codingislove.com/simple-blockchain-javascript/
+- https://blockchaindemo.io
+- https://github.com/lhartikk/naivechain
+- https://ciphertrick.com/2018/04/16/create-tiny-blockchain-using-javascript/
+- https://github.com/seanjameshan/blockchain-cli
+- https://unenumerated.blogspot.com/2017/02/money-blockchains-and-social-scalability.html

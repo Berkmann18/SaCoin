@@ -67,7 +67,7 @@ test('Cont.', () => {
 
 test('Transactions', () => {
   let SXC = new Chain();
-  // init(SXC);
+
   expect(SXC.getBlock(-1)).toBeDefined();
   let tx = new Transaction(BANK.address, BANK.pk, BANK.address, MINING_REWARD * 2);
   expect(() => {
@@ -107,13 +107,12 @@ test('Mining', () => {
   BANK.wallet.blockchain = SXC;
   // console.log('utp=', utp.toString());
   let hash = SHA256('123'), coin = 7;
-  // init(SXC);
+
   let me = new Wallet(SXC, '123'), tx = new Transaction(BANK.address, BANK.pk, me.address, transferred);
   SXC.utpool.addUT(me.address, coin);
   expect(me.publicKey).not.toBe(BANK.pk);
   // console.log('addr me/BANK', me.address, BANK.address);
   // console.log('SXC.utpool=', SXC.utpool.toString());
-  // expect(SXC.utpool.pool[me.address]).toBe(coin);
   expect(SXC.utpool.pool[BANK.address]).toBe(BANK.amount);
   me.signTransaction(tx, hash); //Will not work because BANK is the owner of the transaction
   expect(tx.isValid()).toBeFalsy();

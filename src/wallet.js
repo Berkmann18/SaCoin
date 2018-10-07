@@ -1,10 +1,27 @@
 'use strict';
 
-const {genKey} = require('./crypto'), SHA256 = require('crypto-js/sha256'), UTPool = require('./utpool'), {colour} = require('./cli');
+/**
+ * @fileoverview Crypto wallet.
+ * @module
+ */
+
+const { genKey } = require('./crypto'), SHA256 = require('crypto-js/sha256'), UTPool = require('./utpool'), { colour } = require('./cli');
 
 /** @private */
 let prvProps = new WeakMap();
-const ATTEMPT = {}, ATTEMPT_THRESHOLD = 3;
+/**
+ * @description Attempt logger.
+ * @private
+ * @type {Object}
+ */
+const ATTEMPT = {};
+
+/**
+ * @description Threshold for the number of allowed attempts.
+ * @private
+ * @type {number}
+ */
+const ATTEMPT_THRESHOLD = 3;
 prvProps.set(ATTEMPT, {});
 
 /**
@@ -29,19 +46,27 @@ const _getAttempt = (addr) => prvProps.get(ATTEMPT)[addr];
  * @param {Key} pubKey Public key
  * @param {number|Date} time Timestamp to use for the generation
  * @param {string|WordArray} pwd
+ * @protected
  */
 const calculateAddress = (pubKey, time, pwd) => SHA256(pubKey + time + pwd).toString();
 
+/**
+ * @class Wallet
+ * @description Electronic wallet.
+ */
 class Wallet {
   /**
-   * @description Electronic wallet.
+   * @description Wallet constructor.
    * @param {Blockchain} blockchain Blockchain associated
    * @param {{pk: Key, sk: Key}} [keyPair=genKey()]
    * @param {string|WordArray} password Password to access fully access the wallet
    * @param {string} [address=calculateAddress(keyPair.pk, ts, hash)] Hex address
+   * @memberof Wallet
    */
   constructor(blockchain, password, keyPair = genKey(), address) {
-    let ts = Date.now(), hash = SHA256(password), addr = address || calculateAddress(keyPair.pk, ts, hash);
+    let ts = Date.now(),
+      hash = SHA256(password),
+      addr = address || calculateAddress(keyPair.pk, ts, hash);
     prvProps.set(this, {
       password: hash,
       creationTime: ts,
@@ -49,8 +74,7 @@ class Wallet {
       keyPair,
       blockchain,
       balance: 0
-    }
-    );
+    });
     _setAttempt(addr, 0);
   }
 
@@ -59,6 +83,7 @@ class Wallet {
    * @param {Key} pubKey Public key of the wallet
    * @param {string|WordArray} pwd Password
    * @return {string} Address
+   * @memberof Wallet
    */
   static generateAddress(pubKey, pwd) {
     return calculateAddress(pubKey, Date.now(), pwd);
@@ -67,6 +92,7 @@ class Wallet {
   /**
    * @description Check if this wallet has a valid address.
    * @return {boolean} Valid address
+   * @memberof Wallet
    */
   hasValidAddress() {
     return this.address === calculateAddress(this.publicKey, prvProps.get(this).creationTime, prvProps.get(this).password);
@@ -75,6 +101,7 @@ class Wallet {
   /**
    * @description Get the wallet's address.
    * @return {string} Hex address
+   * @memberof Wallet
    */
   get address() {
     return prvProps.get(this).address;
@@ -83,6 +110,7 @@ class Wallet {
   /**
    * @description Get the wallet's public key.
    * @return {Key} Public key
+   * @memberof Wallet
    */
   get publicKey() {
     return prvProps.get(this).keyPair.pk;
@@ -91,6 +119,7 @@ class Wallet {
   /**
    * @description Get the associated blockchain.
    * @return {Blockchain} Blockchain
+   * @memberof Wallet
    */
   get blockchain() {
     return prvProps.get(this).blockchain;
@@ -99,6 +128,7 @@ class Wallet {
   /**
    * @description Change the associated blockchain
    * @param {Blockchain} chain
+   * @memberof Wallet
    */
   set blockchain(chain) {
     console.log(`${this.toString()} ${colour('warn', 'changed to')} ${chain.toString()}`);
@@ -108,6 +138,7 @@ class Wallet {
   /**
    * @description Get the wallet's secret key.
    * @param {string|WordArray} pwd Password
+   * @memberof Wallet
    */
   secretKey(pwd) {
     if (_getAttempt(this.address) >= ATTEMPT_THRESHOLD) throw Error('Secret key recovery attempt threshold exceeded.');
@@ -121,6 +152,7 @@ class Wallet {
   /**
    * @description Reset the recovery attempts to 0.
    * @param {string|WordArray} pwd Password
+   * @memberof Wallet
    */
   reset(pwd) {
     if (pwd.toString() === prvProps.get(this).password.toString()) _setAttempt(this.address, 0);
@@ -131,6 +163,7 @@ class Wallet {
    * @description Get the wallet's balance.
    * @param {UTPool} utp Unspent transactions pool
    * @return {number} Balance from the chain
+   * @memberof Wallet
    */
   unspentBalance(utp) {
     return utp.pool[this.address];
@@ -140,6 +173,7 @@ class Wallet {
    * @description Calculate the wallet's balance by going through its associated blockchain.
    * @param {Blockchain} [blockchain=this.blockchain] Blockchain to use
    * @return {number} Calculated balance
+   * @memberof Wallet
    */
   calculateBalance(blockchain = this.blockchain) {
     let balance = 0;
@@ -161,28 +195,30 @@ class Wallet {
    * @description String representation of the wallet.
    * @param {boolean} [cliColour=true] Add CLI colours
    * @return {string} Wallet
+   * @memberof Wallet
    */
   toString(cliColour = true) {
-    return `Wallet(blockchain=${this.blockchain.toString(cliColour)}, address=${this.address}, publicKey=${this.publicKey})`
-  }
-  /*
-  /!**
-   * @description Create and sign a transaction.
-   * @param {string} receiverAddress Address of the receiver
-   * @param {number} amount Amount of coins to send
-   * @param {string} pwd Password
-   * @return {Transaction} Transaction
-   *!/
-  createTransaction(receiverAddress, amount, pwd) {
-    let tx = new Transaction(this.address, this.publicKey, receiverAddress, amount);
-    tx.sign(this.secretKey(pwd));
-    return tx
-  }*/
+      return `Wallet(blockchain=${this.blockchain.toString(cliColour)}, address=${this.address}, publicKey=${this.publicKey})`
+    }
+    /*
+    /!**
+     * @description Create and sign a transaction.
+     * @param {string} receiverAddress Address of the receiver
+     * @param {number} amount Amount of coins to send
+     * @param {string} pwd Password
+     * @return {Transaction} Transaction
+     *!/
+    createTransaction(receiverAddress, amount, pwd) {
+      let tx = new Transaction(this.address, this.publicKey, receiverAddress, amount);
+      tx.sign(this.secretKey(pwd));
+      return tx
+    }*/
 
   /**
    * @description Get all the transactions coming from/to this wallet within its associated blockchain.
    * @param {Blockchain} [blockchain=this.blockchain] Blockchain to use
-   * @return {{in: Transaction[], out: Transaction[]}}
+   * @return {{in: Transaction[], out: Transaction[]}} Transactions
+   * @memberof Wallet
    */
   getTransactions(blockchain = this.blockchain) {
     let txs = {
@@ -202,6 +238,7 @@ class Wallet {
    * @description Sign a transaction.
    * @param {Transaction} tx Transaction
    * @param {string|WordArray} pwd Password
+   * @memberof Wallet
    */
   signTransaction(tx, pwd) {
     tx.sign(this.secretKey(pwd));
