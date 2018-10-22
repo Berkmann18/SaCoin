@@ -198,9 +198,9 @@ class Wallet {
    * @memberof Wallet
    */
   toString(cliColour = true) {
-      return `Wallet(blockchain=${this.blockchain.toString(cliColour)}, address=${this.address}, publicKey=${this.publicKey})`
-    }
-    /*
+    return `Wallet(blockchain=${this.blockchain.toString(cliColour)}, address=${this.address}, publicKey=${this.publicKey})`
+  }
+  /*
     /!**
      * @description Create and sign a transaction.
      * @param {string} receiverAddress Address of the receiver
