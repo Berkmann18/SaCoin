@@ -11,9 +11,9 @@
     "test": "jest",
     "lint": "eslint -c ./cfg/.eslintrc.js --fix",
     "fmt": "npm run lint src/*.js tests/*.js",
+    "doc:lint": "documentation lint src/**",
     "doc:html": "documentation build src/** -f html -o doc/",
-    "doc:md": "documentation build src/** -f md -o DOCUMENTATION.md",
-    "doc": "npm run doc:html && npm run doc:md",
+    "doc": "npm run doc:lint && npm run doc:html",
     "changelog": "conventional-changelog -p eslint -i CHANGELOG.md -s -r 0",
     "version": "npm run changelog && git add CHANGELOG.md",
     "commit": "git-cz"
