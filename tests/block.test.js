@@ -9,8 +9,11 @@ test('Block creation', () => {
   expect(block.prevHash).toEqual('b076b4ac5dfd570677538e23b54818022a379d2e8da1ef6f1b40f08965b528ff');
   expect(block.hash).toBe(block.calculateHash());
   expect(block.height).toBe(0);
-  expect(block.toString()).toBe(colour('block', `Block(transactions=[], timestamp=${block.timestamp}, prevHash=${block.prevHash}, hash=${block.hash}, height=0, beneficiaryAddr=${block.beneficiaryAddr}, transactionFee=1)`));
-  expect(block.toString(false)).toBe(`Block(transactions=[], timestamp=${block.timestamp}, prevHash=${block.prevHash}, hash=${block.hash}, height=0, beneficiaryAddr=${block.beneficiaryAddr}, transactionFee=1)`);
+  expect(Buffer.isBuffer(block.merkleRoot)).toBeTruthy();
+  let merkleRoot = block.merkleRoot.toString('utf8');
+  expect(merkleRoot === '').toBeTruthy();
+  expect(block.toString()).toStrictEqual(colour('block', `Block(transactions=[], timestamp=${block.timestamp}, prevHash=${block.prevHash}, merkleRoot=${merkleRoot}, hash=${block.hash}, height=0, beneficiaryAddr=${block.beneficiaryAddr}, transactionFee=1)`));
+  expect(block.toString(false)).toStrictEqual(`Block(transactions=[], timestamp=${block.timestamp}, prevHash=${block.prevHash}, merkleRoot=${merkleRoot}, hash=${block.hash}, height=0, beneficiaryAddr=${block.beneficiaryAddr}, transactionFee=1)`);
   expect(block.isGenesis()).toBeTruthy();
   expect(block.isValid()).toBeFalsy();
   expect(block.nonce).toBe(undefined); //Instead of 0
@@ -69,11 +72,11 @@ test('Transactions gone right', () => {
   let tx = new Transaction(BANK.address, BANK.pk, wlt.publicKey, 5);
 
   expect(() => {
-    let block = new Block('genesis', [tx]);
+    new Block('genesis', [tx]);
   }).toThrow(`Invalid transaction ant-Block creation: ${tx.toString()}`);
   tx.sign(BANK.sk);
   expect(() => {
-    let block = new Block('genesis', [tx]);
+    new Block('genesis', [tx]);
   }).not.toThrow(`Invalid transaction ant-Block creation: ${tx.toString()}`);
   expect(tx.fee).toBe(TRANSACTION_FEE);
   let block = new Block('root', [tx], 0, 0, wlt.address, 2);

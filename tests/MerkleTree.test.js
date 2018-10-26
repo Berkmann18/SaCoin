@@ -1,46 +1,35 @@
-const MerkleTree = require('merkletreejs'),
-  SHA256 = require('crypto-js/sha256'),
-  SHA224 = require('crypto-js/sha224'),
-  SHA3 = require('crypto-js/sha3'),
-  Transaction = require('../src/transaction'),
+const MerkleTree = require('merkletreejs')
+SHA256 = require('crypto-js/sha256'),
+SHA3 = require('crypto-js/sha3');
+const Transaction = require('../src/transaction'),
   Wallet = require('../src/wallet'),
-  Chain = require('../src/blockchain');
+  Chain = require('../src/blockchain'),
+  { BSHA3 } = require('../src/crypto');
 const { sha3 } = require('ethereumjs-util');
 
 const bufferify = f => x => Buffer.from(f(x.toString()).toString(), 'hex');
 const hashFn = bufferify(SHA256);
 
-test('crypto-js - sha256', done => { //Taken from https://github.com/miguelmota/merkletreejs/commit/922f78fa275658a8a2b9392e59e4b84b7dc97d8f
-  const leaves = ['a', 'b', 'c'].map(x => sha3(x));
-
+test('crypto-js - sha256', () => { //Taken from https://github.com/miguelmota/merkletreejs/commit/922f78fa275658a8a2b9392e59e4b84b7dc97d8f
+  const leaves = ['a', 'b', 'c'].map(BSHA3);
   const tree = new MerkleTree(leaves, SHA256);
-
-  const root = '311d2e46f49b15fff8b746b74ad57f2cc9e0d9939fda94387141a2d3fdf187ae';
-  // assert.expect(1);
+  const root = '57e9ee696a291f8a51d224a6d64ba4a0693920a63f1e0329efe96c02a5f28849';
   expect(tree.getRoot().toString('hex')).toEqual(root);
-  done();
 });
 
 test('Simple', () => {
   const data = ['Lorem', 'Ipsum', 'Dolore', 'Sit', 'Amet'];
-  // const leaves = data.map(d => Buffer.from(SHA256(d).toString(), 'hex'));
+
   const leaves = data.map(x => sha3(x));
-  // console.log(leaves);
-  // expect(leaves[0] instanceof Buffer).toBeTruthy();
-  // expect(Buffer.isBuffer(SHA256('hello')))1.toBeTruthy();
+
   let tree = new MerkleTree(leaves, SHA256);
-  // console.log(tree);
   expect(tree instanceof MerkleTree).toBeTruthy();
   expect(tree.getLeaves()).toBe(leaves);
-  // console.log(tree.getLayers());
   let root = () => {
     let layers = tree.getLayers();
     return layers[layers.length - 1][0];
   };
   expect(tree.getRoot()).toBe(root());
-  let proof1 = tree.getProof(leaves[1]);
-  // console.log(tree.verify(proof1, leaves[1], tree.getRoot()))
-
 });
 
 test('With Transactions', () => {
@@ -61,7 +50,6 @@ test('With Transactions', () => {
 
   const leaves = txs.map(hashFn);
   let tree = new MerkleTree(leaves, bufferify(SHA3));
-  // console.log(tree.getLeaves());
   expect(tree.getLayers().length).toBe(2);
   let proofs = txs.map(tx => {
     let leaf = hashFn(tx);
@@ -69,6 +57,5 @@ test('With Transactions', () => {
   });
   let root = tree.getRoot();
   let vrfs = proofs.map((p, i) => tree.verify(p, leaves[i], root));
-  // console.log(vrfs);
   expect(vrfs).toEqual(new Array(txs.length).fill(true));
 });

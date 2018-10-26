@@ -6,11 +6,13 @@
  */
 
 const SHA256 = require('crypto-js/sha256'),
-  Transaction = require('./transaction'),
+  MerkleTree = require('merkletreejs');
+const Transaction = require('./transaction'),
   /*{DIFFICULTY, BANK} = require('./config'), */
   { TransactionError } = require('./error'),
   { setColours, colour } = require('./cli'),
-  { DIFFICULTY, BANK, TRANSACTION_FEE } = require('../cfg.json');
+  { DIFFICULTY, BANK, TRANSACTION_FEE } = require('../cfg.json'),
+  { BSHA3 } = require('./crypto');
 
 setColours();
 
@@ -52,10 +54,12 @@ class Block {
       hash: '',
       height,
       beneficiaryAddr,
-      txFee
+      txFee,
+      merkleTree: null
     });
 
-    this.updateHash()
+    this.updateTree();
+    this.updateHash();
   }
 
   /**
@@ -96,7 +100,7 @@ class Block {
 
   /**
    * @description Get the block's height within a chain.
-   * @returns {number} Height
+   * @return {number} Height
    * @memberof Block
    */
   get height() {
@@ -122,12 +126,30 @@ class Block {
   }
 
   /**
+   * @description Get the Merkle tree's root.
+   * @return {Buffer} Root of the tree
+   * @memberof Block
+   */
+  get merkleRoot() {
+    return prvProps.get(this).merkleTree.getRoot();
+  }
+
+  /**
    * @description Calculate the hash.
-   * @returns {Object} SHA256 hash
+   * @return {Object} SHA256 hash
    * @memberof Block
    */
   calculateHash() {
-    return SHA256(this.timestamp + JSON.stringify(this.transactions) + this.prevHash + prvProps.get(this).nonce).toString()
+    return SHA256(this.timestamp + this.merkleRoot + this.prevHash + prvProps.get(this).nonce).toString()
+  }
+
+  /**
+   * @description Update the Merkle tree.
+   * @memberof Block
+   */
+  updateTree() {
+    const leaves = this.transactions.map(BSHA3);
+    prvProps.get(this).merkleTree = new MerkleTree(leaves, SHA256);
   }
 
   /**
@@ -135,7 +157,7 @@ class Block {
    * @memberof Block
    */
   updateHash() {
-    prvProps.get(this).hash = this.calculateHash()
+    prvProps.get(this).hash = this.calculateHash();
   }
 
   /**
@@ -145,7 +167,7 @@ class Block {
    * @memberof Block
    */
   toString(cliColour = true) {
-    let str = `Block(transactions=[${this.transactions.map(trans => trans.toString())}], timestamp=${this.timestamp}, prevHash=${this.prevHash}, hash=${this.hash}, height=${this.height}, beneficiaryAddr=${this.beneficiaryAddr}, transactionFee=${this.transactionFee})`;
+    let str = `Block(transactions=[${this.transactions.map(trans => trans.toString())}], timestamp=${this.timestamp}, prevHash=${this.prevHash}, merkleRoot=${this.merkleRoot.toString('utf8')}, hash=${this.hash}, height=${this.height}, beneficiaryAddr=${this.beneficiaryAddr}, transactionFee=${this.transactionFee})`;
     return cliColour ? colour('block', str) : str;
   }
 
@@ -165,6 +187,19 @@ class Block {
   }
 
   /**
+   * @description Check if the Merkle tree is valid.
+   * @return {boolean} Validity
+   * @memberof Block
+   */
+  hasValidTree() {
+    let proofs = this.transactions.map(tx => tree.getProof(BSHA3(tx)));
+    let root = this.merkleRoot;
+    let leaves = this.merkleTree.getLeaves(); //this.transactions.map(BSHA3);
+    let vrfs = proofs.map((p, i) => tree.verify(p, leaves[i], root));
+    return vrfs.every(Boolean);
+  }
+
+  /**
    * @description Check if the block is valid.
    * @return {boolean} Validity
    * @memberof Block
@@ -176,7 +211,7 @@ class Block {
     let correctHash = this.hash === actualHash,
       correctPadding = this.hash.substring(0, diff) === actualPad;
     // if (log) console.log('correctHash=', correctHash, 'correctPadding=', correctPadding);
-    return correctHash && correctPadding;
+    return correctHash && correctPadding && this.hasValidTree;
   }
 
   /**
@@ -190,6 +225,7 @@ class Block {
 
   /**
    * @description Increment the nonce until a valid hash is obtained with enough 0's at the beginning (based on the difficulty).
+   * @memberof Block
    */
   mine() {
     let diff = prvProps.get(this).difficulty;

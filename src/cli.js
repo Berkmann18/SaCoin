@@ -13,7 +13,7 @@ const clrScheme = { in: 'white',
   err: 'red',
   warn: 'yellow',
   debug: 'grey',
-  block: 'bgCyan',
+  block: 'magenta',
   tx: ['white', 'underline'],
   chain: ['green', 'bold']
 };

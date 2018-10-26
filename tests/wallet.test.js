@@ -32,8 +32,8 @@ test('Init', () => {
   expect(wlt.unspentBalance(utp)).toBe(amt);
   expect(wlt.calculateBalance()).toBe(0); //Not in blockchain so 0
   expect(wlt.blockchain).toBe(chain);
-  expect(wlt.toString()).toBe(`Wallet(blockchain=${wlt.blockchain.toString()}, address=${wlt.address}, publicKey=${wlt.publicKey})`);
-  expect(wlt.toString(false)).toBe(`Wallet(blockchain=${wlt.blockchain.toString(false)}, address=${wlt.address}, publicKey=${wlt.publicKey})`);
+  expect(wlt.toString()).toBe(`Wallet(blockchain=${wlt.blockchain.toString()}, address=${wlt.address}, publicKey=${wlt.publicKey.pubKeyHex})`);
+  expect(wlt.toString(false)).toBe(`Wallet(blockchain=${wlt.blockchain.toString(false)}, address=${wlt.address}, publicKey=${wlt.publicKey.pubKeyHex})`);
   wlt.reset(hash);
   expect(typeof wlt.secretKey(hash)).toBe('object');
   expect(() => wlt.reset(hash + 0)).toThrow(Error);
@@ -72,7 +72,7 @@ test('Integration 1/2', () => {
 
 test('Integration 2/2', () => {
   let chain = new Chain(), xch = 5, pw0 = 'z', h0 = SHA256(pw0);
-  // init(chain);
+
   expect(chain.chain.length).toBe(1);
   expect(chain.difficulty).toBe(2);
   expect(chain.miningReward).toBe(12.5);

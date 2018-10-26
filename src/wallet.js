@@ -198,7 +198,7 @@ class Wallet {
    * @memberof Wallet
    */
   toString(cliColour = true) {
-    return `Wallet(blockchain=${this.blockchain.toString(cliColour)}, address=${this.address}, publicKey=${this.publicKey})`
+    return `Wallet(blockchain=${this.blockchain.toString(cliColour)}, address=${this.address}, publicKey=${this.publicKey.pubKeyHex})`
   }
   /*
     /!**

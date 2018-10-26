@@ -5,7 +5,8 @@
  * @module
  */
 
-const { KEYUTIL, Signature, crypto, RSAKey } = require('jsrsasign');
+const { KEYUTIL, Signature, crypto, RSAKey } = require('jsrsasign'),
+  SHA3 = require('crypto-js/sha3');
 
 /**
  * @description A key.
@@ -113,4 +114,18 @@ const cloneKey = (key) => {
   return clone;
 }; //(type, key) => type === 'EC' ? new crypto.ECDSA(key) : new RSAKey(key);
 
-module.exports = { genKey, sign, verify, encrypt, decrypt, KEY_CONFIGS, cloneKey };
+/**
+ * @description Bufferify the output of a function.
+ * @param {function(*): *} fn Function to bufferify
+ * @returns {Buffer} Buffered output
+ */
+const bufferify = fn => x => Buffer.from(fn(x.toString()).toString(), 'hex');
+
+/**
+ * @description Buffered SHA3.
+ * @param {*} Data to hash
+ * @returns {Buffer} SHA3 hash
+ */
+const BSHA3 = bufferify(SHA3);
+
+module.exports = { genKey, sign, verify, encrypt, decrypt, KEY_CONFIGS, cloneKey, BSHA3 };
