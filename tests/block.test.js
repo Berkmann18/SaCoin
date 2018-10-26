@@ -20,6 +20,7 @@ test('Block creation', () => {
   expect(block.difficulty).toBe(undefined); //Instead of DIFFICULTY
   expect(block.beneficiaryAddr).toBe(BANK.address);
   expect(block.transactionFee).toBe(TRANSACTION_FEE);
+  expect(block.hasValidTree()).toBeTruthy();
   block.mine();
   expect(block.isValid()).toBeTruthy(); //This only works with the mining transaction reward commented out
   expect(() => {

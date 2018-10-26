@@ -1,4 +1,4 @@
-const Wallet = require('../src/wallet'), UTPool = require('../src/utpool'), Chain = require('../src/blockchain'), {BANK} = require('../cfg')/*{BANK, init} = require('../src/config')*/,
+const Wallet = require('../src/wallet'), UTPool = require('../src/utpool'), Chain = require('../src/blockchain'), {BANK} = require('../cfg'),
   TransactionError = require('../src/error').TransactionError, Transaction = require('../src/transaction'), SHA256 = require('crypto-js/sha256');
 
 let bankPair = require('../src/crypto').genKey();
@@ -37,15 +37,13 @@ test('Init', () => {
   wlt.reset(hash);
   expect(typeof wlt.secretKey(hash)).toBe('object');
   expect(() => wlt.reset(hash + 0)).toThrow(Error);
-  /*let createTx = () => wlt.createTransaction(BANK.address, -1, hash);
-  expect(createTx).not.toThrowError(TransactionError);
-  let tx = createTx();*/
+
   let tx = new Transaction(wlt.address, wlt.publicKey, BANK.address, -1);
   wlt.signTransaction(tx, hash);
   expect(tx instanceof Transaction).toBeTruthy();
   expect(tx.hasValidSignature()).toBeTruthy();
   expect(tx.isValid()).toBeFalsy(); //-1 < 0 so fail
-  tx = new Transaction(wlt.address, wlt.publicKey, BANK.address, 5);//wlt.createTransaction(BANK.address, 5, hash);
+  tx = new Transaction(wlt.address, wlt.publicKey, BANK.address, 5);
   wlt.signTransaction(tx, hash);
   expect(tx instanceof Transaction).toBeTruthy();
   expect(tx.hasValidSignature()).toBeTruthy();

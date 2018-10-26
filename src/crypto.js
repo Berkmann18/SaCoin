@@ -112,7 +112,7 @@ const cloneKey = (key) => {
   let clone = KEYUTIL.getKey(KEYUTIL.getJWKFromKey(key));
   if (key.isPublic !== clone.isPublic) clone.isPublic = key.isPublic;
   return clone;
-}; //(type, key) => type === 'EC' ? new crypto.ECDSA(key) : new RSAKey(key);
+};
 
 /**
  * @description Bufferify the output of a function.

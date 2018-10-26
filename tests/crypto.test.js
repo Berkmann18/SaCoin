@@ -53,30 +53,6 @@ test('BANK', () => {
   expect(verify(BANK.pk, m, sig)).toBeTruthy();
 });
 
-/*test('Reggy keys', () => {
-  let kp = genKey(), key = genKey();
-  // console.log('kp=', kp);
-
-  key.pk.setPublicKeyHex(kp.pk.pubKeyHex);
-  key.sk.setPrivateKeyHex(kp.sk.prvKeyHex);
-  let CJ = require('circular-json');
-  // console.log(CJ.stringify(key.pk, null, 2));
-  //
-  // console.log(CJ.stringify(kp.pk, null, 2));
-  let cjKeyPk = CJ.stringify(key.pk, null, 2), cjKeySk = CJ.stringify(key.sk, null, 2),
-    cjKpPk = CJ.stringify(kp.pk, null, 2), cjKpSk = CJ.stringify(kp.sk, null, 2);
-  expect(cjKeyPk).toEqual(cjKpPk);
-  expect(cjKeySk).toEqual(cjKpSk);
-  // expect(key.pk).toEqual(kp.pk);
-  // expect(key.sk).toEqual(kp.sk);
-
-  // let pub = KEYUTIL.getKeyFromCSRHex(kp.pk.pubKeyHex);
-  // let sec = KEYUTIL.getKeyFromCSRHex(kp.sk.prvKeyHex);
-  // let pub = KEYUTIL.getKey(kp.pk.pubKeyHex), sec = KEYUTIL.getKey(kp.sk.prvKeyHex);
-  // expect(pub).toBe(kp.pk.pubKeyHex);
-  // expect(sec).toBe(kp.sk.prvKeyHex);
-});*/
-
 test('EC clone', () => {
   let kp = EC256R1_KEY || genKey();
   const CJ = require('circular-json');

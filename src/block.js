@@ -8,7 +8,6 @@
 const SHA256 = require('crypto-js/sha256'),
   MerkleTree = require('merkletreejs');
 const Transaction = require('./transaction'),
-  /*{DIFFICULTY, BANK} = require('./config'), */
   { TransactionError } = require('./error'),
   { setColours, colour } = require('./cli'),
   { DIFFICULTY, BANK, TRANSACTION_FEE } = require('../cfg.json'),
@@ -194,7 +193,7 @@ class Block {
   hasValidTree() {
     let proofs = this.transactions.map(tx => tree.getProof(BSHA3(tx)));
     let root = this.merkleRoot;
-    let leaves = this.merkleTree.getLeaves(); //this.transactions.map(BSHA3);
+    let leaves = prvProps.get(this).merkleTree.getLeaves(); //this.transactions.map(BSHA3);
     let vrfs = proofs.map((p, i) => tree.verify(p, leaves[i], root));
     return vrfs.every(Boolean);
   }
