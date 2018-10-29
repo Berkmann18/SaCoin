@@ -44,12 +44,12 @@
     "ethereumjs-util": "^5.2.0",
     "jsrsasign": "^8.0.12",
     "lodash": "^4.17.10",
-    "merkletreejs": "0.0.15"
+    "merkletreejs": "0.0.16"
   },
   "devDependencies": {
     "cz-adapter-eslint": "^0.1.2",
     "documentation": "^8.1.2",
-    "eslint": "^5.3.0",
+    "eslint": "^5.8.0",
     "eslint-plugin-security": "^1.4.0",
     "jest": "^23.4.2"
   },

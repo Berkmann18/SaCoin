@@ -11,9 +11,8 @@ const Block = require('./block'),
   { BlockError, TransactionError, OutOfBoundsError } = require('./error'),
   flat = require('lodash/flatten'),
   UTPool = require('./utpool'),
-  { setColours, colour } = require('./cli'),
-  SHA256 = require('crypto-js/sha256');
-
+  { setColours, colour } = require('./cli');
+  
 setColours();
 
 /** @private */

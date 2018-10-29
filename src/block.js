@@ -232,11 +232,6 @@ class Block {
       prvProps.get(this).nonce++;
       this.updateHash();
     }
-    /*let rewardTx = new Transaction(BANK.address, BANK.pk, this.beneficiaryAddr, MINING_REWARD);
-    rewardTx.sign(sk);
-    this.addTransaction(rewardTx);
-    this.updateHash();*/
-    // console.log(`Block mined: ${this.toString()}`);
   }
 
 }
