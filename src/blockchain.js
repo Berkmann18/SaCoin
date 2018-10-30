@@ -12,7 +12,7 @@ const Block = require('./block'),
   flat = require('lodash/flatten'),
   UTPool = require('./utpool'),
   { setColours, colour } = require('./cli');
-  
+
 setColours();
 
 /** @private */

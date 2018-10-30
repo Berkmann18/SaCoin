@@ -5,13 +5,12 @@
  * @module
  */
 
-const SHA256 = require('crypto-js/sha256'),
+const { SHA256, SHA3 } = require('crypto-js'),
   MerkleTree = require('merkletreejs');
 const Transaction = require('./transaction'),
   { TransactionError } = require('./error'),
   { setColours, colour } = require('./cli'),
-  { DIFFICULTY, BANK, TRANSACTION_FEE } = require('../cfg.json'),
-  { BSHA3 } = require('./crypto');
+  { DIFFICULTY, BANK, TRANSACTION_FEE } = require('../cfg.json');
 
 setColours();
 
@@ -147,7 +146,7 @@ class Block {
    * @memberof Block
    */
   updateTree() {
-    const leaves = this.transactions.map(BSHA3);
+    const leaves = this.transactions.map(SHA3);
     prvProps.get(this).merkleTree = new MerkleTree(leaves, SHA256);
   }
 
@@ -191,11 +190,13 @@ class Block {
    * @memberof Block
    */
   hasValidTree() {
-    let proofs = this.transactions.map(tx => tree.getProof(BSHA3(tx)));
-    let root = this.merkleRoot;
-    let leaves = prvProps.get(this).merkleTree.getLeaves(); //this.transactions.map(BSHA3);
-    let vrfs = proofs.map((p, i) => tree.verify(p, leaves[i], root));
-    return vrfs.every(Boolean);
+    const root = this.merkleRoot;
+    const leaves = this.transactions.map(SHA3); //prvProps.get(this).merkleTree.getLeaves();
+    const verifs = leaves.map(leaf => {
+      const proof = tree.getProof(leaf);
+      return tree.verify(proof, leaf, root)
+    });
+    return verifs.every(Boolean);
   }
 
   /**
