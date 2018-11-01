@@ -1,4 +1,7 @@
 # SaCoin (XSC)
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/1c0a16636b344afb895e4ee0cd589ccc)](https://app.codacy.com/app/maxieberkmann/SaCoin?utm_source=github.com&utm_medium=referral&utm_content=Berkmann18/SaCoin&utm_campaign=Badge_Grade_Dashboard)
+
 With the increasing use and popularity around blockchain (and by extension, cryptocurrencies), I decided to learn more about it what better ways are there other than learning by building one?
 This project would mainly be for educational purposes whilst being usable for production purposes.
 
