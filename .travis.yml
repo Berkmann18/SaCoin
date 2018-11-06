@@ -1,13 +1,24 @@
 language: node_js
-node_js:
-  - "node"
 cache:
   directories:
-    - "node_modules"
+    - ~/.npm
+notifications:
+  email: false
+node_js:
+  - 'node'
+  - '10'
+  - '9'
+  - '8'
+  - '6'
 install:
-    npm i -g codecov
-# safelist
+  - npm i
+  - npm i codecov jest eslint
+script:
+  - npm run lint
+  - npm test
+  - codecov
+after_success:
+  - npm run travis-deploy-once "npm run semantic-release"
 branches:
-  only:
-  - master
-  - /^v\d+\.\d+(\.\d+)?(-\S*)?$/ #vX.Y
+  except:
+    - /^v\d+\.\d+\.\d+$/

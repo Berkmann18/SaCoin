@@ -1,7 +1,6 @@
 # Contribution guide
 
-1.  Make sure you always pull the latest changes from the repo and `rebase` from the
-`master` branch whenever it's necessary.
+1.  Make sure you always pull the latest changes from the repo and `rebase` from the `master` branch whenever it's necessary.
 2.  Always work on the `dev` branch or dedicated branches (e.g.: for features).
 3.  Don't modify generated files in `/doc` and in `/dist`.
 4.  Squash commits in branches to reduce the chain whenever its possible.
@@ -14,5 +13,6 @@ with `npm run lint`).
 
 ## Project structure
 -   **`build`**: contains built files for distribution.
+-   **`doc`**: contains documentation files.
 -   **`src`**: contains source files.
--   **`test`**: contains all tests, unit tests are written using Jest and E2E are written with Nightwatch. 
+-   **`tests`**: contains all tests, unit tests are written using Jest and E2E are written with Nightwatch. 

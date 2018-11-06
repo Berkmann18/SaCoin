@@ -22,11 +22,11 @@ Also, isn't it just a single chain of blocks like linked-lists? No, it's more li
 
 # Pre-requisite
 It would be preferable if you have a foundation in the following:
-- data-structures
-- variable scopes
-- cryptography
-- JavaScript ES5 and 6
-- NodeJS
+-   data-structures
+-   variable scopes
+-   cryptography
+-   JavaScript ES5 and 6
+-   NodeJS
 
 # Step 0
 Choosing the right data-structure and approach.
@@ -84,7 +84,7 @@ class Block {
 So here you can see that each blocks has a previous hash, a list of transactions, difficulty (I'll come to this later),
 nonce (used to get a specific hash) and the height.
 
-__Note__: I'll be using a `WeakMap` (identified as `prvProps`) based approach to ensure the privacy of the fields by restricting what can be accessed
+**Note**: I'll be using a `WeakMap` (identified as `prvProps`) based approach to ensure the privacy of the fields by restricting what can be accessed
 and changed using `get`/`set` methods as such:
 ```js
 /**
@@ -231,7 +231,7 @@ class Wallet {
   }
 }
 ```
-But wait, in order to know how much coin I has, my wallet would go through the *whole* chain every time I call that method.
+But wait, in order to know how much coin I has, my wallet would go through the _whole_ chain every time I call that method.
 <br>There must be a way to save some computation time by saving those amounts into an object like a hash table that links
 addresses to amounts of unspent coins.
 
@@ -345,20 +345,20 @@ If you think that I did/got something wrong or want to suggest X or Y changes/ad
 while following what [this](./wiki/CONTRIBUTING.md) says.
 
 # Resources
-- http://www.darrenbeck.co.uk/blockchain/nodejs/nodejscrypto/
-- https://blog.cloudboost.io/build-a-bitcoin-blockchain-in-javascript-part-1-13d8ea2873ec
-- https://github.com/nambrot/blockchain-in-js
-- https://github.com/conradoqg/naivecoin
-- https://hackernoon.com/building-a-blockchain-the-grey-paper-5be456018040
-- https://hackernoon.com/how-to-run-a-blockchain-on-a-deserted-island-with-pen-and-paper-899949ec555b
-- https://blockgeeks.com/guides/code-a-bitcoin-blockchain-in-javascript/
-- https://www.quora.com/How-are-Merkle-trees-used-in-a-blockchain
-- https://www.savjee.be/2017/07/Writing-tiny-blockchain-in-JavaScript/
-- https://www.savjee.be/2017/09/Implementing-proof-of-work-javascript-blockchain/
-- https://www.savjee.be/2018/02/Transactions-and-mining-rewards/
-- https://codingislove.com/simple-blockchain-javascript/
-- https://blockchaindemo.io
-- https://github.com/lhartikk/naivechain
-- https://ciphertrick.com/2018/04/16/create-tiny-blockchain-using-javascript/
-- https://github.com/seanjameshan/blockchain-cli
-- https://unenumerated.blogspot.com/2017/02/money-blockchains-and-social-scalability.html
+-   [nodejscrypto](http://www.darrenbeck.co.uk/blockchain/nodejs/nodejscrypto/)
+-   [build-a-bitcoin-blockchain-in-javascript-part-1](https://blog.cloudboost.io/build-a-bitcoin-blockchain-in-javascript-part-1-13d8ea2873ec)
+-   [blockchain-in-js](https://github.com/nambrot/blockchain-in-js)
+-   [naivecoin](https://github.com/conradoqg/naivecoin)
+-   [building-a-blockchain-the-grey-paper](https://hackernoon.com/building-a-blockchain-the-grey-paper-5be456018040)
+-   [how-to-run-a-blockchain-on-a-deserted-island-with-pen-and-paper](https://hackernoon.com/how-to-run-a-blockchain-on-a-deserted-island-with-pen-and-paper-899949ec555b)
+-   [code-a-bitcoin-blockchain-in-javascript](https://blockgeeks.com/guides/code-a-bitcoin-blockchain-in-javascript/)
+-   [How-are-Merkle-trees-used-in-a-blockchain](https://www.quora.com/How-are-Merkle-trees-used-in-a-blockchain)
+-   [Writing-tiny-blockchain-in-JavaScript](https://www.savjee.be/2017/07/Writing-tiny-blockchain-in-JavaScript/)
+-   [Implementing-proof-of-work-javascript-blockchain](https://www.savjee.be/2017/09/Implementing-proof-of-work-javascript-blockchain/)
+-   [Transactions-and-mining-rewards](https://www.savjee.be/2018/02/Transactions-and-mining-rewards/)
+-   [simple-blockchain-javascript](https://codingislove.com/simple-blockchain-javascript/)
+-   [blockchaindemo.io](https://blockchaindemo.io)
+-   [naivechain](https://github.com/lhartikk/naivechain)
+-   [create-tiny-blockchain-using-javascript](https://ciphertrick.com/2018/04/16/create-tiny-blockchain-using-javascript/)
+-   [blockchain-cli](https://github.com/seanjameshan/blockchain-cli)
+-   [money-blockchains-and-social-scalability](https://unenumerated.blogspot.com/2017/02/money-blockchains-and-social-scalability.html)
