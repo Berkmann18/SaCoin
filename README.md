@@ -1,8 +1,32 @@
 # SaCoin (XSC)
 ![XSC icon](./img/icon.png)
 
-[![BCH compliance](https://bettercodehub.com/edge/badge/Berkmann18/SaCoin?branch=master)](https://bettercodehub.com/)
+[![NodeVersion](https://img.shields.io/node/v/sacoin.svg)](https://github.com/Berkmann18/SaCoin)
+[![GitHub package version](https://img.shields.io/github/package-json/v/Berkmann18/SaCoin.svg)](https://github.com/Berkmann18/SaCoin)
+[![devDependencies Status](https://david-dm.org/berkmann18/sacoin/dev-status.svg)](https://david-dm.org/berkmann18/sacoin?type=dev)
+[![dependencies Status](https://david-dm.org/berkmann18/sacoin/status.svg)](https://david-dm.org/berkmann18/sacoin)
+
+[![GH Downloads](https://img.shields.io/github/downloads/Berkmann18/SaCoin/total.svg)](https://github.com/Berkmann18/SaCoin/network/members)
+[![GitHub commit activity the past year](https://img.shields.io/github/commit-activity/y/Berkmann18/SaCoin.svg)](https://github.com/Berkmann18/SaCoin/graphs/commit-activity)
+[![GitHub contributors](https://img.shields.io/github/contributors/Berkmann18/SaCoin.svg)](https://github.com/Berkmann18/SaCoin/graphs/contributors)
+[![Github search hit counter](https://img.shields.io/github/search/Berkmann18/SaCoin/goto.svg)](https://github.com/Berkmann18/SaCoin/graphs/traffic)
+
+[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=Berkmann18/SaCoin)](https://dependabot.com)
 [![Build Status](https://travis-ci.org/Berkmann18/SaCoin.svg?branch=master)](https://travis-ci.org/Berkmann18/SaCoin)
+[![codecov.io Code Coverage](https://img.shields.io/codecov/c/github/Berkmann18/SaCoin.svg?maxAge=2592000)](https://codecov.io/github/Berkmann18/SaCoin?branch=master)
+[![tested with jest](https://img.shields.io/badge/tested_with-jest-99424f.svg)](https://github.com/facebook/jest)
+
+[![GitHub](https://img.shields.io/github/license/Berkmann18/SaCoin.svg)](https://github.com/Berkmann18/SaCoin/blob/master/LICENSE)
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/Berkmann18/SaCoin/issues)
+[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+
+[![GitHub top language](https://img.shields.io/github/languages/top/Berkmann18/SaCoin.svg)](https://github.com/Berkmann18/SaCoin)
+[![GitHub language count](https://img.shields.io/github/languages/count/Berkmann18/SaCoin.svg)](https://github.com/Berkmann18/SaCoin)
+[![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/Berkmann18/SaCoin.svg)](https://github.com/Berkmann18/SaCoin)
+
+
+[![BCH compliance](https://bettercodehub.com/edge/badge/Berkmann18/SaCoin?branch=master)](https://bettercodehub.com/)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a772e53fef984a558ef4741392bd926d)](https://www.codacy.com/app/maxieberkmann/SaCoin?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Berkmann18/SaCoin&amp;utm_campaign=Badge_Grade)
 
 With the increasing use and popularity around blockchain (and by extension, cryptocurrencies), I decided to learn more about it, what better ways are there other than learning that by building one?
 This project would mainly be for educational purposes whilst being usable for production purposes.
