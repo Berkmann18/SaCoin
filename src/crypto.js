@@ -5,8 +5,7 @@
  * @module
  */
 
-const { KEYUTIL, Signature, crypto, RSAKey } = require('jsrsasign'),
-  SHA3 = require('crypto-js/sha3');
+const { KEYUTIL, Signature, crypto, RSAKey } = require('jsrsasign');
 
 /**
  * @description A key.
@@ -88,21 +87,6 @@ const encrypt = (pk, msg, alg = 'RSA') => crypto.Cipher.encrypt(msg, pk, alg);
  */
 const decrypt = (sk, cipher, alg = 'RSA') => crypto.Cipher.decrypt(cipher, sk, alg);
 
-/*
-/!**
- * @description Get the PEM data from a key.
- * @param {RSAKey} keyObj Key object
- * @return {string} PEM data
- *!/
-const toPEM = (keyObj) => KEYUTIL.getPEM(keyObj);
-
-/!**
- * @description Get the key from the PEM data.
- * @param {string} PEM PEM data
- * @return {RSAKey} RSA key
- *!/
-const fromPEM = (PEM) => KEYUTIL.getKey(PEM);*/
-
 /**
  * @description Clone a key.
  * @param {Key} key Original key
@@ -114,18 +98,4 @@ const cloneKey = (key) => {
   return clone;
 };
 
-/**
- * @description Bufferify the output of a function.
- * @param {function(*): *} fn Function to bufferify
- * @returns {Buffer} Buffered output
- */
-const bufferify = fn => x => Buffer.from(fn(x.toString()).toString(), 'hex');
-
-/**
- * @description Buffered SHA3.
- * @param {*} Data to hash
- * @returns {Buffer} SHA3 hash
- */
-const BSHA3 = bufferify(SHA3);
-
-module.exports = { genKey, sign, verify, encrypt, decrypt, KEY_CONFIGS, cloneKey, BSHA3 };
+module.exports = { genKey, sign, verify, encrypt, decrypt, KEY_CONFIGS, cloneKey };
