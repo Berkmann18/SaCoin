@@ -281,7 +281,7 @@ class Blockchain {
       fromPubKey: BANK.pk,
       toAddr: minerWallet.address,
       amount: this.miningReward,
-      signature: '',
+      sig: '',
       fee: 0
     });
     rewardTx.sign(BANK.sk);

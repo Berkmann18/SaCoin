@@ -20,18 +20,36 @@ test('Customized KGen', () => {
 });
 
 test('Sign and Vrf', () => {
-  let bl = len / 4, m = 'Hello', sig = sign(sk, m, bl);
+  let bitLen = len / 4, msg = 'Hello', sig = sign(sk, msg, bitLen);
   expect(typeof sig).toBe('string');
-  expect(sig.length).not.toBe(bl); //It should be equal for RSA but not ECDSA
+  expect(sig.length).not.toBe(bitLen); //It should be equal for RSA but not ECDSA
   expect(sig.length >= 140).toBeTruthy(); //Usually 142-144
-  expect(verify(pk, m, sig, bl)).toBeTruthy();
+  expect(verify({
+    pubKey: pk,
+    msg,
+    sig,
+    bitLen
+  })).toBeTruthy();
+  expect(verify({
+    pubKey: pk,
+    msg,
+    sig,
+    bitLen,
+    alg: 'ECDSA'
+  })).toBeTruthy();
 });
 
 test('RSA S&V', () => {
-  let key = RSA2048_KEY || genKey(KEY_CONFIGS.RSA2048), m = 'Lorem', bl = 512, alg = 'RSA', sig = sign(key.sk, m, bl, alg);
+  let key = RSA2048_KEY || genKey(KEY_CONFIGS.RSA2048), msg = 'Lorem', bitLen = 512, alg = 'RSA', sig = sign(key.sk, msg, bitLen, alg);
   expect(sig).toBeDefined();
-  expect(sig.length).toBe(bl);
-  expect(verify(key.pk, m, sig, bl, alg)).toBeTruthy();
+  expect(sig.length).toBe(bitLen);
+  expect(verify({
+    pubKey: key.pk,
+    msg,
+    sig,
+    bitLen,
+    alg
+  })).toBeTruthy();
 });
 
 test('Enc & Dec', () => {
@@ -49,8 +67,12 @@ test('Enc & Dec', () => {
 });
 
 test('BANK', () => {
-  let m = 'Welcome', sig = sign(BANK.sk, m);
-  expect(verify(BANK.pk, m, sig)).toBeTruthy();
+  let msg = 'Welcome', sig = sign(BANK.sk, msg);
+  expect(verify({
+    pubKey: BANK.pk,
+    msg,
+    sig
+  })).toBeTruthy();
 });
 
 test('EC clone', () => {
@@ -71,25 +93,65 @@ test('EC clone', () => {
 
   let msg = 'Lorem';
   let sig = sign(kp.sk, msg), cSig = sign(prv, msg);
-  let vrf = verify(kp.pk, msg, sig), cVrf = verify(pub, msg, cSig);
+  let vrf = verify({
+      pubKey: kp.pk,
+      msg,
+      sig
+    }), cVrf = verify({
+      pubKey: pub,
+      msg,
+      sig: cSig
+    });
   expect(vrf).toBeTruthy();
   expect(cVrf).toBeTruthy();
-  let xVrf = verify(kp.pk, msg, cSig), xCVrf = verify(pub, msg, sig);
+  let xVrf = verify({
+      pubKey: kp.pk,
+      msg,
+      sig: cSig
+    }), xCVrf = verify({
+      pubKey: pub,
+      msg,
+      sig
+    });
   expect(xVrf).toBeTruthy();
   expect(xCVrf).toBeTruthy();
 });
 
 test('RSA clone', () => {
-  let kp = RSA2048_KEY || genKey(KEY_CONFIGS.RSA1024), bl = 256, alg = 'RSA';
+  let kp = RSA2048_KEY || genKey(KEY_CONFIGS.RSA1024), bitLen = 256, alg = 'RSA';
   let pub = cloneKey(kp.pk), prv = cloneKey(kp.sk), msg = 'Hi';
   expect(pub).toEqual(kp.pk);
   expect(prv).not.toEqual(kp.sk);
-  let sig = sign(kp.sk, msg, bl, alg), cSig = sign(prv, msg, bl, alg);
+  let sig = sign(kp.sk, msg, bitLen, alg), cSig = sign(prv, msg, bitLen, alg);
   expect(cSig).toEqual(sig);
-  let vrf = verify(kp.pk, msg, sig, bl, alg), cVrf = verify(pub, msg, cSig, bl, alg);
+  let vrf = verify({
+      pubKey: kp.pk,
+      msg,
+      sig,
+      bitLen,
+      alg
+    }), cVrf = verify({
+      pubKey: pub,
+      msg,
+      sig: cSig,
+      bitLen,
+      alg
+    });
   expect(vrf).toBeTruthy();
   expect(cVrf).toBeTruthy();
-  let xVrf = verify(kp.pk, msg, cSig, bl, alg), xCVrf = verify(pub, msg, sig, bl, alg);
+  let xVrf = verify({
+      pubKey: kp.pk,
+      msg,
+      sig: cSig,
+      bitLen,
+      alg
+    }), xCVrf = verify({
+      pubKey: pub,
+      msg,
+      sig,
+      bitLen,
+      alg
+    });
   expect(xVrf).toBeTruthy();
   expect(xCVrf).toBeTruthy();
 });

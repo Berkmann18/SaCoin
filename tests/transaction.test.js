@@ -29,18 +29,57 @@ test('Init', () => {
   expect(tx.toString(false)).toBe(`Transaction(fromAddr=${tx.fromAddr}, fromPubKey=${tx.fromPubKey}, toAddr=${tx.toAddr}, amount=${amt}, timestamp=${tx.timestamp}, fee=${FEE}, hash=${tx.hash})`);
 });
 
+test('Default', () => {
+  let tx = new Transaction({
+    fromAddr: sender.address,
+    fromPubKey: sender.publicKey,
+    toAddr: receiver.address,
+    sig
+  });
+  expect(tx.fromAddr).toBe(sender.address);
+  expect(tx.fromPubKey).toBe(sender.publicKey);
+  expect(tx.toAddr).toBe(receiver.address);
+  expect(tx.amount).toBe(0);
+  expect(tx.timestamp <= Date.now()).toBeTruthy();
+  expect(typeof tx.hash).toBe('string');
+  expect(tx.fee).toBe(FEE);
+  expect(tx.signature).toBe(sig);
+});
+
+test('All set', () => {
+  let tx = new Transaction({
+    fromAddr: sender.address,
+    fromPubKey: sender.publicKey,
+    toAddr: receiver.address,
+    fee: 1
+  });
+  expect(tx.fromAddr).toBe(sender.address);
+  expect(tx.fromPubKey).toBe(sender.publicKey);
+  expect(tx.toAddr).toBe(receiver.address);
+  expect(tx.amount).toBe(0);
+  expect(tx.fee).toBe(1);
+});
+
 test('Signature et al', () => {
   expect.assertions(5);
   return new Promise((resolve) => {
     resolve(tx.hasValidSignature())
   }).then(bool => {
     expect(bool).toBeFalsy();
-    return expect(verify(sender.publicKey, tx.hash, tx.signature)).toBeFalsy()
+    return expect(verify({
+      pubKey: sender.publicKey,
+      msg: tx.hash,
+      sig: tx.signature
+    })).toBeFalsy()
   })
     .then(vrf => tx.sign(sender.secretKey(sHash)))
     .then(signed => expect(tx.hasValidSignature()).toBeTruthy())
     .then(correct => {
-      expect(verify(sender.publicKey, tx.hash, tx.signature)).toBeTruthy();
+      expect(verify({
+        pubKey: sender.publicKey,
+        msg: tx.hash,
+        sig: tx.signature
+      })).toBeTruthy();
       expect(tx.isValid()).toBeTruthy();
     })
     .catch(err => console.log('This went wrong:', err.toString()))

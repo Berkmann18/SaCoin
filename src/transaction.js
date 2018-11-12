@@ -24,18 +24,18 @@ class Transaction {
    * @param {Key} obj.fromPubKey Public key of the sender
    * @param {string} obj.toAddr Address of the receiver
    * @param {number} [obj.amount=0] Amount of coins
-   * @param {string=} [obj.signature] Signature of the sender
+   * @param {string=} [obj.sig] Signature of the sender
    * @param {number} [obj.fee=0] Transaction fee
    * @version 3
    * @memberof Transaction
    */
-  constructor({fromAddr, fromPubKey, toAddr, amount = 0, signature, fee = TRANSACTION_FEE} = {}) {
+  constructor({ fromAddr, fromPubKey, toAddr, amount = 0, sig, fee = TRANSACTION_FEE } = {}) {
     prvProps.set(this, {
       fromAddr,
       fromPubKey,
       toAddr,
       amount,
-      signature,
+      sig,
       hash: null,
       timestamp: Date.now(),
       fee
@@ -166,7 +166,11 @@ class Transaction {
    * @memberof Transaction
    */
   hasValidSignature() {
-    return this.signature && verify(this.fromPubKey, this.hash, this.signature);
+    return this.signature && verify({
+      pubKey: this.fromPubKey,
+      msg: this.hash,
+      sig: this.signature
+    });
   }
 
   /**

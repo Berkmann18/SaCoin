@@ -55,16 +55,17 @@ const sign = (sk, msg, bitLen = 512, alg = 'ECDSA') => {
 
 /**
  * @description Verify a signature.
- * @param {Key} pk Public key
- * @param {string} msg Message
- * @param {string} sig Digital signature
- * @param {number} [bitLen=512] Bit length associated to the SHA hash (1, 224, 256, 384, 512) and usually half the key length from genKey().
- * @param {string} [alg='ECDSA'] Algorithm
+ * @param {Object} arg Arguments
+ * @param {Key} arg.pubKey Public key
+ * @param {string} arg.msg Message
+ * @param {string} arg.sig Digital signature
+ * @param {number} [arg.bitLen=512] Bit length associated to the SHA hash (1, 224, 256, 384, 512) and usually half the key length from genKey().
+ * @param {string} [arg.alg='ECDSA'] Algorithm
  * @return {void|boolean} Signature validity
  */
-const verify = (pk, msg, sig, bitLen = 512, alg = 'ECDSA') => {
+const verify = ({ pubKey, msg, sig, bitLen = 512, alg = 'ECDSA' } = {}) => {
   let tag = new Signature({ alg: `SHA${bitLen}with${alg}` });
-  tag.init(pk);
+  tag.init(pubKey);
   tag.updateString(msg);
   return tag.verify(sig);
 };
