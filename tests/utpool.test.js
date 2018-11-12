@@ -1,4 +1,7 @@
-const UTPool = require('../src/utpool'), gen = require('../src/crypto').genKey, {BANK, init} = require('../src/config'), Wallet = require('../src/wallet');
+const UTPool = require('../src/utpool'),
+  gen = require('../src/crypto').genKey,
+  { BANK, init } = require('../src/config'),
+  Wallet = require('../src/wallet');
 
 test('Init', () => {
   let utp = new UTPool(), addr = Wallet.generateAddress(gen().pk, '');

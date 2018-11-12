@@ -138,8 +138,8 @@ class Transaction {
    * @return {string} Signature
    * @memberof Transaction
    */
-  get signature() {
-    return prvProps.get(this).signature;
+  get sig() {
+    return prvProps.get(this).sig;
   }
 
   /**
@@ -148,7 +148,7 @@ class Transaction {
    * @memberof Transaction
    */
   sign(sk) {
-    prvProps.get(this).signature = sign(sk, this.hash);
+    prvProps.get(this).sig = sign(sk, this.hash);
   }
 
   /**
@@ -166,10 +166,10 @@ class Transaction {
    * @memberof Transaction
    */
   hasValidSignature() {
-    return this.signature && verify({
+    return this.sig && verify({
       pubKey: this.fromPubKey,
       msg: this.hash,
-      sig: this.signature
+      sig: this.sig
     });
   }
 

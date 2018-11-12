@@ -124,7 +124,7 @@ class Blockchain {
    * @memberof Blockchain
    */
   static createGenesisBlock(beneficiaryAddr) {
-    return new Block(ROOT_HASH, [], 0, 0, beneficiaryAddr);
+    return new Block({ beneficiaryAddr });
   }
 
   /**
@@ -221,7 +221,13 @@ class Blockchain {
   _add(transactions, beneficiaryAddr) {
     let prevBlock = this.getBlock(-1),
       ba = beneficiaryAddr || prevBlock.beneficiaryAddr,
-      newBlock = new Block(prevBlock.hash, transactions, 0, prevBlock.height + 1, ba);
+      newBlock = new Block({
+        prevHash: prevBlock.hash,
+        transactions,
+        nonce: 0,
+        height: prevBlock.height + 1,
+        beneficiaryAddr: ba
+      });
     newBlock.mine();
     prvProps.get(this).chain.push(newBlock);
 

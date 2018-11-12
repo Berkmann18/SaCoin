@@ -26,15 +26,16 @@ const ROOT_HASH = 'b076b4ac5dfd570677538e23b54818022a379d2e8da1ef6f1b40f08965b52
 class Block {
   /**
    * @description Block.
-   * @param {string} [prevHash=ROOT_HASH] Previous hash
-   * @param {Transaction[]} [transactions=[]] List of transactions inside the block
-   * @param {number} [nonce=0] Nonce associated to the block
-   * @param {number} [height=0] Height of the block within a chain
-   * @param {string} [beneficiaryAddr=BANK.address] Address of the beneficiary
-   * @param {number} [txFee=TRANSACTION_FEE] Fee for each transaction that will be present in that block
+   * @param {Object} arg Argument
+   * @param {string} [arg.prevHash=ROOT_HASH] Previous hash
+   * @param {Transaction[]} [arg.transactions=[]] List of transactions inside the block
+   * @param {number} [arg.nonce=0] Nonce associated to the block
+   * @param {number} [arg.height=0] Height of the block within a chain
+   * @param {string} [arg.beneficiaryAddr=BANK.address] Address of the beneficiary
+   * @param {number} [arg.txFee=TRANSACTION_FEE] Fee for each transaction that will be present in that block
    * @memberof Block
    */
-  constructor(prevHash = ROOT_HASH, transactions = [], nonce = 0, height = 0, beneficiaryAddr = BANK.address, txFee = TRANSACTION_FEE) {
+  constructor({ prevHash = ROOT_HASH, transactions = [], nonce = 0, height = 0, beneficiaryAddr = BANK.address, txFee = TRANSACTION_FEE } = {}) {
 
     if (transactions.length) transactions.forEach(tx => {
       if (!tx.isValid()) throw new TransactionError(`Invalid transaction ant-Block creation: ${tx.toString()}`);

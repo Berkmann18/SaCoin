@@ -30,7 +30,7 @@ test('Init', () => {
 });
 
 test('Customised', () => {
-  let genesis = new Block('root', [], 1, 0), GBP = new Chain(3, BANK.pool, genesis, 10, 'GBP');
+  let genesis = new Block({ nonce: 1 }), GBP = new Chain(3, BANK.pool, genesis, 10, 'GBP');
   expect(GBP.difficulty).toBe(3);
   expect(GBP.utpool).toBe(BANK.pool);
   expect(GBP.chain).toStrictEqual([genesis]);
@@ -39,7 +39,10 @@ test('Customised', () => {
 });
 
 test('Cont.', () => {
-  let SXC = new Chain(), block = new Block(SXC.getBlock(-1).hash, [], 0, 1);
+  let SXC = new Chain(), block = new Block({
+    prevHash: SXC.getBlock(-1).hash,
+    height: 1
+  });
   expect(block.prevHash).toBe(SXC.getBlock(-1).hash);
   expect(() => SXC.addBlock(block)).toThrowError(BlockError);
   block.mine();
@@ -65,7 +68,10 @@ test('Cont.', () => {
   }).toThrowError(TransactionError); //Should throw since tx.amount = 0
   expect(SXC.getBlockByHash(block.hash)).toBe(block);
   expect(() => {
-    let blk = new Block(block.hash, [], 0, 1);
+    let blk = new Block({
+      prevHash: block.hash,
+      height: 1
+    });
     SXC.addBlock(blk);
     SXC.getBlockByHash(block.hash)
   }).toThrowError(BlockError); //Duplicate block

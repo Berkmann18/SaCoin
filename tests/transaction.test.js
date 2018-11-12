@@ -11,7 +11,7 @@ let txCfg = {
   fromPubKey: sender.publicKey,
   toAddr: receiver.address,
   amount: amt,
-  signature: sig
+  sig
 }
 let tx = new Transaction(txCfg);
 
@@ -23,7 +23,7 @@ test('Init', () => {
   expect(tx.timestamp <= Date.now()).toBeTruthy();
   expect(typeof tx.hash).toBe('string');
   expect(tx.fee).toBe(FEE);
-  expect(tx.signature).toBe(sig);
+  expect(tx.sig).toBe(sig);
   expect(tx.isValid()).toBeFalsy(); //tests calculateHash() so no need to test that
   expect(tx.toString()).toBe(use('tx', `Transaction(fromAddr=${tx.fromAddr}, fromPubKey=${tx.fromPubKey}, toAddr=${tx.toAddr}, amount=${amt}, timestamp=${tx.timestamp}, fee=${FEE}, hash=${tx.hash})`));
   expect(tx.toString(false)).toBe(`Transaction(fromAddr=${tx.fromAddr}, fromPubKey=${tx.fromPubKey}, toAddr=${tx.toAddr}, amount=${amt}, timestamp=${tx.timestamp}, fee=${FEE}, hash=${tx.hash})`);
@@ -43,7 +43,7 @@ test('Default', () => {
   expect(tx.timestamp <= Date.now()).toBeTruthy();
   expect(typeof tx.hash).toBe('string');
   expect(tx.fee).toBe(FEE);
-  expect(tx.signature).toBe(sig);
+  expect(tx.sig).toBe(sig);
 });
 
 test('All set', () => {
@@ -69,7 +69,7 @@ test('Signature et al', () => {
     return expect(verify({
       pubKey: sender.publicKey,
       msg: tx.hash,
-      sig: tx.signature
+      sig: tx.sig
     })).toBeFalsy()
   })
     .then(vrf => tx.sign(sender.secretKey(sHash)))
@@ -78,7 +78,7 @@ test('Signature et al', () => {
       expect(verify({
         pubKey: sender.publicKey,
         msg: tx.hash,
-        sig: tx.signature
+        sig: tx.sig
       })).toBeTruthy();
       expect(tx.isValid()).toBeTruthy();
     })

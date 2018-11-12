@@ -37,7 +37,12 @@ test('Block creation', () => {
 
 test('Linking', () => {
   let genesis = new Block();
-  let block = new Block(genesis.hash, [], 0, 1);
+  let block = new Block({
+    prevHash: genesis.hash,
+    transactions: [],
+    nonce: 0,
+    height: 1
+  });
   expect(block.prevHash).toBe(genesis.hash);
   expect(block.isValid()).toBeFalsy();
   expect(block.isGenesis()).toBeFalsy();
@@ -67,7 +72,10 @@ test('Transactions gone wrong', () => {
     toAddr: 'ba45734499c7188265c760e93f69018bbecdb6a26998656f4834e8da66ee0007',
     amount: 5
   });
-  let block = new Block('root', []);
+  let block = new Block({
+    prevHash: 'root',
+    transactions: []
+  });
   expect(() => block.addTransaction(tx)).toThrowError(TransactionError);
   tx.sign(BANK.sk);
   expect(() => block.addTransaction(tx)).not.toThrowError(TransactionError);
@@ -87,14 +95,27 @@ test('Transactions gone right', () => {
   });
 
   expect(() => {
-    new Block('genesis', [tx]);
+    new Block({
+      prevHash: 'genesis',
+      transactions: [tx]
+    });
   }).toThrow(`Invalid transaction ant-Block creation: ${tx.toString()}`);
   tx.sign(BANK.sk);
   expect(() => {
-    new Block('genesis', [tx]);
+    new Block({
+      prevHash: 'genesis',
+      transactions: [tx]
+    });
   }).not.toThrow(`Invalid transaction ant-Block creation: ${tx.toString()}`);
   expect(tx.fee).toBe(TRANSACTION_FEE);
-  let block = new Block('root', [tx], 0, 0, wlt.address, 2);
+  let block = new Block({
+    prevHash: 'root',
+    transactions: [tx],
+    nonce: 0,
+    height: 0,
+    beneficiaryAddr: wlt.address,
+    txFee: 2
+  });
   expect(tx.fee).toBe(2);
 });
 
@@ -115,6 +136,9 @@ test('Filled block', () => {
     })
   ];
   txs.forEach(tx => tx.sign(BANK.sk));
-  let block = new Block('root', txs);
+  let block = new Block({
+    prevHash: 'root',
+    transactions: txs
+  });
   expect(block.hasValidTree()).toBeTruthy();
 });
