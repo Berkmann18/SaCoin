@@ -5,15 +5,13 @@
  * @module
  */
 
+const flat = require('lodash/flatten'),
+  { use } = require('./cli');
 const Block = require('./block'),
   { DIFFICULTY, MINING_REWARD, CURRENCY, BANK, UTPOOL } = require('../cfg.json'),
   Transaction = require('./transaction'),
   { BlockError, TransactionError, OutOfBoundsError } = require('./error'),
-  flat = require('lodash/flatten'),
-  UTPool = require('./utpool'),
-  { setColours, colour } = require('./cli');
-
-setColours();
+  UTPool = require('./utpool');
 
 /** @private */
 let prvProps = new WeakMap();
@@ -211,7 +209,7 @@ class Blockchain {
    */
   toString(cliColour = true) {
     let str = `Blockchain(chain=[${this.chain.map(block => block.toString())}], pendingTransactions=[${this.pendingTransactions}], difficulty=${this.difficulty}, miningReward=${this.miningReward}, currency=${this.currency})`;
-    return cliColour ? colour('chain', str) : str;
+    return cliColour ? use('chain', str) : str;
   }
 
   /**

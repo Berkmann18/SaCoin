@@ -6,13 +6,11 @@
  */
 
 const { SHA256, SHA3 } = require('crypto-js'),
-  MerkleTree = require('merkletreejs');
+  MerkleTree = require('merkletreejs'),
+  { use } = require('./cli');
 const Transaction = require('./transaction'),
   { TransactionError } = require('./error'),
-  { setColours, colour } = require('./cli'),
   { DIFFICULTY, BANK, TRANSACTION_FEE } = require('../cfg.json');
-
-setColours();
 
 /** @private */
 let prvProps = new WeakMap();
@@ -166,7 +164,7 @@ class Block {
    */
   toString(cliColour = true) {
     let str = `Block(transactions=[${this.transactions.map(trans => trans.toString())}], timestamp=${this.timestamp}, prevHash=${this.prevHash}, merkleRoot=${this.merkleRoot.toString('utf8')}, hash=${this.hash}, height=${this.height}, beneficiaryAddr=${this.beneficiaryAddr}, transactionFee=${this.transactionFee})`;
-    return cliColour ? colour('block', str) : str;
+    return cliColour ? use('block', str) : str;
   }
 
   /**
@@ -190,7 +188,8 @@ class Block {
    * @memberof Block
    */
   hasValidTree() {
-    const root = this.merkleRoot;
+    const root = this.merkleRoot,
+      tree = prvProps.get(this).merkleTree;
     const leaves = this.transactions.map(SHA3); //prvProps.get(this).merkleTree.getLeaves();
     const verifs = leaves.map(leaf => {
       const proof = tree.getProof(leaf);

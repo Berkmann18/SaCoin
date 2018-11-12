@@ -1,5 +1,9 @@
-const Transaction = require('../src/transaction'), {genKey, sign, verify} = require('../src/crypto'), FEE = require('../src/config').TRANSACTION_FEE, Wallet = require('../src/wallet'),
-  SHA256 = require('crypto-js/sha256'), {colour} = require('../src/cli');
+const SHA256 = require('crypto-js/sha256'),
+  { use } = require('nclr');
+const Transaction = require('../src/transaction'),
+  { genKey, sign, verify } = require('../src/crypto'),
+  FEE = require('../src/config').TRANSACTION_FEE,
+  Wallet = require('../src/wallet');
 
 let sender = new Wallet(null, 'se'), sHash = SHA256('se'), receiver = new Wallet(null, 're'), rHash = SHA256('re'), amt = 5, sig = sign(sender.secretKey(sHash), amt.toString());
 let tx = new Transaction(sender.address, sender.publicKey, receiver.address, amt, sig);
@@ -14,7 +18,7 @@ test('Init', () => {
   expect(tx.fee).toBe(FEE);
   expect(tx.signature).toBe(sig);
   expect(tx.isValid()).toBeFalsy(); //tests calculateHash() so no need to test that
-  expect(tx.toString()).toBe(colour('tx', `Transaction(fromAddr=${tx.fromAddr}, fromPubKey=${tx.fromPubKey}, toAddr=${tx.toAddr}, amount=${amt}, timestamp=${tx.timestamp}, fee=${FEE}, hash=${tx.hash})`));
+  expect(tx.toString()).toBe(use('tx', `Transaction(fromAddr=${tx.fromAddr}, fromPubKey=${tx.fromPubKey}, toAddr=${tx.toAddr}, amount=${amt}, timestamp=${tx.timestamp}, fee=${FEE}, hash=${tx.hash})`));
   expect(tx.toString(false)).toBe(`Transaction(fromAddr=${tx.fromAddr}, fromPubKey=${tx.fromPubKey}, toAddr=${tx.toAddr}, amount=${amt}, timestamp=${tx.timestamp}, fee=${FEE}, hash=${tx.hash})`);
 });
 

@@ -1,6 +1,13 @@
-const Chain = require('../src/blockchain'), {DIFFICULTY, MINING_REWARD, CURRENCY, BANK, TRANSACTION_FEE, UTPOOL} = require('../cfg'), Block = require('../src/block'),
-  Transaction = require('../src/transaction'), {TransactionError, BlockError, OutOfBoundsError} = require('../src/error'), gen = require('../src/crypto').genKey, UTPool = require('../src/utpool'),
-  Wallet = require('../src/wallet'), SHA256 = require('crypto-js/sha256'), {colour} = require('../src/cli');
+const SHA256 = require('crypto-js/sha256'),
+  { use } = require('nclr');
+const Chain = require('../src/blockchain'),
+  { DIFFICULTY, MINING_REWARD, CURRENCY, BANK, TRANSACTION_FEE, UTPOOL } = require('../cfg'),
+  Block = require('../src/block'),
+  Transaction = require('../src/transaction'),
+  { TransactionError, BlockError, OutOfBoundsError } = require('../src/error'),
+  gen = require('../src/crypto').genKey,
+  UTPool = require('../src/utpool'),
+  Wallet = require('../src/wallet');
 
 let bankPair = gen();
 BANK.pk = bankPair.pk;
@@ -17,7 +24,7 @@ test('Init', () => {
   expect(SXC.utpool).toStrictEqual(new UTPool()); //Should fail IF init was called thus changing BANK.pool
   expect(Chain.createGenesisBlock()).not.toBe(SXC.chain[0]);
   expect(SXC.size).toBe(1);
-  expect(SXC.toString()).toBe(colour('chain', `Blockchain(chain=[${SXC.chain}], pendingTransactions=[], difficulty=${DIFFICULTY}, miningReward=${MINING_REWARD}, currency=${CURRENCY})`));
+  expect(SXC.toString()).toBe(use('chain', `Blockchain(chain=[${SXC.chain}], pendingTransactions=[], difficulty=${DIFFICULTY}, miningReward=${MINING_REWARD}, currency=${CURRENCY})`));
   expect(SXC.toString(false)).toBe(`Blockchain(chain=[${SXC.chain}], pendingTransactions=[], difficulty=${DIFFICULTY}, miningReward=${MINING_REWARD}, currency=${CURRENCY})`);
   expect(SXC.isValid()).toBeTruthy();
 });

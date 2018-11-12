@@ -5,9 +5,10 @@
  * @module
  */
 
-const { TRANSACTION_FEE } = require('./config'), { verify, sign } = require('./crypto'), SHA256 = require('crypto-js/sha256'), { setColours, colour } = require('./cli');
-
-setColours();
+const { use } = require('./cli'),
+  SHA256 = require('crypto-js/sha256');
+const { verify, sign } = require('./crypto'),
+  { TRANSACTION_FEE } = require('./config');
 
 /** @private */
 let prvProps = new WeakMap();
@@ -175,7 +176,7 @@ class Transaction {
    */
   toString(cliColour = true) {
     let str = `Transaction(fromAddr=${this.fromAddr}, fromPubKey=${this.fromPubKey}, toAddr=${this.toAddr}, amount=${this.amount}, timestamp=${this.timestamp}, fee=${this.fee}, hash=${this.hash})`;
-    return cliColour ? colour('tx', str) : str;
+    return cliColour ? use('tx', str) : str;
   }
 }
 

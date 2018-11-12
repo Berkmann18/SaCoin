@@ -5,7 +5,10 @@
  * @module
  */
 
-const { genKey } = require('./crypto'), SHA256 = require('crypto-js/sha256'), UTPool = require('./utpool'), { colour } = require('./cli');
+const SHA256 = require('crypto-js/sha256'),
+  { use } = require('./cli');
+const { genKey } = require('./crypto'),
+  UTPool = require('./utpool');
 
 /** @private */
 let prvProps = new WeakMap();
@@ -131,7 +134,7 @@ class Wallet {
    * @memberof Wallet
    */
   set blockchain(chain) {
-    console.log(`${this.toString()} ${colour('warn', 'changed to')} ${chain.toString()}`);
+    console.log(`${this.toString()} ${use('warn', 'changed to')} ${chain.toString()}`);
     prvProps.get(this).blockchain = chain;
   }
 
@@ -225,7 +228,7 @@ class Wallet {
       'in': [],
       'out': []
     };
-    for (const block of this.blockchain.chain) {
+    for (const block of blockchain.chain) {
       for (const tx of block.transactions) {
         if (tx.fromAddr === this.address) txs.in.push(tx);
         if (tx.toAddr === this.address) txs.out.push(tx);

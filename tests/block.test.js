@@ -1,5 +1,10 @@
-const Block = require('../src/block'), {BANK, TRANSACTION_FEE} = require('../cfg.json'), Transaction = require('../src/transaction'),
-  gen = require('../src/crypto').genKey, {colour} = require('../src/cli'), TransactionError = require('../src/error').TransactionError, Wallet = require('../src/wallet'),
+const { use } = require('nclr');
+const Block = require('../src/block'),
+  {BANK, TRANSACTION_FEE} = require('../cfg.json'),
+  Transaction = require('../src/transaction'),
+  gen = require('../src/crypto').genKey,
+  TransactionError = require('../src/error').TransactionError,
+  Wallet = require('../src/wallet'),
   UTPool = require('../src/utpool');
 
 test('Block creation', () => {
@@ -12,7 +17,7 @@ test('Block creation', () => {
   expect(Buffer.isBuffer(block.merkleRoot)).toBeTruthy();
   let merkleRoot = block.merkleRoot.toString('utf8');
   expect(merkleRoot === '').toBeTruthy();
-  expect(block.toString()).toStrictEqual(colour('block', `Block(transactions=[], timestamp=${block.timestamp}, prevHash=${block.prevHash}, merkleRoot=${merkleRoot}, hash=${block.hash}, height=0, beneficiaryAddr=${block.beneficiaryAddr}, transactionFee=1)`));
+  expect(block.toString()).toStrictEqual(use('block', `Block(transactions=[], timestamp=${block.timestamp}, prevHash=${block.prevHash}, merkleRoot=${merkleRoot}, hash=${block.hash}, height=0, beneficiaryAddr=${block.beneficiaryAddr}, transactionFee=1)`));
   expect(block.toString(false)).toStrictEqual(`Block(transactions=[], timestamp=${block.timestamp}, prevHash=${block.prevHash}, merkleRoot=${merkleRoot}, hash=${block.hash}, height=0, beneficiaryAddr=${block.beneficiaryAddr}, transactionFee=1)`);
   expect(block.isGenesis()).toBeTruthy();
   expect(block.isValid()).toBeFalsy();
@@ -82,4 +87,15 @@ test('Transactions gone right', () => {
   expect(tx.fee).toBe(TRANSACTION_FEE);
   let block = new Block('root', [tx], 0, 0, wlt.address, 2);
   expect(tx.fee).toBe(2);
+});
+
+test('Filled block', () => {
+  let w0 = new Wallet({}, '0'), w1 = new Wallet({}, '1');
+  let txs = [
+    new Transaction(BANK.address, BANK.pk, w0.publicKey, 2),
+    new Transaction(BANK.address, BANK.pk, w1.publicKey, 2)
+  ];
+  txs.forEach(tx => tx.sign(BANK.sk));
+  let block = new Block('root', txs);
+  expect(block.hasValidTree()).toBeTruthy();
 });
