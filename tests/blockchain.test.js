@@ -50,7 +50,11 @@ test('Cont.', () => {
   expect(SXC.isValid()).toBeTruthy();
   expect(SXC.size).toBe(2);
   expect(SXC.getBlock(-1)).toEqual(block); //Same as getBlock(1)
-  let tx = new Transaction(BANK.address, BANK.pk, BANK.address);
+  let tx = new Transaction({
+    fromAddr: BANK.address,
+    fromPubKey: BANK.pk,
+    toAddr: BANK.address
+  });
   expect(block.beneficiaryAddr).toBe(BANK.address);
   expect(() => {
     SXC._add([tx], BANK.address);
@@ -67,7 +71,12 @@ test('Cont.', () => {
   }).toThrowError(BlockError); //Duplicate block
 
   let wlt = new Wallet(SXC, ' ');
-  tx = new Transaction(BANK.address, BANK.pk, wlt.address, 5);
+  tx = new Transaction({
+    fromAddr: BANK.address,
+    fromPubKey: BANK.pk,
+    toAddr: wlt.address,
+    amount: 5
+  });
   tx.sign(BANK.sk);
   SXC._add([tx]);
 });
@@ -76,7 +85,12 @@ test('Transactions', () => {
   let SXC = new Chain();
 
   expect(SXC.getBlock(-1)).toBeDefined();
-  let tx = new Transaction(BANK.address, BANK.pk, BANK.address, MINING_REWARD * 2);
+  let tx = new Transaction({
+    fromAddr: BANK.address,
+    fromPubKey: BANK.pk,
+    toAddr: BANK.address,
+    amount: MINING_REWARD * 2
+  });
   expect(() => {
     SXC.addTransaction(tx)
   }).toThrowError(TransactionError); //Unsigned
@@ -94,12 +108,22 @@ test('Transactions', () => {
   expect(SXC.getAllTransactions(true)).toStrictEqual([tx.toString(false)]);
   expect(SXC.getAllTransactions(true, true)).toStrictEqual([tx.toString()]);
   let wlt = new Wallet(SXC, 'lol'), hash = SHA256('lol') ;
-  tx = new Transaction(wlt.address, wlt.publicKey, BANK.address, 100);
+  tx = new Transaction({
+    fromAddr: wlt.address,
+    fromPubKey: wlt.publicKey,
+    toAddr: BANK.address,
+    amount: 100
+  });
   tx.sign(wlt.secretKey(hash));
   expect(() => SXC.addTransaction(tx)).toThrowError(`The balance of the sender ${wlt.address} has no unspent coins`); //TransactionError
   let spending = 1;
   SXC.utpool.addUT(wlt.address, spending);
-  let trans = new Transaction(wlt.address, wlt.publicKey, BANK.address, spending);
+  let trans = new Transaction({
+    fromAddr: wlt.address,
+    fromPubKey: wlt.publicKey,
+    toAddr: BANK.address,
+    amount: spending
+  });
   trans.sign(wlt.secretKey(hash));
   expect(() => SXC.addTransaction(trans)).toThrowError(TransactionError); //Not enough coins
   SXC.utpool.addUT(wlt.address, 5);
@@ -114,7 +138,12 @@ test('Mining', () => {
   BANK.wallet.blockchain = SXC;
   let hash = SHA256('123'), coin = 7;
 
-  let me = new Wallet(SXC, '123'), tx = new Transaction(BANK.address, BANK.pk, me.address, transferred);
+  let me = new Wallet(SXC, '123'), tx = new Transaction({
+    fromAddr: BANK.address,
+    fromPubKey: BANK.pk,
+    toAddr: me.address,
+    amount: transferred
+  });
   SXC.utpool.addUT(me.address, coin);
   expect(me.publicKey).not.toBe(BANK.pk);
   expect(SXC.utpool.pool[BANK.address]).toBe(BANK.amount);
@@ -130,7 +159,12 @@ test('Mining', () => {
   let myCoins = coin + transferred + TRANSACTION_FEE, bkCoins = BANK.amount - transferred - TRANSACTION_FEE;
   expect(SXC.utpool.pool[me.address]).toBe(myCoins);
   expect(SXC.utpool.pool[BANK.address]).toBe(bkCoins);
-  let him = new Wallet(SXC, '00'), trans = new Transaction(BANK.address, BANK.pk, me.address, transferred); // BANK.wallet.createTransaction(me.address, transferred, SHA256('sxcBank'));
+  let him = new Wallet(SXC, '00'), trans = new Transaction({
+    fromAddr: BANK.address,
+    fromPubKey: BANK.pk,
+    toAddr: me.address,
+    amount: transferred
+  }); // BANK.wallet.createTransaction(me.address, transferred, SHA256('sxcBank'));
   trans.sign(BANK.sk);
   SXC.addTransaction(trans);
   expect(SXC.utpool.pool[me.address]).toBe(myCoins);

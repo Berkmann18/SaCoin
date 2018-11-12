@@ -61,8 +61,12 @@ test('Transactions gone wrong', () => {
   BANK.sk = bankPair.sk;
   BANK.wallet = new Wallet({}, 'sxcBank', bankPair, BANK.address);
   //Test the block's ability to detect invalid transactions on creation on `addTransaction`
-  let kp = gen();
-  let tx = new Transaction(BANK.address, BANK.pk, kp.pk, 5);
+  let tx = new Transaction({
+    fromAddr: BANK.address,
+    fromPubKey: BANK.pk,
+    toAddr: 'ba45734499c7188265c760e93f69018bbecdb6a26998656f4834e8da66ee0007',
+    amount: 5
+  });
   let block = new Block('root', []);
   expect(() => block.addTransaction(tx)).toThrowError(TransactionError);
   tx.sign(BANK.sk);
@@ -75,7 +79,12 @@ test('Transactions gone right', () => {
     [wlt.address]: 10,
     [BANK.address]: 100
   });
-  let tx = new Transaction(BANK.address, BANK.pk, wlt.publicKey, 5);
+  let tx = new Transaction({
+    fromAddr: BANK.address,
+    fromPubKey: BANK.pk,
+    toAddr: wlt.publicKey,
+    amount: 5
+  });
 
   expect(() => {
     new Block('genesis', [tx]);
@@ -92,8 +101,18 @@ test('Transactions gone right', () => {
 test('Filled block', () => {
   let w0 = new Wallet({}, '0'), w1 = new Wallet({}, '1');
   let txs = [
-    new Transaction(BANK.address, BANK.pk, w0.publicKey, 2),
-    new Transaction(BANK.address, BANK.pk, w1.publicKey, 2)
+    new Transaction({
+      fromAddr: BANK.address,
+      fromPubKey: BANK.pk,
+      toAddr: w0.publicKey,
+      amount: 2
+    }),
+    new Transaction({
+      fromAddr: BANK.address,
+      fromPubKey: BANK.pk,
+      toAddr: w1.publicKey,
+      amount: 2
+    })
   ];
   txs.forEach(tx => tx.sign(BANK.sk));
   let block = new Block('root', txs);

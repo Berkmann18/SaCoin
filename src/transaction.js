@@ -18,17 +18,18 @@ let prvProps = new WeakMap();
  */
 class Transaction {
   /**
-   *@description Crypto transaction.
-   * @param {string} fromAddr Address of the sender
-   * @param {Key} fromPubKey Public key of the sender
-   * @param {string} toAddr Wallet of the receiver
-   * @param {number} amount Amount of coins
-   * @param {string=} signature Signature of the sender
-   * @param {number} [fee=0] Transaction fee
-   * @version 2
+   * @description Crypto transaction.
+   * @param {Object} obj Details of the transaction
+   * @param {string} obj.fromAddr Address of the sender
+   * @param {Key} obj.fromPubKey Public key of the sender
+   * @param {string} obj.toAddr Address of the receiver
+   * @param {number} [obj.amount=0] Amount of coins
+   * @param {string=} [obj.signature] Signature of the sender
+   * @param {number} [obj.fee=0] Transaction fee
+   * @version 3
    * @memberof Transaction
    */
-  constructor(fromAddr, fromPubKey, toAddr, amount = 0, signature, fee = TRANSACTION_FEE) {
+  constructor({fromAddr, fromPubKey, toAddr, amount = 0, signature, fee = TRANSACTION_FEE} = {}) {
     prvProps.set(this, {
       fromAddr,
       fromPubKey,

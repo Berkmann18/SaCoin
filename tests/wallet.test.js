@@ -1,5 +1,10 @@
-const Wallet = require('../src/wallet'), UTPool = require('../src/utpool'), Chain = require('../src/blockchain'), {BANK} = require('../cfg'),
-  TransactionError = require('../src/error').TransactionError, Transaction = require('../src/transaction'), SHA256 = require('crypto-js/sha256');
+const SHA256 = require('crypto-js/sha256');
+const Wallet = require('../src/wallet'),
+  UTPool = require('../src/utpool'),
+  Chain = require('../src/blockchain'),
+  { BANK } = require('../cfg'),
+  TransactionError = require('../src/error').TransactionError,
+  Transaction = require('../src/transaction');
 
 let bankPair = require('../src/crypto').genKey();
 BANK.pk = bankPair.pk;
@@ -38,12 +43,22 @@ test('Init', () => {
   expect(typeof wlt.secretKey(hash)).toBe('object');
   expect(() => wlt.reset(hash + 0)).toThrow(Error);
 
-  let tx = new Transaction(wlt.address, wlt.publicKey, BANK.address, -1);
+  let tx = new Transaction({
+    fromAddr: wlt.address,
+    fromPubKey: wlt.publicKey,
+    toAddr: BANK.address,
+    amount: -1
+  });
   wlt.signTransaction(tx, hash);
   expect(tx instanceof Transaction).toBeTruthy();
   expect(tx.hasValidSignature()).toBeTruthy();
   expect(tx.isValid()).toBeFalsy(); //-1 < 0 so fail
-  tx = new Transaction(wlt.address, wlt.publicKey, BANK.address, 5);
+  tx = new Transaction({
+    fromAddr: wlt.address,
+    fromPubKey: wlt.publicKey,
+    toAddr: BANK.address,
+    amount: 5
+  });
   wlt.signTransaction(tx, hash);
   expect(tx instanceof Transaction).toBeTruthy();
   expect(tx.hasValidSignature()).toBeTruthy();
@@ -52,7 +67,12 @@ test('Init', () => {
 
 test('Integration 1/2', () => {
   let utp = new UTPool(), chain = new Chain(2, utp), w0 = new Wallet(chain, 'z'), w1 = new Wallet(chain, 'o'), xch = 3,
-    tx = new Transaction(w0.address, w0.publicKey, w1.address, xch), start = 10;
+    tx = new Transaction({
+      fromAddr: w0.address,
+      fromPubKey: w0.publicKey,
+      toAddr: w1.address,
+      amount: xch
+    }), start = 10;
   utp.addUT(w0.address, start);
   utp.addUT(w1.address, start);
   w0.signTransaction(tx, SHA256('z'));
@@ -76,7 +96,12 @@ test('Integration 2/2', () => {
   expect(chain.miningReward).toBe(12.5);
   expect(chain.currency).toBe('XSC');
 
-  let w0 = new Wallet(chain, pw0), w1 = new Wallet(chain, 'o'), tx = new Transaction(w0.address, w0.publicKey, w1.address, xch), start = 10;
+  let w0 = new Wallet(chain, pw0), w1 = new Wallet(chain, 'o'), tx = new Transaction({
+      fromAddr: w0.address,
+      fromPubKey: w0.publicKey,
+      toAddr: w1.address,
+      amount: xch
+    }), start = 10;
   chain.utpool.addUT(w0.address, start);
   chain.utpool.addUT(w1.address, start);
   w0.signTransaction(tx, h0);

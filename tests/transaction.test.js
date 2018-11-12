@@ -1,12 +1,19 @@
 const SHA256 = require('crypto-js/sha256'),
   { use } = require('nclr');
 const Transaction = require('../src/transaction'),
-  { genKey, sign, verify } = require('../src/crypto'),
+  { sign, verify } = require('../src/crypto'),
   FEE = require('../src/config').TRANSACTION_FEE,
   Wallet = require('../src/wallet');
 
 let sender = new Wallet(null, 'se'), sHash = SHA256('se'), receiver = new Wallet(null, 're'), rHash = SHA256('re'), amt = 5, sig = sign(sender.secretKey(sHash), amt.toString());
-let tx = new Transaction(sender.address, sender.publicKey, receiver.address, amt, sig);
+let txCfg = {
+  fromAddr: sender.address,
+  fromPubKey: sender.publicKey,
+  toAddr: receiver.address,
+  amount: amt,
+  signature: sig
+}
+let tx = new Transaction(txCfg);
 
 test('Init', () => {
   expect(tx.fromAddr).toBe(sender.address);

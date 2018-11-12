@@ -38,8 +38,18 @@ test('With Transactions', () => {
   [w0, w1, w2].forEach(wlt => chain.utpool.addUT(wlt.address, 10));
 
   let txs = [
-    new Transaction(w0.address, w0.publicKey, w1.address, 2),
-    new Transaction(w1.address, w1.publicKey, w2.address, 4)
+    new Transaction({
+      fromAddr: w0.address,
+      fromPubKey: w0.publicKey,
+      toAddr: w1.address,
+      amount: 2
+    }),
+    new Transaction({
+      fromAddr: w1.address,
+      fromPubKey: w1.publicKey,
+      toAddr: w2.address,
+      amount: 4
+    })
   ];
   w0.signTransaction(txs[0], SHA256('0'));
   w1.signTransaction(txs[1], SHA256('1'));

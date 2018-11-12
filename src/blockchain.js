@@ -276,7 +276,14 @@ class Blockchain {
     //Create a new block with all pending transactions and mine it and add the newly mined block to the chain
     this._add(prvProps.get(this).pendingTransactions, minerWallet.address);
     //Reset the pending transactions and send the mining reward
-    let rewardTx = new Transaction(BANK.address, BANK.pk, minerWallet.address, this.miningReward, '', 0);
+    let rewardTx = new Transaction({
+      fromAddr: BANK.address,
+      fromPubKey: BANK.pk,
+      toAddr: minerWallet.address,
+      amount: this.miningReward,
+      signature: '',
+      fee: 0
+    });
     rewardTx.sign(BANK.sk);
     prvProps.get(this).pendingTransactions = [rewardTx];
   }
