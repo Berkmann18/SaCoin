@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset='utf-8' />
-  <title>sacoin 1.0.0 | Documentation</title>
+  <title>sacoin 0.0.0-development | Documentation</title>
   <meta name='viewport' content='width=device-width,initial-scale=1'>
   <link href='assets/bass.css' type='text/css' rel='stylesheet' />
   <link href='assets/style.css' type='text/css' rel='stylesheet' />
@@ -15,7 +15,7 @@
       <div id='split-left' class='overflow-auto fs0 height-viewport-100'>
         <div class='py1 px2'>
           <h3 class='mb0 no-anchor'>sacoin</h3>
-          <div class='mb1'><code>1.0.0</code></div>
+          <div class='mb1'><code>0.0.0-development</code></div>
           <input
             placeholder='Filter'
             id='filter-input'
@@ -310,19 +310,9 @@
               
                 
                 <li><a
-                  href='#setcolours'
+                  href='#use'
                   class="">
-                  setColours
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#colour'
-                  class="">
-                  colour
+                  use
                   
                 </a>
                 
@@ -451,26 +441,6 @@
                   href='#clonekey'
                   class="">
                   cloneKey
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#bufferify'
-                  class="">
-                  bufferify
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#bsha3'
-                  class="">
-                  BSHA3
                   
                 </a>
                 
@@ -610,9 +580,9 @@
                       </a></li>
                     
                       <li><a
-                        href='#transactionsignature'
+                        href='#transactionsig'
                         class='regular pre-open'>
-                        .signature
+                        .sig
                       </a></li>
                     
                       <li><a
@@ -3197,56 +3167,8 @@
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='setcolours'>
-      setColours
-    </h3>
-    
-    
-  </div>
-  
-
-  <p>Set a colour scheme for the CLI.</p>
-
- 
-  
-    <div class='pre p1 fill-light mt0'>setColours</div>
-   
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='colour'>
-      colour
+    <h3 class='fl m0' id='use'>
+      use
     </h3>
     
     
@@ -3257,7 +3179,7 @@
 
  
   
-    <div class='pre p1 fill-light mt0'>colour</div>
+    <div class='pre p1 fill-light mt0'>use</div>
    
   
   
@@ -3870,48 +3792,76 @@
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>pk</span> <code class='quiet'>(<a href="#key">Key</a>)</code>
-	    Public key
+            <span class='code bold'>arg</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>
+            = <code>{}</code>)</code>
+	    Arguments
 
           </div>
           
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>msg</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    Message
+          <table class='mt1 mb2 fixed-table h5 col-12'>
+            <colgroup>
+              <col width='30%' />
+              <col width='70%' />
+            </colgroup>
+            <thead>
+              <tr class='bold fill-light'>
+                <th>Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody class='mt1'>
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>arg.pubKey</span> <code class='quiet'><a href="#key">Key</a></code>
+  </td>
+  <td class='break-word'><span>Public key
+</span></td>
+</tr>
 
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>sig</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    Digital signature
 
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>bitLen</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>
-            = <code>512</code>)</code>
-	    Bit length associated to the SHA hash (1, 224, 256, 384, 512) and usually half the key length from genKey().
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>arg.msg</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
+  </td>
+  <td class='break-word'><span>Message
+</span></td>
+</tr>
 
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>alg</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>
-            = <code>&#39;ECDSA&#39;</code>)</code>
-	    Algorithm
 
-          </div>
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>arg.sig</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
+  </td>
+  <td class='break-word'><span>Digital signature
+</span></td>
+</tr>
+
+
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>arg.bitLen</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>
+  
+    (default <code>512</code>)
+  </td>
+  <td class='break-word'><span>Bit length associated to the SHA hash (1, 224, 256, 384, 512) and usually half the key length from genKey().
+</span></td>
+</tr>
+
+
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>arg.alg</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
+  
+    (default <code>&#39;ECDSA&#39;</code>)
+  </td>
+  <td class='break-word'><span>Algorithm
+</span></td>
+</tr>
+
+
+              
+            </tbody>
+          </table>
           
         </div>
       
@@ -4196,146 +4146,6 @@
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='bufferify'>
-      bufferify
-    </h3>
-    
-    
-  </div>
-  
-
-  <p>Bufferify the output of a function.</p>
-
- 
-  
-    <div class='pre p1 fill-light mt0'>bufferify</div>
-   
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>fn</span> <code class='quiet'>(function (any): any)</code>
-	    Function to bufferify
-
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://nodejs.org/api/buffer.html">Buffer</a></code>:
-        Buffered output
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='bsha3'>
-      BSHA3
-    </h3>
-    
-    
-  </div>
-  
-
-  <p>Buffered SHA3.</p>
-
- 
-  
-    <div class='pre p1 fill-light mt0'>BSHA3</div>
-   
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>Data</span> <code class='quiet'>(any)</code>
-	    to hash
-
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://nodejs.org/api/buffer.html">Buffer</a></code>:
-        SHA3 hash
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
     <h3 class='fl m0' id='error'>
       error
     </h3>
@@ -4381,7 +4191,7 @@
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>context</span> <code class='quiet'>(any)</code>
+            <span class='code bold'>params</span> <code class='quiet'>(...any)</code>
 	    
           </div>
           
@@ -5265,11 +5075,11 @@
       </div>
     </div>
   
-    <div class='border-bottom' id='transactionsignature'>
+    <div class='border-bottom' id='transactionsig'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>signature</span>
+            <span class='code strong strong truncate'>sig</span>
         </div>
       </div>
       <div class="clearfix display-none toggle-target">
@@ -5281,7 +5091,7 @@
 
  
   
-    <div class='pre p1 fill-light mt0'>signature</div>
+    <div class='pre p1 fill-light mt0'>sig</div>
    
   
   
