@@ -28,6 +28,7 @@ class Transaction {
    * @param {number} [obj.fee=0] Transaction fee
    * @version 3
    * @memberof Transaction
+   * @throws {Error} No fromAddr/fromPubKey/toAddr property
    */
   constructor({
     fromAddr, fromPubKey,
@@ -36,6 +37,7 @@ class Transaction {
     sig,
     fee = TRANSACTION_FEE
   } = {}) {
+    if (!fromAddr || !fromPubKey || !toAddr) throw new Error('A transaction needs to have a fromAddr, fromPubKey and toAddr property');
     prvProps.set(this, {
       fromAddr,
       fromPubKey,

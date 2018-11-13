@@ -60,6 +60,10 @@ test('All set', () => {
   expect(tx.fee).toBe(1);
 });
 
+test('Empty', () => {
+  expect(() => new Transaction()).toThrowError(Error)
+});
+
 test('Signature et al', () => {
   expect.assertions(5);
   return new Promise((resolve) => {
@@ -83,4 +87,11 @@ test('Signature et al', () => {
       expect(tx.isValid()).toBeTruthy();
     })
     .catch(err => console.log('This went wrong:', err.toString()))
+});
+
+test('Changing', () => {
+  expect(tx.fee).toStrictEqual(FEE);
+  tx.fee = 3;
+  expect(tx.fee).toStrictEqual(3);
+  expect(tx.fee !== FEE).toBeTruthy();
 });

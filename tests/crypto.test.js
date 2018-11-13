@@ -34,7 +34,6 @@ test('Sign and Vrf', () => {
     pubKey: pk,
     msg,
     sig,
-    bitLen,
     alg: 'ECDSA'
   })).toBeTruthy();
 });
@@ -154,4 +153,8 @@ test('RSA clone', () => {
     });
   expect(xVrf).toBeTruthy();
   expect(xCVrf).toBeTruthy();
+});
+
+test('Verify something', () => {
+  expect(() => verify()).toThrowError('init failed:TypeError: Cannot read property \'curve\' of undefined');
 });
