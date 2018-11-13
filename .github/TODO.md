@@ -1,0 +1,16 @@
+-   [X] Add Elliptic Curve DSA
+-   [X] Add wallets with addresses and PK/SK pairs
+-   [ ] Prevent double-spending
+-   [X] Make sure that only available coins can be spent and that there's enough fee which goes to the correct place
+-   [ ] REST interface
+-   [ ] P2P using websocket (ws package)
+-   [ ] DB to save the blockchain and the wallets (to avoid loosing progress)
+-   [ ] GUI for the blockchain
+-   [X] Use Merkel trees (such as [this](https://github.com/miguelmota/merkle-tree))
+-   [ ] Add Proof of Stake
+-   [ ] Add consensus to the chain ([grey paper](https://hackernoon.com/building-a-blockchain-the-grey-paper-5be456018040))
+-   [ ] Adding Smart contracts
+-   [ ] Changing BANK into a proper wallet (so hide the sk and promote its wallet to itself)
+-   [ ] Making sure the documentation covers the source modules
+-   [X] Create a logo for the coin
+-   [X] Add a code coverage check
