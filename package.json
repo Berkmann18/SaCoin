@@ -9,17 +9,18 @@
   },
   "scripts": {
     "test": "jest",
-    "lint:js": "eslint -c ./config/.eslintrc.js --fix src/*.js tests/*.js",
+    "lint:js": "eslint -c ./.eslintrc.js --fix src/*.js tests/*.js",
     "fmt": "npm run lint:js src/*.js tests/*.js",
     "doc:lint": "documentation lint src/**",
     "doc:html": "documentation build src/** -f html -o doc/",
     "doc": "npm run doc:lint && npm run doc:html",
     "changelog": "conventional-changelog -p eslint -i CHANGELOG.md -s -r 0",
     "version": "npm run changelog && git add CHANGELOG.md",
+    "precommit": "lint-staged",
     "commit": "git-cz",
     "travis-deploy-once": "travis-deploy-once",
     "semantic-release": "semantic-release",
-    "lint:md": "remark . .github -i ./config/.remarkignore",
+    "lint:md": "remark . .github -i ./.remarkignore",
     "lint": "npm run lint:js && npm run lint:md"
   },
   "repository": {
@@ -80,6 +81,11 @@
     },
     "testEnvironment": "node"
   },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 9"
+  ],
   "engines": {
     "node": ">= 7.0.0",
     "npm": ">= 4.0.0"
@@ -89,20 +95,9 @@
       "path": "cz-adapter-eslint"
     }
   },
-  "remarkConfig": {
-    "plugins": [
-      "remark-preset-lint-recommended",
-      "remark-preset-lint-consistent"
-    ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "lint-staged": {
     "*.js": [
-      "eslint -c ./config/.eslintrc.js --fix",
+      "eslint -c ./.eslintrc.js --fix",
       "jest --bail --findRelatedTests",
       "git add"
     ],
