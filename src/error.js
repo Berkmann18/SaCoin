@@ -13,15 +13,13 @@ class ExtendedError extends Error {
   /**
    * @description Create a custom (extended) error.
    * @param {string} message Error message
-   * @param {*} context Context in which the error happened
+   * @param {...*} params Extra parameters
    */
-  constructor(message, context) {
-    super();
+  constructor(message, ...params) {
+    super(...params);
     this.message = message;
     this.name = this.constructor.name;
-    if (typeof Error.captureStackTrace === 'function') Error.captureStackTrace(this, this.constructor);
-    else this.stack = (new Error(message)).stack; //For IE and maybe Firefox
-    this.context = context;
+    Error.captureStackTrace && Error.captureStackTrace(this, this.constructor);
   }
 }
 

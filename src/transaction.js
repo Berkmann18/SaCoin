@@ -29,7 +29,13 @@ class Transaction {
    * @version 3
    * @memberof Transaction
    */
-  constructor({ fromAddr, fromPubKey, toAddr, amount = 0, sig, fee = TRANSACTION_FEE } = {}) {
+  constructor({
+    fromAddr, fromPubKey,
+    toAddr,
+    amount = 0,
+    sig,
+    fee = TRANSACTION_FEE
+  } = {}) {
     prvProps.set(this, {
       fromAddr,
       fromPubKey,

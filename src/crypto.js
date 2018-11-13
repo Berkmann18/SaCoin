@@ -63,7 +63,13 @@ const sign = (sk, msg, bitLen = 512, alg = 'ECDSA') => {
  * @param {string} [arg.alg='ECDSA'] Algorithm
  * @return {void|boolean} Signature validity
  */
-const verify = ({ pubKey, msg, sig, bitLen = 512, alg = 'ECDSA' } = {}) => {
+const verify = ({
+  pubKey,
+  msg,
+  sig,
+  bitLen = 512,
+  alg = 'ECDSA'
+} = {}) => {
   let tag = new Signature({ alg: `SHA${bitLen}with${alg}` });
   tag.init(pubKey);
   tag.updateString(msg);

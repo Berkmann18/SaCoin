@@ -35,7 +35,14 @@ class Block {
    * @param {number} [arg.txFee=TRANSACTION_FEE] Fee for each transaction that will be present in that block
    * @memberof Block
    */
-  constructor({ prevHash = ROOT_HASH, transactions = [], nonce = 0, height = 0, beneficiaryAddr = BANK.address, txFee = TRANSACTION_FEE } = {}) {
+  constructor({
+    prevHash = ROOT_HASH,
+    transactions = [],
+    nonce = 0,
+    height = 0,
+    beneficiaryAddr = BANK.address,
+    txFee = TRANSACTION_FEE
+  } = {}) {
 
     if (transactions.length) transactions.forEach(tx => {
       if (!tx.isValid()) throw new TransactionError(`Invalid transaction ant-Block creation: ${tx.toString()}`);

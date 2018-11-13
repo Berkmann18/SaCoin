@@ -67,15 +67,4 @@ test('OOBError', () => {
     expect(f).toThrowError('i too big');
     expect(f).toThrowError(OutOfBoundsError);
   }).catch(err => console.log('err:', err));
-  let gstack = () => {
-    let stk = null;
-    try {
-      throw new OutOfBoundsError();
-    } catch (err) {
-      stk = err.stack;
-    }
-    return stk;
-  };
-  expect(typeof gstack()).toBe('string');
-  expect(gstack().startsWith('OutOfBoundsError')).toBeTruthy();
 });

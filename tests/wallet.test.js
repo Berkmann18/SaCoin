@@ -12,7 +12,10 @@ BANK.sk = bankPair.sk;
 BANK.wallet = new Wallet(new Chain(), 'sxcBank', bankPair, BANK.address);
 
 test('Init', () => {
-  let chain = new Chain(1, BANK.pool), pw = 'pass', wlt = new Wallet(chain, pw), utp = new UTPool(), amt = 2, hash = SHA256(pw);
+  let chain = new Chain({
+      difficulty: 1,
+      utpool: BANK.pool
+    }), pw = 'pass', wlt = new Wallet(chain, pw), utp = new UTPool(), amt = 2, hash = SHA256(pw);
   expect(typeof wlt.address).toBe('string');
   expect(wlt.address).toBeDefined();
   expect(typeof wlt.keyPair).toBe('undefined');
@@ -66,7 +69,10 @@ test('Init', () => {
 });
 
 test('Integration 1/2', () => {
-  let utp = new UTPool(), chain = new Chain(2, utp), w0 = new Wallet(chain, 'z'), w1 = new Wallet(chain, 'o'), xch = 3,
+  let utp = new UTPool(), chain = new Chain({
+      difficulty: 2,
+      utpool: utp
+    }), w0 = new Wallet(chain, 'z'), w1 = new Wallet(chain, 'o'), xch = 3,
     tx = new Transaction({
       fromAddr: w0.address,
       fromPubKey: w0.publicKey,

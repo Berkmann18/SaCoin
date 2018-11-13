@@ -30,7 +30,13 @@ test('Init', () => {
 });
 
 test('Customised', () => {
-  let genesis = new Block({ nonce: 1 }), GBP = new Chain(3, BANK.pool, genesis, 10, 'GBP');
+  let genesis = new Block({ nonce: 1 }), GBP = new Chain({
+    difficulty: 3,
+    utpool: BANK.pool,
+    genesisBlock: genesis,
+    miningReward: 10,
+    currency: 'GBP'
+  });
   expect(GBP.difficulty).toBe(3);
   expect(GBP.utpool).toBe(BANK.pool);
   expect(GBP.chain).toStrictEqual([genesis]);
@@ -140,7 +146,9 @@ test('Transactions', () => {
 });
 
 test('Mining', () => {
-  let SXC = new Chain(DIFFICULTY, new UTPool({[BANK.address]: BANK.amount})), transferred = 5;
+  let SXC = new Chain({
+      utpool: new UTPool({[BANK.address]: BANK.amount})
+    }), transferred = 5;
   BANK.wallet.blockchain = SXC;
   let hash = SHA256('123'), coin = 7;
 

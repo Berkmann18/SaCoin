@@ -15,7 +15,6 @@ const Block = require('./block'),
 
 /** @private */
 let prvProps = new WeakMap();
-const ROOT_HASH = 'b076b4ac5dfd570677538e23b54818022a379d2e8da1ef6f1b40f08965b528ff'; //Taken from block.js
 
 // if (!DIFFICULTY || !BANK || !MINING_REWARD || !CURRENCY) console.error('No config.js:', {DIFFICULTY, BANK, MINING_REWARD, CURRENCY});
 /* Since there's an apparent issue in which wallet.test.js not finding the constants from config even tho it works on blockchain.test.js and on here,
@@ -43,15 +42,22 @@ const ROOT_HASH = 'b076b4ac5dfd570677538e23b54818022a379d2e8da1ef6f1b40f08965b52
  */
 class Blockchain {
   /**
-   * @description Creates a blockchain
-   * @param {number} [difficulty=DIFFICULTY] Difficulty of the hashes
-   * @param {UTPool} [utpool=new UTPool(UTPOOL)] Unspent transaction pool
-   * @param {Block} [genesisBlock=Blockchain.createGenesisBlock()] Genesis block
-   * @param {number} [miningReward=MINING_REWARD] Mining reward
-   * @param {string} [currency=CURRENCY] Currency name
+   * @description Creates a blockchain.
+   * @param {Object} stg Settings of the blockchain
+   * @param {number} [stg.difficulty=DIFFICULTY] Difficulty of the hashes
+   * @param {UTPool} [stg.utpool=new UTPool(UTPOOL)] Unspent transaction pool
+   * @param {Block} [stg.genesisBlock=Blockchain.createGenesisBlock()] Genesis block
+   * @param {number} [stg.miningReward=MINING_REWARD] Mining reward
+   * @param {string} [stg.currency=CURRENCY] Currency name
    * @memberof Blockchain
    */
-  constructor(difficulty = DIFFICULTY, utpool = new UTPool(UTPOOL), genesisBlock = Blockchain.createGenesisBlock(), miningReward = MINING_REWARD, currency = CURRENCY) {
+  constructor({
+    difficulty = DIFFICULTY,
+    utpool = new UTPool(UTPOOL),
+    genesisBlock = Blockchain.createGenesisBlock(),
+    miningReward = MINING_REWARD,
+    currency = CURRENCY
+  } = {}) {
     genesisBlock.mine();
     prvProps.set(this, {
       chain: [genesisBlock],
