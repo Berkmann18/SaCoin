@@ -12,7 +12,9 @@ test('Init', () => {
   expect(utp.pool).toStrictEqual({[addr]: 3});
   let adr = Wallet.generateAddress(gen().pk, '');
   utp.addUT(adr, 5);
+  /* eslint-disable security/detect-object-injection */
   expect(utp.pool[adr]).toBe(5);
+  /* eslint-enable security/detect-object-injection */
   expect(() => utp.addUT(adr, '2')).toThrowError(TypeError);
   expect(() => utp.addUT(adr, null)).toThrowError('The UT amount needs to be a number not null');
 });
@@ -30,5 +32,7 @@ test('Configured', () => {
 test('Catching the 32', () => {
   let addr = Wallet.generateAddress(gen().pk, ''), utp = new UTPool({[addr]: '123'});
   utp.addUT(addr, 4); //Should reach l.32
+  /* eslint-disable security/detect-object-injection */
   expect(utp.pool[addr]).toBe(127);
+  /* eslint-enable security/detect-object-injection */
 });

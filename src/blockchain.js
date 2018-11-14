@@ -147,12 +147,17 @@ class Blockchain {
    * @param {number} index Index
    * @return {Block} Block
    * @memberof Blockchain
+   * @throws {TypeError} Index needs to be an integer
+   * @throws {OutOfBoundsError} Index out of bounds
    */
   getBlock(index) {
+    if (!Number.isInteger(index)) throw new TypeError(`index (${index}) needs to be an integer`);
     let chain = this.chain,
       sz = chain.length;
-    if (index >= sz) throw new OutOfBoundsError(`index (${index}) out of bounds`);
+    if (index >= sz || index <= ~sz) throw new OutOfBoundsError(`index (${index}) out of bounds`);
+    /* eslint-disable security/detect-object-injection */
     else return (index < 0) ? chain[sz + index] : chain[index];
+    /* eslint-enable security/detect-object-injection */
   }
 
   /**
@@ -196,6 +201,7 @@ class Blockchain {
   isValid() {
     let chain = this.chain;
     for (let i = 1; i < chain.length; ++i) {
+      /* eslint-disable security/detect-object-injection */
       const currentBlock = chain[i],
         prevBlock = chain[i - 1],
         pad = '0'.repeat(this.difficulty);

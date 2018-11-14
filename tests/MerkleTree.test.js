@@ -64,6 +64,8 @@ test('With Transactions', () => {
     return tree.getProof(leaf);
   });
   let root = tree.getRoot();
+  /* eslint-disable security/detect-object-injection */
   let vrfs = proofs.map((proof, i) => tree.verify(proof, leaves[i], root));
+  /* eslint-enable security/detect-object-injection */
   expect(vrfs).toEqual(new Array(txs.length).fill(true));
 });

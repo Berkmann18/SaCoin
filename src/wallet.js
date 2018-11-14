@@ -27,6 +27,7 @@ const ATTEMPT = {};
 const ATTEMPT_THRESHOLD = 3;
 prvProps.set(ATTEMPT, {});
 
+/* eslint-disable security/detect-object-injection */
 /**
  * @description Set the number of secret key recovery attempts.
  * @param {Wallet.address|string} addr Address of the wallet concerned
@@ -43,6 +44,7 @@ const _setAttempt = (addr, num) => prvProps.get(ATTEMPT)[addr] = num;
  * @private
  */
 const _getAttempt = (addr) => prvProps.get(ATTEMPT)[addr];
+/* eslint-disable security/detect-object-injection */
 
 /**
  * @description Calculate the address of a wallet.

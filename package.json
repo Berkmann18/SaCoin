@@ -10,7 +10,6 @@
   "scripts": {
     "test": "jest",
     "lint:js": "eslint -c ./.eslintrc.js --fix src/*.js tests/*.js",
-    "fmt": "npm run lint:js src/*.js tests/*.js",
     "doc:lint": "documentation lint src/**",
     "doc:html": "documentation build src/** -f html -o doc/",
     "doc": "npm run doc:lint && npm run doc:html",
