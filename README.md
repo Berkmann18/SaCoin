@@ -15,6 +15,7 @@
 [![Build Status](https://travis-ci.org/Berkmann18/SaCoin.svg?branch=master)](https://travis-ci.org/Berkmann18/SaCoin)
 [![codecov.io Code Coverage](https://img.shields.io/codecov/c/github/Berkmann18/SaCoin.svg?maxAge=2592000)](https://codecov.io/github/Berkmann18/SaCoin?branch=master)
 [![tested with jest](https://img.shields.io/badge/tested_with-jest-99424f.svg)](https://github.com/facebook/jest)
+[![Known Vulnerabilities](https://snyk.io/test/github/Berkmann18/SaCoin/badge.svg?targetFile=package.json)](https://snyk.io/test/github/Berkmann18/SaCoin?targetFile=package.json)
 
 [![GitHub](https://img.shields.io/github/license/Berkmann18/SaCoin.svg)](https://github.com/Berkmann18/SaCoin/blob/master/LICENSE)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/Berkmann18/SaCoin/issues)
@@ -23,7 +24,6 @@
 [![GitHub top language](https://img.shields.io/github/languages/top/Berkmann18/SaCoin.svg)](https://github.com/Berkmann18/SaCoin)
 [![GitHub language count](https://img.shields.io/github/languages/count/Berkmann18/SaCoin.svg)](https://github.com/Berkmann18/SaCoin)
 [![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/Berkmann18/SaCoin.svg)](https://github.com/Berkmann18/SaCoin)
-
 
 [![BCH compliance](https://bettercodehub.com/edge/badge/Berkmann18/SaCoin?branch=master)](https://bettercodehub.com/)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a772e53fef984a558ef4741392bd926d)](https://www.codacy.com/app/maxieberkmann/SaCoin?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Berkmann18/SaCoin&amp;utm_campaign=Badge_Grade)
