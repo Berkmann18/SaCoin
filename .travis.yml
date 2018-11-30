@@ -12,7 +12,7 @@ node_js:
   - '6'
 install:
   - npm i
-  - npm i codecov jest eslint
+  - npm i codecov jest eslint conventional-changelog
 script:
   - npm run lint
   - npm test
