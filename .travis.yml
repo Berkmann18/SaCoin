@@ -12,12 +12,14 @@ node_js:
   - '6'
 install:
   - npm i
-  - npm i codecov jest eslint conventional-changelog
+  - npm i -g codecov jest eslint snuk
 script:
   - npm run lint
+  - snyk auth $SNYK_TOKEN
   - npm test
   - codecov
 after_success:
+  - snyk monitor
   - npm run travis-deploy-once "npm run semantic-release"
 branches:
   except:

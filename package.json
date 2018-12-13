@@ -13,8 +13,6 @@
     "doc:lint": "documentation lint src/**",
     "doc:html": "documentation build src/** -f html -o doc/",
     "doc": "npm run doc:lint && npm run doc:html",
-    "changelog": "conventional-changelog -p eslint -i CHANGELOG.md -s -r 0",
-    "version": "npm run changelog && git add CHANGELOG.md",
     "precommit": "lint-staged",
     "commit": "git-cz",
     "travis-deploy-once": "travis-deploy-once",
@@ -35,7 +33,10 @@
     "nodejs",
     "es6"
   ],
-  "author": "Berkmann18",
+  "author": {
+		"name": "Maximilian Berkmann",
+		"email": "maxieberkmann@gmail.com"
+	},
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Berkmann18/SaCoin/issues"
@@ -51,11 +52,16 @@
     "nclr": "^1.2.1"
   },
   "devDependencies": {
+    "@semantic-release/changelog": "^3.0.1",
+    "@semantic-release/git": "^7.0.5",
+    "conventional-changelog-eslint": "^3.0.1",
     "cz-adapter-eslint": "^0.1.2",
     "documentation": "^8.1.2",
     "eslint": "^5.7.0",
     "eslint-plugin-security": "^1.4.0",
+    "eslint-plugin-you-dont-need-lodash-underscore": "^6.4.0",
     "jest": "^23.4.2",
+    "lint-staged": "^8.1.0",
     "remark-cli": "^6.0.0",
     "remark-preset-lint-consistent": "^2.0.2",
     "remark-preset-lint-recommended": "^3.0.2",
