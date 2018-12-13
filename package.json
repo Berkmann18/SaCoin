@@ -48,7 +48,7 @@
     "crypto-js": "^3.1.9-1",
     "jsrsasign": "^8.0.12",
     "lodash": "^4.17.10",
-    "merkletreejs": "0.0.18",
+    "merkletreejs": "0.0.20",
     "nclr": "^1.2.1"
   },
   "devDependencies": {
@@ -56,7 +56,7 @@
     "@semantic-release/git": "^7.0.5",
     "conventional-changelog-eslint": "^3.0.1",
     "cz-adapter-eslint": "^0.1.2",
-    "documentation": "^8.1.2",
+    "documentation": "^9.0.0",
     "eslint": "^5.7.0",
     "eslint-plugin-security": "^1.4.0",
     "eslint-plugin-you-dont-need-lodash-underscore": "^6.4.0",
