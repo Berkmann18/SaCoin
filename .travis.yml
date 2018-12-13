@@ -12,7 +12,7 @@ node_js:
   - '6'
 install:
   - npm i
-  - npm i -g codecov jest eslint snuk
+  - npm i -g jest codecov eslint
 script:
   - npm run lint
   - snyk auth $SNYK_TOKEN
