@@ -20,7 +20,18 @@ script:
   - codecov
 after_success:
   - snyk monitor
-  - npm run travis-deploy-once "npm run semantic-release"
+jobs:
+  include:
+    - stage: release
+      node_js: 'node'
+      script: skip
+      deploy:
+        provider: script
+        skip_cleanup: true
+        script: npm run semantic-release
 branches:
   except:
     - /^v\d+\.\d+\.\d+$/
+stages:
+  - name: release
+    if: branch = master
