@@ -13,11 +13,11 @@
     "doc:lint": "documentation lint src/**",
     "doc:html": "documentation build src/** -f html -o doc/",
     "doc": "npm run doc:lint && npm run doc:html",
-    "precommit": "lint-staged",
     "commit": "git-cz",
     "semantic-release": "semantic-release",
     "lint:md": "remark . .github -i ./.remarkignore",
     "lint": "npm run lint:js && npm run lint:md",
+    "prepare": "snyk protect",
     "contribs:add": "all-contributors add",
     "contribs:generate": "all-contributors generate",
     "contribs:check": "all-contributors check"
