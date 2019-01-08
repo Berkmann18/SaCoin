@@ -366,7 +366,14 @@ class UTPool {
 
 # Contributing
 If you think that I did/got something wrong or want to suggest X or Y changes/additions then feel free to create an issue or PR
-while following what [this](./wiki/CONTRIBUTING.md) says.
+while following what [this](./github/CONTRIBUTING.md) says.
+
+# Contributors
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore -->
+| [<img src="https://avatars0.githubusercontent.com/u/8260834?v=4" width="100px;"/><br /><sub><b>Maximilian Berkmann</b></sub>](http://maxcubing.wordpress.com)<br />[🐛](https://github.com/Berkmann18/SaCoin/issues?q=author%3ABerkmann18 "Bug reports") [💻](https://github.com/Berkmann18/SaCoin/commits?author=Berkmann18 "Code") [📖](https://github.com/Berkmann18/SaCoin/commits?author=Berkmann18 "Documentation") [🤔](#ideas-Berkmann18 "Ideas, Planning, & Feedback") [💬](#question-Berkmann18 "Answering Questions") [👀](#review-Berkmann18 "Reviewed Pull Requests") [🛡️](#security-Berkmann18 "Security") [⚠️](https://github.com/Berkmann18/SaCoin/commits?author=Berkmann18 "Tests") | [<img src="https://avatars2.githubusercontent.com/u/36207117?v=4" width="100px;"/><br /><sub><b>Dependabot</b></sub>](https://dependabot.com)<br />[🔧](#tool-dependabot-bot "Tools") | [<img src="https://avatars1.githubusercontent.com/u/32174276?v=4" width="100px;"/><br /><sub><b>Semantic Release Bot</b></sub>](http://semantic-release.org/)<br />[📖](https://github.com/Berkmann18/SaCoin/commits?author=semantic-release-bot "Documentation") [📦](#platform-semantic-release-bot "Packaging/porting to new platform") | [<img src="https://avatars1.githubusercontent.com/u/31427850?v=4" width="100px;"/><br /><sub><b>ImgBot</b></sub>](https://imgbot.net)<br />[🎨](#design-ImgBotApp "Design") | [<img src="https://avatars3.githubusercontent.com/u/23704769?v=4" width="100px;"/><br /><sub><b>Codacy Badger</b></sub>](https://www.codacy.com)<br />[📖](https://github.com/Berkmann18/SaCoin/commits?author=codacy-badger "Documentation") |
+| :---: | :---: | :---: | :---: | :---: |
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 
 # Resources
 -   [nodejscrypto](http://www.darrenbeck.co.uk/blockchain/nodejs/nodejscrypto/)
