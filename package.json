@@ -62,7 +62,7 @@
     "cz-adapter-eslint": "^0.2.0",
     "documentation": "^10.0.0",
     "eslint": "^5.7.0",
-    "eslint-plugin-node": "^8.0.1",
+    "eslint-plugin-node": "^9.0.1",
     "eslint-plugin-security": "^1.4.0",
     "eslint-plugin-you-dont-need-lodash-underscore": "^6.4.0",
     "jest": "^24.0.0",
