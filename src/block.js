@@ -7,7 +7,7 @@
 
 const { SHA256, SHA3 } = require('crypto-js'),
   MerkleTree = require('merkletreejs'),
-  { use } = require('./cli');
+  { use } = require('./utils');
 const Transaction = require('./transaction'),
   { TransactionError } = require('./error'),
   { DIFFICULTY, BANK, TRANSACTION_FEE } = require('../cfg.json');

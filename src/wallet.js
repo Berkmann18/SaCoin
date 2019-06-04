@@ -6,7 +6,7 @@
  */
 
 const SHA256 = require('crypto-js/sha256'),
-  { use } = require('./cli');
+  { use } = require('./utils');
 const { genKey } = require('./crypto'),
   UTPool = require('./utpool');
 

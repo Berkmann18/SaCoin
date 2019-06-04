@@ -6,7 +6,7 @@
  */
 
 const flat = require('lodash/flatten'),
-  { use } = require('./cli');
+  { use } = require('./utils');
 const Block = require('./block'),
   { DIFFICULTY, MINING_REWARD, CURRENCY, BANK, UTPOOL } = require('../cfg.json'),
   Transaction = require('./transaction'),

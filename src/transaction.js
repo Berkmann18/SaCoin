@@ -5,7 +5,7 @@
  * @module
  */
 
-const { use } = require('./cli'),
+const { use } = require('./utils'),
   SHA256 = require('crypto-js/sha256');
 const { verify, sign } = require('./crypto'),
   { TRANSACTION_FEE } = require('./config');

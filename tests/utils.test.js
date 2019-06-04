@@ -1,4 +1,4 @@
-const { use } = require('../src/cli');
+const { use } = require('../src/utils');
 
 
 test('Init', () => {
