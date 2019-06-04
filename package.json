@@ -21,7 +21,8 @@
     "prepare": "snyk protect",
     "contribs:add": "all-contributors add",
     "contribs:generate": "all-contributors generate",
-    "contribs:check": "all-contributors check"
+    "contribs:check": "all-contributors check",
+    "fmt": "prettier --config .prettierrc.json --ignore-path .prettierignore --write"
   },
   "repository": {
     "type": "git",
@@ -66,8 +67,10 @@
     "eslint-plugin-node": "^9.0.1",
     "eslint-plugin-security": "^1.4.0",
     "eslint-plugin-you-dont-need-lodash-underscore": "^6.4.0",
+    "husky": "^2.3.0",
     "jest": "^24.0.0",
     "lint-staged": "^8.1.0",
+    "prettier": "^1.17.1",
     "remark-cli": "^6.0.0",
     "remark-preset-lint-consistent": "^2.0.2",
     "remark-preset-lint-recommended": "^3.0.2",
@@ -108,6 +111,7 @@
   },
   "lint-staged": {
     "*.js": [
+      "npm run fmt",
       "eslint -c ./.eslintrc.js --fix",
       "jest --bail --findRelatedTests",
       "git add"
