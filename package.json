@@ -53,7 +53,8 @@
     "jsrsasign": "^8.0.12",
     "lodash": "^4.17.10",
     "merkletreejs": "0.0.22",
-    "nclr": "^2.0.0"
+    "nclr": "^2.0.0",
+    "vorpal": "^1.12.0"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^3.0.1",
