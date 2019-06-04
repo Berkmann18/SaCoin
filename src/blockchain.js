@@ -6,11 +6,11 @@
  */
 
 const flat = require('lodash/flatten'),
-  { use } = require('./utils');
+  {use} = require('./utils');
 const Block = require('./block'),
-  { DIFFICULTY, MINING_REWARD, CURRENCY, BANK, UTPOOL } = require('../cfg.json'),
+  {DIFFICULTY, MINING_REWARD, CURRENCY, BANK, UTPOOL} = require('../cfg.json'),
   Transaction = require('./transaction'),
-  { BlockError, TransactionError, OutOfBoundsError } = require('./error'),
+  {BlockError, TransactionError, OutOfBoundsError} = require('./error'),
   UTPool = require('./utpool');
 
 /** @private */
@@ -130,7 +130,7 @@ class Blockchain {
    * @memberof Blockchain
    */
   static createGenesisBlock(beneficiaryAddr) {
-    return new Block({ beneficiaryAddr });
+    return new Block({beneficiaryAddr});
   }
 
   /**
@@ -155,8 +155,8 @@ class Blockchain {
     let chain = this.chain,
       sz = chain.length;
     if (index >= sz || index <= ~sz) throw new OutOfBoundsError(`index (${index}) out of bounds`);
-    /* eslint-disable security/detect-object-injection */
-    else return (index < 0) ? chain[sz + index] : chain[index];
+    /* eslint-disable security/detect-object-injection */ else
+      return index < 0 ? chain[sz + index] : chain[index];
     /* eslint-enable security/detect-object-injection */
   }
 
@@ -180,7 +180,9 @@ class Blockchain {
    * @memberof Blockchain
    */
   getAllTransactions(toString = false, cliColour = false) {
-    return toString ? flat(this.chain.map(block => block.transactions.map(tx => tx.toString(cliColour)))) : flat(this.chain.map(block => block.transactions));
+    return toString
+      ? flat(this.chain.map(block => block.transactions.map(tx => tx.toString(cliColour))))
+      : flat(this.chain.map(block => block.transactions));
   }
 
   /**
@@ -205,7 +207,8 @@ class Blockchain {
       const currentBlock = chain[i],
         prevBlock = chain[i - 1],
         pad = '0'.repeat(this.difficulty);
-      const incorrectPadding = (!currentBlock.hash.startsWith(pad) || !prevBlock.hash.startsWith(pad)),
+      const incorrectPadding =
+          !currentBlock.hash.startsWith(pad) || !prevBlock.hash.startsWith(pad),
         incorrectHash = currentBlock.hash !== currentBlock.calculateHash(),
         incorrectFollow = currentBlock.prevHash !== prevBlock.hash;
       /* istanbul ignore next */
@@ -221,7 +224,11 @@ class Blockchain {
    * @memberof Blockchain
    */
   toString(cliColour = true) {
-    let str = `Blockchain(chain=[${this.chain.map(block => block.toString())}], pendingTransactions=[${this.pendingTransactions}], difficulty=${this.difficulty}, miningReward=${this.miningReward}, currency=${this.currency})`;
+    let str = `Blockchain(chain=[${this.chain.map(block =>
+      block.toString()
+    )}], pendingTransactions=[${this.pendingTransactions}], difficulty=${
+      this.difficulty
+    }, miningReward=${this.miningReward}, currency=${this.currency})`;
     return cliColour ? use('chain', str) : str;
   }
 
@@ -274,13 +281,22 @@ class Blockchain {
    */
   addTransaction(transaction) {
     //Check the transaction
-    if (!transaction.isValid()) throw new TransactionError(`Invalid transaction: ${transaction.toString()}`);
+    if (!transaction.isValid())
+      throw new TransactionError(`Invalid transaction: ${transaction.toString()}`);
     let senderBalance = this.utpool.pool[transaction.fromAddr],
       spending = transaction.amount + transaction.fee;
-    if (senderBalance === undefined) throw new Error(`The balance of the sender ${transaction.fromAddr} has no unspent coins`);
-    if ( /*transaction.fromAddr !== BANK.address && */ senderBalance < spending) throw new TransactionError(`The transaction requires more coins than the sender (${transaction.fromAddr}) has ((${transaction.amount} + ${transaction.fee})${this.currency} off ${senderBalance}${this.currency})`);
-    if (this.getTransactionsByHash(transaction.hash).length) throw new TransactionError(`Transaction already in blockchain: ${transaction.toString()}`);
-    if (this.pendingTransactions.includes(transaction)) throw new TransactionError(`Transaction already pending: ${transaction.toString()}`);
+    if (senderBalance === undefined)
+      throw new Error(`The balance of the sender ${transaction.fromAddr} has no unspent coins`);
+    if (/*transaction.fromAddr !== BANK.address && */ senderBalance < spending)
+      throw new TransactionError(
+        `The transaction requires more coins than the sender (${transaction.fromAddr}) has ((${
+          transaction.amount
+        } + ${transaction.fee})${this.currency} off ${senderBalance}${this.currency})`
+      );
+    if (this.getTransactionsByHash(transaction.hash).length)
+      throw new TransactionError(`Transaction already in blockchain: ${transaction.toString()}`);
+    if (this.pendingTransactions.includes(transaction))
+      throw new TransactionError(`Transaction already pending: ${transaction.toString()}`);
 
     //Eventually place the transaction in the list of pending ones
     prvProps.get(this).pendingTransactions.push(transaction);

@@ -6,8 +6,8 @@
  */
 
 const SHA256 = require('crypto-js/sha256'),
-  { use } = require('./utils');
-const { genKey } = require('./crypto'),
+  {use} = require('./utils');
+const {genKey} = require('./crypto'),
   UTPool = require('./utpool');
 
 /** @private */
@@ -35,7 +35,7 @@ prvProps.set(ATTEMPT, {});
  * @private
  * @return {*}
  */
-const _setAttempt = (addr, num) => prvProps.get(ATTEMPT)[addr] = num;
+const _setAttempt = (addr, num) => (prvProps.get(ATTEMPT)[addr] = num);
 
 /**
  * @description Get the number of attempts done on the secret key of an address.
@@ -43,7 +43,7 @@ const _setAttempt = (addr, num) => prvProps.get(ATTEMPT)[addr] = num;
  * @return {number} Number of recovery attempts
  * @private
  */
-const _getAttempt = (addr) => prvProps.get(ATTEMPT)[addr];
+const _getAttempt = addr => prvProps.get(ATTEMPT)[addr];
 /* eslint-disable security/detect-object-injection */
 
 /**
@@ -100,7 +100,10 @@ class Wallet {
    * @memberof Wallet
    */
   hasValidAddress() {
-    return this.address === calculateAddress(this.publicKey, prvProps.get(this).creationTime, prvProps.get(this).password);
+    return (
+      this.address ===
+      calculateAddress(this.publicKey, prvProps.get(this).creationTime, prvProps.get(this).password)
+    );
   }
 
   /**
@@ -147,10 +150,15 @@ class Wallet {
    */
   secretKey(pwd) {
     const attempt = _getAttempt(this.address);
-    if (attempt >= ATTEMPT_THRESHOLD) throw Error('Secret key recovery attempt threshold exceeded.');
+    if (attempt >= ATTEMPT_THRESHOLD)
+      throw Error('Secret key recovery attempt threshold exceeded.');
     if (pwd.toString() !== prvProps.get(this).password.toString()) {
       _setAttempt(this.address, 1 + attempt);
-      throw Error(`A secret key recovery was attempted on the address ${this.address} with ${_getAttempt(this.address)} attempts`);
+      throw Error(
+        `A secret key recovery was attempted on the address ${this.address} with ${_getAttempt(
+          this.address
+        )} attempts`
+      );
     }
     return prvProps.get(this).keyPair.sk;
   }
@@ -204,7 +212,9 @@ class Wallet {
    * @memberof Wallet
    */
   toString(cliColour = true) {
-    return `Wallet(blockchain=${this.blockchain.toString(cliColour)}, address=${this.address}, publicKey=${this.publicKey.pubKeyHex})`
+    return `Wallet(blockchain=${this.blockchain.toString(cliColour)}, address=${
+      this.address
+    }, publicKey=${this.publicKey.pubKeyHex})`;
   }
   /*
     /!**
@@ -237,7 +247,7 @@ class Wallet {
         if (tx.toAddr === this.address) txs.out.push(tx);
       }
     }
-    return txs
+    return txs;
   }
 
   /**

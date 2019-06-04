@@ -41,4 +41,4 @@ class BlockError extends ExtendedError {}
  */
 class OutOfBoundsError extends ExtendedError {}
 
-module.exports = { TransactionError, BlockError, OutOfBoundsError };
+module.exports = {TransactionError, BlockError, OutOfBoundsError};

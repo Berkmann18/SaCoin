@@ -5,10 +5,10 @@
  * @module
  */
 
-const { use } = require('./utils'),
+const {use} = require('./utils'),
   SHA256 = require('crypto-js/sha256');
-const { verify, sign } = require('./crypto'),
-  { TRANSACTION_FEE } = require('./config');
+const {verify, sign} = require('./crypto'),
+  {TRANSACTION_FEE} = require('./config');
 
 /** @private */
 let prvProps = new WeakMap();
@@ -30,14 +30,9 @@ class Transaction {
    * @memberof Transaction
    * @throws {Error} No fromAddr/fromPubKey/toAddr property
    */
-  constructor({
-    fromAddr, fromPubKey,
-    toAddr,
-    amount = 0,
-    sig,
-    fee = TRANSACTION_FEE
-  } = {}) {
-    if (!fromAddr || !fromPubKey || !toAddr) throw new Error('A transaction needs to have a fromAddr, fromPubKey and toAddr property');
+  constructor({fromAddr, fromPubKey, toAddr, amount = 0, sig, fee = TRANSACTION_FEE} = {}) {
+    if (!fromAddr || !fromPubKey || !toAddr)
+      throw new Error('A transaction needs to have a fromAddr, fromPubKey and toAddr property');
     prvProps.set(this, {
       fromAddr,
       fromPubKey,
@@ -57,7 +52,9 @@ class Transaction {
    * @memberof Transaction
    */
   calculateHash() {
-    return SHA256(this.fromAddr + this.toAddr + this.amount /* + this.fee*/ + this.timestamp).toString();
+    return SHA256(
+      this.fromAddr + this.toAddr + this.amount /* + this.fee*/ + this.timestamp
+    ).toString();
   }
 
   /**
@@ -113,7 +110,6 @@ class Transaction {
     return prvProps.get(this).timestamp;
   }
 
-
   /**
    * @description Get the transaction's hash.
    * @return {string} Hash
@@ -165,7 +161,12 @@ class Transaction {
    * @memberof Transaction
    */
   isValid() {
-    return this.hash === this.calculateHash() && this.hasValidSignature() && this.amount > 0 && this.fee >= 0
+    return (
+      this.hash === this.calculateHash() &&
+      this.hasValidSignature() &&
+      this.amount > 0 &&
+      this.fee >= 0
+    );
   }
 
   /**
@@ -174,11 +175,14 @@ class Transaction {
    * @memberof Transaction
    */
   hasValidSignature() {
-    return this.sig && verify({
-      pubKey: this.fromPubKey,
-      msg: this.hash,
-      sig: this.sig
-    });
+    return (
+      this.sig &&
+      verify({
+        pubKey: this.fromPubKey,
+        msg: this.hash,
+        sig: this.sig
+      })
+    );
   }
 
   /**
@@ -188,7 +192,9 @@ class Transaction {
    * @memberof Transaction
    */
   toString(cliColour = true) {
-    let str = `Transaction(fromAddr=${this.fromAddr}, fromPubKey=${this.fromPubKey}, toAddr=${this.toAddr}, amount=${this.amount}, timestamp=${this.timestamp}, fee=${this.fee}, hash=${this.hash})`;
+    let str = `Transaction(fromAddr=${this.fromAddr}, fromPubKey=${this.fromPubKey}, toAddr=${
+      this.toAddr
+    }, amount=${this.amount}, timestamp=${this.timestamp}, fee=${this.fee}, hash=${this.hash})`;
     return cliColour ? use('tx', str) : str;
   }
 }

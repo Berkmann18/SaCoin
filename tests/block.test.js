@@ -1,4 +1,4 @@
-const { use } = require('nclr');
+const {use} = require('nclr');
 const Block = require('../src/block'),
   {BANK, TRANSACTION_FEE} = require('../cfg.json'),
   Transaction = require('../src/transaction'),
@@ -11,14 +11,31 @@ test('Block creation', () => {
   let block = new Block();
   expect(block.transactions).toEqual([]);
   expect(block.timestamp <= Date.now()).toBeTruthy();
-  expect(block.prevHash).toEqual('b076b4ac5dfd570677538e23b54818022a379d2e8da1ef6f1b40f08965b528ff');
+  expect(block.prevHash).toEqual(
+    'b076b4ac5dfd570677538e23b54818022a379d2e8da1ef6f1b40f08965b528ff'
+  );
   expect(block.hash).toBe(block.calculateHash());
   expect(block.height).toBe(0);
   expect(Buffer.isBuffer(block.merkleRoot)).toBeTruthy();
   let merkleRoot = block.merkleRoot.toString('utf8');
   expect(merkleRoot === '').toBeTruthy();
-  expect(block.toString()).toStrictEqual(use('block', `Block(transactions=[], timestamp=${block.timestamp}, prevHash=${block.prevHash}, merkleRoot=${merkleRoot}, hash=${block.hash}, height=0, beneficiaryAddr=${block.beneficiaryAddr}, transactionFee=1)`));
-  expect(block.toString(false)).toStrictEqual(`Block(transactions=[], timestamp=${block.timestamp}, prevHash=${block.prevHash}, merkleRoot=${merkleRoot}, hash=${block.hash}, height=0, beneficiaryAddr=${block.beneficiaryAddr}, transactionFee=1)`);
+  expect(block.toString()).toStrictEqual(
+    use(
+      'block',
+      `Block(transactions=[], timestamp=${block.timestamp}, prevHash=${
+        block.prevHash
+      }, merkleRoot=${merkleRoot}, hash=${block.hash}, height=0, beneficiaryAddr=${
+        block.beneficiaryAddr
+      }, transactionFee=1)`
+    )
+  );
+  expect(block.toString(false)).toStrictEqual(
+    `Block(transactions=[], timestamp=${block.timestamp}, prevHash=${
+      block.prevHash
+    }, merkleRoot=${merkleRoot}, hash=${block.hash}, height=0, beneficiaryAddr=${
+      block.beneficiaryAddr
+    }, transactionFee=1)`
+  );
   expect(block.isGenesis()).toBeTruthy();
   expect(block.isValid()).toBeFalsy();
   expect(block.nonce).toBe(undefined); //Instead of 0
@@ -83,10 +100,13 @@ test('Transactions gone wrong', () => {
 });
 
 test('Transactions gone right', () => {
-  let chain = [], pw = 'pass', wlt = new Wallet(chain, pw), utp = new UTPool({
-    [wlt.address]: 10,
-    [BANK.address]: 100
-  });
+  let chain = [],
+    pw = 'pass',
+    wlt = new Wallet(chain, pw),
+    utp = new UTPool({
+      [wlt.address]: 10,
+      [BANK.address]: 100
+    });
   let tx = new Transaction({
     fromAddr: BANK.address,
     fromPubKey: BANK.pk,
@@ -120,7 +140,8 @@ test('Transactions gone right', () => {
 });
 
 test('Filled block', () => {
-  let w0 = new Wallet({}, '0'), w1 = new Wallet({}, '1');
+  let w0 = new Wallet({}, '0'),
+    w1 = new Wallet({}, '1');
   let txs = [
     new Transaction({
       fromAddr: BANK.address,

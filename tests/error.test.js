@@ -4,9 +4,10 @@ test('TransactionError', () => {
   expect(() => {
     throw new TransactionError();
   }).toThrowError(TransactionError);
-  let txt = 'Invalid tx', named = () => {
-    throw new TransactionError(txt);
-  };
+  let txt = 'Invalid tx',
+    named = () => {
+      throw new TransactionError(txt);
+    };
   expect(named).toThrowError(TransactionError);
   expect(named).toThrowError(txt);
   let ctxted = () => {
@@ -26,14 +27,14 @@ test('TransactionError', () => {
   expect(gstack().startsWith('TransactionError')).toBeTruthy();
 });
 
-
 test('BlockError', () => {
   expect(() => {
     throw new BlockError();
   }).toThrowError(BlockError);
-  let txt = 'Invalid block', named = () => {
-    throw new BlockError(txt);
-  };
+  let txt = 'Invalid block',
+    named = () => {
+      throw new BlockError(txt);
+    };
   expect(named).toThrowError(BlockError);
   expect(named).toThrowError(txt);
   let ctxted = () => {
@@ -55,16 +56,19 @@ test('BlockError', () => {
 
 test('OOBError', () => {
   expect.assertions(3);
-  let txt = 'Too big', ctxted = () => {
-    throw new OutOfBoundsError(txt, test);
-  };
+  let txt = 'Too big',
+    ctxted = () => {
+      throw new OutOfBoundsError(txt, test);
+    };
   expect(ctxted).toThrowError(txt);
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     resolve(() => {
       throw new OutOfBoundsError('i too big');
+    });
+  })
+    .then(f => {
+      expect(f).toThrowError('i too big');
+      expect(f).toThrowError(OutOfBoundsError);
     })
-  }).then(f => {
-    expect(f).toThrowError('i too big');
-    expect(f).toThrowError(OutOfBoundsError);
-  }).catch(err => console.log('err:', err));
+    .catch(err => console.log('err:', err));
 });

@@ -1,4 +1,6 @@
-const cfg = require('../src/config'), Wallet = require('../src/wallet'), Blockchain = require('../src/blockchain');
+const cfg = require('../src/config'),
+  Wallet = require('../src/wallet'),
+  Blockchain = require('../src/blockchain');
 
 test('Static', () => {
   expect(cfg.DIFFICULTY >= 1).toBeTruthy();
