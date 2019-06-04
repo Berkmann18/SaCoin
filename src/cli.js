@@ -54,7 +54,10 @@ vorpal.command('info', 'User information').action((args, cb) => {
     `Wallet:\nAddress: ${use('info', user.wallet.address)}\nPublic key: ${use(
       'info',
       user.wallet.publicKey.pubKeyHex
-    )}\n`
+    )}\nBalance: ${use('info', user.wallet.calculateBalance())} SXC\nUnspent balance: ${use(
+      'info',
+      user.wallet.unspentBalance(SXC.utpool)
+    )} SXC`
   );
   cb();
 });
