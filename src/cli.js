@@ -5,16 +5,16 @@
  */
 
 const vorpal = require('vorpal')();
-const {succ, warn, error} = require('nclr');
+const {succ, warn, error, info, use} = require('nclr');
 const Wallet = require('./wallet');
 const Blockchain = require('./blockchain');
 const checkPw = require('./pwck');
 
 const SXC = new Blockchain();
 const user = {
-  wallet: null,
+  wallet: null
   // peers: []
-}
+};
 
 // @todo Implement: mining, sending transactions, checking balance, discovering peers
 // vorpal
@@ -23,11 +23,9 @@ const user = {
 //     throw new Error('Not implemented yet')
 //     // cb();
 //   })
-vorpal
-  .command('join', 'Join the network')
-  .action((args, cb) => {
-    // console.log('args=', args);
-    vorpal.activeCommand.prompt({
+vorpal.command('join', 'Join the network').action((args, cb) => {
+  vorpal.activeCommand
+    .prompt({
       type: 'password',
       name: 'pwd',
       message: 'Password: ',
@@ -39,12 +37,26 @@ vorpal
         }
         return true;
       }
-    }).then(ans => {
-      user.wallet = new Wallet(SXC, ans.pwd);
-      succ('Welcome fellow user!');
-    }, err => error(err))
+    })
+    .then(
+      ans => {
+        user.wallet = new Wallet(SXC, ans.pwd);
+        succ('Welcome fellow user!');
+      },
+      err => error(err)
+    )
     /* eslint-disable-next-line no-unused-vars */
-    .then(_ => cb())
-  })
+    .then(_ => cb());
+});
+
+vorpal.command('info', 'User information').action((args, cb) => {
+  info(
+    `Wallet:\nAddress: ${use('info', user.wallet.address)}\nPublic key: ${use(
+      'info',
+      user.wallet.publicKey.pubKeyHex
+    )}\n`
+  );
+  cb();
+});
 
 vorpal.delimiter('sacoin$').show();
