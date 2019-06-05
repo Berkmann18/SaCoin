@@ -4,6 +4,11 @@ const ALPHA = 'abcdefghijklmnopqrstuvwxyz',
   NUMBERS = '01234567890',
   SYMBOLS = ')!@#$%^&*(';
 
+/**
+ * Sequential string patterns
+ * @param {string} password Password to check
+ * @returns {seqAlpha: number, seqNum: number, seqSymbol: number} Seq* numbers
+ */
 const seqStrPatterns = password => {
   let s = 0,
     seqAlpha = 0,
