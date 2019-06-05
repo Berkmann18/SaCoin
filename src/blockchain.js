@@ -6,35 +6,15 @@
  */
 
 const flat = require('lodash/flatten'),
-  { use } = require('./cli');
+  {use} = require('./utils');
 const Block = require('./block'),
-  { DIFFICULTY, MINING_REWARD, CURRENCY, BANK, UTPOOL } = require('../cfg.json'),
+  {DIFFICULTY, MINING_REWARD, CURRENCY, BANK, UTPOOL} = require('../cfg.json'),
   Transaction = require('./transaction'),
-  { BlockError, TransactionError, OutOfBoundsError } = require('./error'),
+  {BlockError, TransactionError, OutOfBoundsError} = require('./error'),
   UTPool = require('./utpool');
 
 /** @private */
-let prvProps = new WeakMap();
-
-// if (!DIFFICULTY || !BANK || !MINING_REWARD || !CURRENCY) console.error('No config.js:', {DIFFICULTY, BANK, MINING_REWARD, CURRENCY});
-/* Since there's an apparent issue in which wallet.test.js not finding the constants from config even tho it works on blockchain.test.js and on here,
-   I'm adding a snippet as a work-around.
-   @todo Fix this issue with a proper solution
- */
-
-/*const DIFF = DIFFICULTY || 2, REWARD = MINING_REWARD || 12.5, CUR = CURRENCY || 'XSC', _BANK = BANK || (() => {
-  let Wallet = require('./wallet');
-  let key = require('./crypto').genKey(), bk = {
-    pk: key.pk,
-    sk: key.sk,
-    amount: 1e8,
-    pool: new UTPool(),
-    address: SHA256(key.pk, 'sxcBank')
-  };
-  bk.wallet = /!*Wallet ? new Wallet(null, 'sxcBank', key, bk.address) :*!/ {address: bk.address, publicKey: key.pk};
-  bk.pool.addUT(bk.address, bk.amount);
-  return bk;
-})();*/
+const prvProps = new WeakMap();
 
 /**
  * @class Blockchain
@@ -130,7 +110,7 @@ class Blockchain {
    * @memberof Blockchain
    */
   static createGenesisBlock(beneficiaryAddr) {
-    return new Block({ beneficiaryAddr });
+    return new Block({beneficiaryAddr});
   }
 
   /**
@@ -152,11 +132,11 @@ class Blockchain {
    */
   getBlock(index) {
     if (!Number.isInteger(index)) throw new TypeError(`index (${index}) needs to be an integer`);
-    let chain = this.chain,
+    const chain = this.chain,
       sz = chain.length;
     if (index >= sz || index <= ~sz) throw new OutOfBoundsError(`index (${index}) out of bounds`);
-    /* eslint-disable security/detect-object-injection */
-    else return (index < 0) ? chain[sz + index] : chain[index];
+    /* eslint-disable security/detect-object-injection */ else
+      return index < 0 ? chain[sz + index] : chain[index];
     /* eslint-enable security/detect-object-injection */
   }
 
@@ -167,7 +147,7 @@ class Blockchain {
    * @memberof Blockchain
    */
   getBlockByHash(hash) {
-    let blocks = this.chain.filter(block => block.hash === hash);
+    const blocks = this.chain.filter(block => block.hash === hash);
     //It's not possible to get duplicate blocks so the check was removed
     return blocks[0];
   }
@@ -180,7 +160,9 @@ class Blockchain {
    * @memberof Blockchain
    */
   getAllTransactions(toString = false, cliColour = false) {
-    return toString ? flat(this.chain.map(block => block.transactions.map(tx => tx.toString(cliColour)))) : flat(this.chain.map(block => block.transactions));
+    return toString
+      ? flat(this.chain.map(block => block.transactions.map(tx => tx.toString(cliColour))))
+      : flat(this.chain.map(block => block.transactions));
   }
 
   /**
@@ -199,13 +181,14 @@ class Blockchain {
    * @memberof Blockchain
    */
   isValid() {
-    let chain = this.chain;
+    const chain = this.chain;
     for (let i = 1; i < chain.length; ++i) {
       /* eslint-disable security/detect-object-injection */
       const currentBlock = chain[i],
         prevBlock = chain[i - 1],
         pad = '0'.repeat(this.difficulty);
-      const incorrectPadding = (!currentBlock.hash.startsWith(pad) || !prevBlock.hash.startsWith(pad)),
+      const incorrectPadding =
+          !currentBlock.hash.startsWith(pad) || !prevBlock.hash.startsWith(pad),
         incorrectHash = currentBlock.hash !== currentBlock.calculateHash(),
         incorrectFollow = currentBlock.prevHash !== prevBlock.hash;
       /* istanbul ignore next */
@@ -221,7 +204,11 @@ class Blockchain {
    * @memberof Blockchain
    */
   toString(cliColour = true) {
-    let str = `Blockchain(chain=[${this.chain.map(block => block.toString())}], pendingTransactions=[${this.pendingTransactions}], difficulty=${this.difficulty}, miningReward=${this.miningReward}, currency=${this.currency})`;
+    const str = `Blockchain(chain=[${this.chain.map(block =>
+      block.toString()
+    )}], pendingTransactions=[${this.pendingTransactions}], difficulty=${
+      this.difficulty
+    }, miningReward=${this.miningReward}, currency=${this.currency})`;
     return cliColour ? use('chain', str) : str;
   }
 
@@ -232,7 +219,7 @@ class Blockchain {
    * @memberof Blockchain
    */
   _add(transactions, beneficiaryAddr) {
-    let prevBlock = this.getBlock(-1),
+    const prevBlock = this.getBlock(-1),
       ba = beneficiaryAddr || prevBlock.beneficiaryAddr,
       newBlock = new Block({
         prevHash: prevBlock.hash,
@@ -245,9 +232,9 @@ class Blockchain {
     prvProps.get(this).chain.push(newBlock);
 
     //Update the UT pool
-    let pool = this.utpool;
+    const pool = this.utpool;
     transactions.forEach(tx => {
-      let amt = tx.amount,
+      const amt = tx.amount,
         fee = tx.fee; //Just to reduce calls
       pool.addUT(tx.fromAddr, -(amt + fee));
       pool.addUT(tx.toAddr, amt);
@@ -261,7 +248,7 @@ class Blockchain {
    * @memberof Blockchain
    */
   addBlock(block) {
-    let wrongLink = block.prevHash !== this.getBlock(-1).hash;
+    const wrongLink = block.prevHash !== this.getBlock(-1).hash;
     if (!block.isValid() || wrongLink) throw new BlockError(`Invalid block: ${block.toString()}`);
     prvProps.get(this).chain.push(block);
   }
@@ -274,13 +261,22 @@ class Blockchain {
    */
   addTransaction(transaction) {
     //Check the transaction
-    if (!transaction.isValid()) throw new TransactionError(`Invalid transaction: ${transaction.toString()}`);
-    let senderBalance = this.utpool.pool[transaction.fromAddr],
+    if (!transaction.isValid())
+      throw new TransactionError(`Invalid transaction: ${transaction.toString()}`);
+    const senderBalance = this.utpool.pool[transaction.fromAddr],
       spending = transaction.amount + transaction.fee;
-    if (senderBalance === undefined) throw new Error(`The balance of the sender ${transaction.fromAddr} has no unspent coins`);
-    if ( /*transaction.fromAddr !== BANK.address && */ senderBalance < spending) throw new TransactionError(`The transaction requires more coins than the sender (${transaction.fromAddr}) has ((${transaction.amount} + ${transaction.fee})${this.currency} off ${senderBalance}${this.currency})`);
-    if (this.getTransactionsByHash(transaction.hash).length) throw new TransactionError(`Transaction already in blockchain: ${transaction.toString()}`);
-    if (this.pendingTransactions.includes(transaction)) throw new TransactionError(`Transaction already pending: ${transaction.toString()}`);
+    if (senderBalance === undefined)
+      throw new Error(`The balance of the sender ${transaction.fromAddr} has no unspent coins`);
+    if (/*transaction.fromAddr !== BANK.address && */ senderBalance < spending)
+      throw new TransactionError(
+        `The transaction requires more coins than the sender (${transaction.fromAddr}) has ((${
+          transaction.amount
+        } + ${transaction.fee})${this.currency} off ${senderBalance}${this.currency})`
+      );
+    if (this.getTransactionsByHash(transaction.hash).length)
+      throw new TransactionError(`Transaction already in blockchain: ${transaction.toString()}`);
+    if (this.pendingTransactions.includes(transaction))
+      throw new TransactionError(`Transaction already pending: ${transaction.toString()}`);
 
     //Eventually place the transaction in the list of pending ones
     prvProps.get(this).pendingTransactions.push(transaction);
@@ -295,7 +291,7 @@ class Blockchain {
     //Create a new block with all pending transactions and mine it and add the newly mined block to the chain
     this._add(prvProps.get(this).pendingTransactions, minerWallet.address);
     //Reset the pending transactions and send the mining reward
-    let rewardTx = new Transaction({
+    const rewardTx = new Transaction({
       fromAddr: BANK.address,
       fromPubKey: BANK.pk,
       toAddr: minerWallet.address,

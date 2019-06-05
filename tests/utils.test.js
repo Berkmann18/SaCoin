@@ -1,9 +1,8 @@
-const { use } = require('../src/cli');
-
+const {use} = require('../src/utils');
 
 test('Init', () => {
   // expect()
-  let inp = () => console.log(use('in', 'Input'));
+  const inp = () => console.log(use('in', 'Input'));
   expect(inp).toThrowError('The name in isn\'t specified in the theme used');
   expect(use('out', 'Output')).not.toStrictEqual('Output');
   expect(use('info', 'Info')).not.toStrictEqual('Info');
@@ -19,6 +18,6 @@ test('This', () => {
   expect(use('tx', 'Transaction(...)')).toBeDefined();
   expect(use('chain', 'Blockchain(...)')).not.toStrictEqual('Blockchain(...)');
   expect(use('chain', 'Blockchain(...)')).toBeDefined();
-  let wrong = () => use('wallet', 'Wallet(...)');
+  const wrong = () => use('wallet', 'Wallet(...)');
   expect(wrong).toThrow('The name wallet isn\'t specified in the theme used');
 });

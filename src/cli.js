@@ -1,31 +1,24 @@
 'use strict';
 /**
- * @fileoverview CLI related functions.
+ * @fileoverview CLI.
  * @module
  */
 
-/* Taken from ServerBuilder's utils.js file */
-const nclr = require('nclr');
+const vorpal = require('vorpal')();
+const join = require('./commands/join');
+const inf = require('./commands/info');
+const mine = require('./commands/mine');
+const Blockchain = require('./blockchain');
 
-nclr.extend({
-  block: 'magenta',
-  tx: ['white', 'underline'],
-  chain: ['green', 'bold']
-});
-
-/**
- * @description Colourise something.
- * @param {string} name Name of the colour in the theme
- * @param {...*} data Data
- * @return {*} Coloured output
- * @throws {Error} Unspecified name
- * @see nclr#use
- */
-const use = (name, ...data) => nclr.use(name, ...data);
-
-module.exports = {
-  use,
-  block: nclr.block,
-  tx: nclr.tx,
-  chain: nclr.chain
+const SXC = new Blockchain();
+const user = {
+  wallet: null
+  // peers: []
 };
+
+// @todo Implement: mining, sending transactions, checking balance, discovering peers
+vorpal.command('join', 'Join the network').action(join(vorpal, SXC));
+vorpal.command('info', 'User information').action(inf(user, SXC));
+vorpal.command('mine', 'Mine a block').action(mine(user, SXC));
+
+vorpal.delimiter('sacoin$').show();

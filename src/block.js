@@ -5,15 +5,14 @@
  * @module
  */
 
-const { SHA256, SHA3 } = require('crypto-js'),
+const {SHA256, SHA3} = require('crypto-js'),
   MerkleTree = require('merkletreejs'),
-  { use } = require('./cli');
-const Transaction = require('./transaction'),
-  { TransactionError } = require('./error'),
-  { DIFFICULTY, BANK, TRANSACTION_FEE } = require('../cfg.json');
+  {use} = require('./utils');
+const {TransactionError} = require('./error'),
+  {DIFFICULTY, BANK, TRANSACTION_FEE} = require('../cfg.json');
 
 /** @private */
-let prvProps = new WeakMap();
+const prvProps = new WeakMap();
 /**
  * @description Hash of the root of the chain.
  * @private
@@ -43,11 +42,12 @@ class Block {
     beneficiaryAddr = BANK.address,
     txFee = TRANSACTION_FEE
   } = {}) {
-
-    if (transactions.length) transactions.forEach(tx => {
-      if (!tx.isValid()) throw new TransactionError(`Invalid transaction ant-Block creation: ${tx.toString()}`);
-      tx.fee = txFee;
-    });
+    if (transactions.length)
+      transactions.forEach(tx => {
+        if (!tx.isValid())
+          throw new TransactionError(`Invalid transaction ant-Block creation: ${tx.toString()}`);
+        tx.fee = txFee;
+      });
 
     prvProps.set(this, {
       prevHash,
@@ -81,7 +81,7 @@ class Block {
    * @memberof Block
    */
   get timestamp() {
-    return prvProps.get(this).timestamp
+    return prvProps.get(this).timestamp;
   }
 
   /**
@@ -90,7 +90,7 @@ class Block {
    * @memberof Block
    */
   get prevHash() {
-    return prvProps.get(this).prevHash
+    return prvProps.get(this).prevHash;
   }
 
   /**
@@ -99,7 +99,7 @@ class Block {
    * @memberof Block
    */
   get hash() {
-    return prvProps.get(this).hash
+    return prvProps.get(this).hash;
   }
 
   /**
@@ -144,7 +144,9 @@ class Block {
    * @memberof Block
    */
   calculateHash() {
-    return SHA256(this.timestamp + this.merkleRoot + this.prevHash + prvProps.get(this).nonce).toString()
+    return SHA256(
+      this.timestamp + this.merkleRoot + this.prevHash + prvProps.get(this).nonce
+    ).toString();
   }
 
   /**
@@ -171,7 +173,13 @@ class Block {
    * @memberof Block
    */
   toString(cliColour = true) {
-    let str = `Block(transactions=[${this.transactions.map(trans => trans.toString())}], timestamp=${this.timestamp}, prevHash=${this.prevHash}, merkleRoot=${this.merkleRoot.toString('utf8')}, hash=${this.hash}, height=${this.height}, beneficiaryAddr=${this.beneficiaryAddr}, transactionFee=${this.transactionFee})`;
+    const str = `Block(transactions=[${this.transactions.map(trans =>
+      trans.toString()
+    )}], timestamp=${this.timestamp}, prevHash=${
+      this.prevHash
+    }, merkleRoot=${this.merkleRoot.toString('utf8')}, hash=${this.hash}, height=${
+      this.height
+    }, beneficiaryAddr=${this.beneficiaryAddr}, transactionFee=${this.transactionFee})`;
     return cliColour ? use('block', str) : str;
   }
 
@@ -184,10 +192,14 @@ class Block {
    * @memberof Block
    */
   addTransaction(transaction) {
-    if (!transaction.isValid()) throw new TransactionError(`The transaction nearly added is invalid: ${transaction.toString()}`);
+    if (!transaction.isValid())
+      throw new TransactionError(
+        `The transaction nearly added is invalid: ${transaction.toString()}`
+      );
     transaction.fee = this.transactionFee; //Change the transaction's fee to match the block's transaction fee (since it should be up to the block's owner).
-    if (this.transactions.includes(transaction)) throw new Error(`The transaction already in the block: ${transaction.toString()}`);
-    prvProps.get(this).transactions.push(transaction)
+    if (this.transactions.includes(transaction))
+      throw new Error(`The transaction already in the block: ${transaction.toString()}`);
+    prvProps.get(this).transactions.push(transaction);
   }
 
   /**
@@ -201,7 +213,7 @@ class Block {
     const leaves = this.transactions.map(SHA3); //prvProps.get(this).merkleTree.getLeaves();
     const verifs = leaves.map(leaf => {
       const proof = tree.getProof(leaf);
-      return tree.verify(proof, leaf, root)
+      return tree.verify(proof, leaf, root);
     });
     return verifs.every(Boolean);
   }
@@ -212,10 +224,10 @@ class Block {
    * @memberof Block
    */
   isValid() {
-    let diff = prvProps.get(this).difficulty,
+    const diff = prvProps.get(this).difficulty,
       actualHash = this.calculateHash(),
       actualPad = '0'.repeat(diff);
-    let correctHash = this.hash === actualHash,
+    const correctHash = this.hash === actualHash,
       correctPadding = this.hash.substring(0, diff) === actualPad;
     // if (log) console.log('correctHash=', correctHash, 'correctPadding=', correctPadding);
     return correctHash && correctPadding && this.hasValidTree;
@@ -227,7 +239,7 @@ class Block {
    * @memberof Block
    */
   isGenesis() {
-    return this.prevHash === ROOT_HASH
+    return this.prevHash === ROOT_HASH;
   }
 
   /**
@@ -235,13 +247,12 @@ class Block {
    * @memberof Block
    */
   mine() {
-    let diff = prvProps.get(this).difficulty;
+    const diff = prvProps.get(this).difficulty;
     while (this.hash.substring(0, diff) !== '0'.repeat(diff)) {
       prvProps.get(this).nonce++;
       this.updateHash();
     }
   }
-
 }
 
 module.exports = Block;

@@ -4,16 +4,17 @@ test('TransactionError', () => {
   expect(() => {
     throw new TransactionError();
   }).toThrowError(TransactionError);
-  let txt = 'Invalid tx', named = () => {
-    throw new TransactionError(txt);
-  };
+  const txt = 'Invalid tx',
+    named = () => {
+      throw new TransactionError(txt);
+    };
   expect(named).toThrowError(TransactionError);
   expect(named).toThrowError(txt);
-  let ctxted = () => {
+  const ctxted = () => {
     throw new TransactionError(txt, test);
   };
   expect(ctxted).toThrowError(txt);
-  let gstack = () => {
+  const gstack = () => {
     let stk = null;
     try {
       throw new TransactionError();
@@ -26,21 +27,21 @@ test('TransactionError', () => {
   expect(gstack().startsWith('TransactionError')).toBeTruthy();
 });
 
-
 test('BlockError', () => {
   expect(() => {
     throw new BlockError();
   }).toThrowError(BlockError);
-  let txt = 'Invalid block', named = () => {
-    throw new BlockError(txt);
-  };
+  const txt = 'Invalid block',
+    named = () => {
+      throw new BlockError(txt);
+    };
   expect(named).toThrowError(BlockError);
   expect(named).toThrowError(txt);
-  let ctxted = () => {
+  const ctxted = () => {
     throw new BlockError(txt, test);
   };
   expect(ctxted).toThrowError(txt);
-  let gstack = () => {
+  const gstack = () => {
     let stk = null;
     try {
       throw new BlockError();
@@ -55,16 +56,19 @@ test('BlockError', () => {
 
 test('OOBError', () => {
   expect.assertions(3);
-  let txt = 'Too big', ctxted = () => {
-    throw new OutOfBoundsError(txt, test);
-  };
+  const txt = 'Too big',
+    ctxted = () => {
+      throw new OutOfBoundsError(txt, test);
+    };
   expect(ctxted).toThrowError(txt);
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     resolve(() => {
       throw new OutOfBoundsError('i too big');
+    });
+  })
+    .then(f => {
+      expect(f).toThrowError('i too big');
+      expect(f).toThrowError(OutOfBoundsError);
     })
-  }).then(f => {
-    expect(f).toThrowError('i too big');
-    expect(f).toThrowError(OutOfBoundsError);
-  }).catch(err => console.log('err:', err));
+    .catch(err => console.log('err:', err));
 });

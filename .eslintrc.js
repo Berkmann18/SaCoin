@@ -1,34 +1,29 @@
 module.exports = {
-  "env": {
-    "browser": true,
-    "es6": true,
-    "node": true
+  env: {
+    es6: true,
+    node: true,
+    jest: true
   },
-  "plugins": ["security"],
-  "extends": "plugin:security/recommended",
-  "rules": {
-    "indent": [
-      "error",
-      2
-    ],
-    "linebreak-style": [
-      "error"
-    ],
-    "no-console": "off",
-    "no-extra-semi": "off",
-    "prefer-const": "off",
-    "quotes": [
-      "error",
-      "single"
-    ],
-    "no-trailing-spaces": [
-      "error"
-    ],
-    "symbol-description": [
-      "warn"
-    ]
+  plugins: ['security', 'jquery'],
+  extends: [
+    'eslint:recommended',
+    'plugin:security/recommended',
+    'plugin:you-dont-need-lodash-underscore/compatible',
+    'plugin:node/recommended',
+    'plugin:jquery/slim'
+  ],
+  rules: {
+    indent: ['error', 2],
+    'linebreak-style': ['error'],
+    'no-console': 'off',
+    'no-extra-semi': 'off',
+    'prefer-const': 'error',
+    quotes: ['error', 'single'],
+    'no-trailing-spaces': ['error'],
+    'symbol-description': ['warn']
   },
-  "parserOptions": {
-    "sourceType": "module"
+  parserOptions: {
+    sourceType: 'module',
+    ecmaVersion: 8
   }
 };
