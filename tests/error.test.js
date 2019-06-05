@@ -4,17 +4,17 @@ test('TransactionError', () => {
   expect(() => {
     throw new TransactionError();
   }).toThrowError(TransactionError);
-  let txt = 'Invalid tx',
+  const txt = 'Invalid tx',
     named = () => {
       throw new TransactionError(txt);
     };
   expect(named).toThrowError(TransactionError);
   expect(named).toThrowError(txt);
-  let ctxted = () => {
+  const ctxted = () => {
     throw new TransactionError(txt, test);
   };
   expect(ctxted).toThrowError(txt);
-  let gstack = () => {
+  const gstack = () => {
     let stk = null;
     try {
       throw new TransactionError();
@@ -31,17 +31,17 @@ test('BlockError', () => {
   expect(() => {
     throw new BlockError();
   }).toThrowError(BlockError);
-  let txt = 'Invalid block',
+  const txt = 'Invalid block',
     named = () => {
       throw new BlockError(txt);
     };
   expect(named).toThrowError(BlockError);
   expect(named).toThrowError(txt);
-  let ctxted = () => {
+  const ctxted = () => {
     throw new BlockError(txt, test);
   };
   expect(ctxted).toThrowError(txt);
-  let gstack = () => {
+  const gstack = () => {
     let stk = null;
     try {
       throw new BlockError();
@@ -56,7 +56,7 @@ test('BlockError', () => {
 
 test('OOBError', () => {
   expect.assertions(3);
-  let txt = 'Too big',
+  const txt = 'Too big',
     ctxted = () => {
       throw new OutOfBoundsError(txt, test);
     };

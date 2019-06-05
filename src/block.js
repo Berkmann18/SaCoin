@@ -8,12 +8,11 @@
 const {SHA256, SHA3} = require('crypto-js'),
   MerkleTree = require('merkletreejs'),
   {use} = require('./utils');
-const Transaction = require('./transaction'),
-  {TransactionError} = require('./error'),
+const {TransactionError} = require('./error'),
   {DIFFICULTY, BANK, TRANSACTION_FEE} = require('../cfg.json');
 
 /** @private */
-let prvProps = new WeakMap();
+const prvProps = new WeakMap();
 /**
  * @description Hash of the root of the chain.
  * @private
@@ -174,7 +173,7 @@ class Block {
    * @memberof Block
    */
   toString(cliColour = true) {
-    let str = `Block(transactions=[${this.transactions.map(trans =>
+    const str = `Block(transactions=[${this.transactions.map(trans =>
       trans.toString()
     )}], timestamp=${this.timestamp}, prevHash=${
       this.prevHash
@@ -225,10 +224,10 @@ class Block {
    * @memberof Block
    */
   isValid() {
-    let diff = prvProps.get(this).difficulty,
+    const diff = prvProps.get(this).difficulty,
       actualHash = this.calculateHash(),
       actualPad = '0'.repeat(diff);
-    let correctHash = this.hash === actualHash,
+    const correctHash = this.hash === actualHash,
       correctPadding = this.hash.substring(0, diff) === actualPad;
     // if (log) console.log('correctHash=', correctHash, 'correctPadding=', correctPadding);
     return correctHash && correctPadding && this.hasValidTree;
@@ -248,7 +247,7 @@ class Block {
    * @memberof Block
    */
   mine() {
-    let diff = prvProps.get(this).difficulty;
+    const diff = prvProps.get(this).difficulty;
     while (this.hash.substring(0, diff) !== '0'.repeat(diff)) {
       prvProps.get(this).nonce++;
       this.updateHash();

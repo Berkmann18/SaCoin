@@ -4,11 +4,10 @@ const Block = require('../src/block'),
   Transaction = require('../src/transaction'),
   gen = require('../src/crypto').genKey,
   TransactionError = require('../src/error').TransactionError,
-  Wallet = require('../src/wallet'),
-  UTPool = require('../src/utpool');
+  Wallet = require('../src/wallet');
 
 test('Block creation', () => {
-  let block = new Block();
+  const block = new Block();
   expect(block.transactions).toEqual([]);
   expect(block.timestamp <= Date.now()).toBeTruthy();
   expect(block.prevHash).toEqual(
@@ -17,7 +16,7 @@ test('Block creation', () => {
   expect(block.hash).toBe(block.calculateHash());
   expect(block.height).toBe(0);
   expect(Buffer.isBuffer(block.merkleRoot)).toBeTruthy();
-  let merkleRoot = block.merkleRoot.toString('utf8');
+  const merkleRoot = block.merkleRoot.toString('utf8');
   expect(merkleRoot === '').toBeTruthy();
   expect(block.toString()).toStrictEqual(
     use(
@@ -53,8 +52,8 @@ test('Block creation', () => {
 });
 
 test('Linking', () => {
-  let genesis = new Block();
-  let block = new Block({
+  const genesis = new Block();
+  const block = new Block({
     prevHash: genesis.hash,
     transactions: [],
     nonce: 0,
@@ -65,7 +64,7 @@ test('Linking', () => {
   expect(block.isGenesis()).toBeFalsy();
   block.mine();
   expect(block.isValid()).toBeTruthy();
-  let curGenHash = genesis.hash;
+  const curGenHash = genesis.hash;
   genesis.mine();
   expect(genesis.hash).not.toEqual(curGenHash);
   block.updateHash();
@@ -78,18 +77,18 @@ test('Linking', () => {
 });
 
 test('Transactions gone wrong', () => {
-  let bankPair = gen();
+  const bankPair = gen();
   BANK.pk = bankPair.pk;
   BANK.sk = bankPair.sk;
   BANK.wallet = new Wallet({}, 'sxcBank', bankPair, BANK.address);
   //Test the block's ability to detect invalid transactions on creation on `addTransaction`
-  let tx = new Transaction({
+  const tx = new Transaction({
     fromAddr: BANK.address,
     fromPubKey: BANK.pk,
     toAddr: 'ba45734499c7188265c760e93f69018bbecdb6a26998656f4834e8da66ee0007',
     amount: 5
   });
-  let block = new Block({
+  const block = new Block({
     prevHash: 'root',
     transactions: []
   });
@@ -100,14 +99,10 @@ test('Transactions gone wrong', () => {
 });
 
 test('Transactions gone right', () => {
-  let chain = [],
+  const chain = [],
     pw = 'pass',
-    wlt = new Wallet(chain, pw),
-    utp = new UTPool({
-      [wlt.address]: 10,
-      [BANK.address]: 100
-    });
-  let tx = new Transaction({
+    wlt = new Wallet(chain, pw);
+  const tx = new Transaction({
     fromAddr: BANK.address,
     fromPubKey: BANK.pk,
     toAddr: wlt.publicKey,
@@ -128,21 +123,12 @@ test('Transactions gone right', () => {
     });
   }).not.toThrow(`Invalid transaction ant-Block creation: ${tx.toString()}`);
   expect(tx.fee).toBe(TRANSACTION_FEE);
-  let block = new Block({
-    prevHash: 'root',
-    transactions: [tx],
-    nonce: 0,
-    height: 0,
-    beneficiaryAddr: wlt.address,
-    txFee: 2
-  });
-  expect(tx.fee).toBe(2);
 });
 
 test('Filled block', () => {
-  let w0 = new Wallet({}, '0'),
+  const w0 = new Wallet({}, '0'),
     w1 = new Wallet({}, '1');
-  let txs = [
+  const txs = [
     new Transaction({
       fromAddr: BANK.address,
       fromPubKey: BANK.pk,
@@ -157,7 +143,7 @@ test('Filled block', () => {
     })
   ];
   txs.forEach(tx => tx.sign(BANK.sk));
-  let block = new Block({
+  const block = new Block({
     prevHash: 'root',
     transactions: txs
   });

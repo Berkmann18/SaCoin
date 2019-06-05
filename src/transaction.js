@@ -11,7 +11,7 @@ const {verify, sign} = require('./crypto'),
   {TRANSACTION_FEE} = require('./config');
 
 /** @private */
-let prvProps = new WeakMap();
+const prvProps = new WeakMap();
 
 /**
  * @class Transaction
@@ -192,7 +192,7 @@ class Transaction {
    * @memberof Transaction
    */
   toString(cliColour = true) {
-    let str = `Transaction(fromAddr=${this.fromAddr}, fromPubKey=${this.fromPubKey}, toAddr=${
+    const str = `Transaction(fromAddr=${this.fromAddr}, fromPubKey=${this.fromPubKey}, toAddr=${
       this.toAddr
     }, amount=${this.amount}, timestamp=${this.timestamp}, fee=${this.fee}, hash=${this.hash})`;
     return cliColour ? use('tx', str) : str;

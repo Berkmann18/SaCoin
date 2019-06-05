@@ -7,11 +7,10 @@
 
 const SHA256 = require('crypto-js/sha256'),
   {use} = require('./utils');
-const {genKey} = require('./crypto'),
-  UTPool = require('./utpool');
+const {genKey} = require('./crypto');
 
 /** @private */
-let prvProps = new WeakMap();
+const prvProps = new WeakMap();
 /**
  * @description Attempt logger.
  * @private
@@ -69,7 +68,7 @@ class Wallet {
    * @memberof Wallet
    */
   constructor(blockchain, password, keyPair = genKey(), address) {
-    let ts = Date.now(),
+    const ts = Date.now(),
       hash = SHA256(password),
       addr = address || calculateAddress(keyPair.pk, ts, hash);
     prvProps.set(this, {

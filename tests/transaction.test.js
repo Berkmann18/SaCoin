@@ -5,20 +5,19 @@ const Transaction = require('../src/transaction'),
   FEE = require('../src/config').TRANSACTION_FEE,
   Wallet = require('../src/wallet');
 
-let sender = new Wallet(null, 'se'),
+const sender = new Wallet(null, 'se'),
   sHash = SHA256('se'),
   receiver = new Wallet(null, 're'),
-  rHash = SHA256('re'),
   amt = 5,
   sig = sign(sender.secretKey(sHash), amt.toString());
-let txCfg = {
+const txCfg = {
   fromAddr: sender.address,
   fromPubKey: sender.publicKey,
   toAddr: receiver.address,
   amount: amt,
   sig
 };
-let tx = new Transaction(txCfg);
+const tx = new Transaction(txCfg);
 
 test('Init', () => {
   expect(tx.fromAddr).toBe(sender.address);
@@ -46,7 +45,7 @@ test('Init', () => {
 });
 
 test('Default', () => {
-  let tx = new Transaction({
+  const tx = new Transaction({
     fromAddr: sender.address,
     fromPubKey: sender.publicKey,
     toAddr: receiver.address,
@@ -63,7 +62,7 @@ test('Default', () => {
 });
 
 test('All set', () => {
-  let tx = new Transaction({
+  const tx = new Transaction({
     fromAddr: sender.address,
     fromPubKey: sender.publicKey,
     toAddr: receiver.address,
@@ -82,32 +81,36 @@ test('Empty', () => {
 
 test('Signature et al', () => {
   expect.assertions(5);
-  return new Promise(resolve => {
-    resolve(tx.hasValidSignature());
-  })
-    .then(bool => {
-      expect(bool).toBeFalsy();
-      return expect(
-        verify({
-          pubKey: sender.publicKey,
-          msg: tx.hash,
-          sig: tx.sig
-        })
-      ).toBeFalsy();
+  return (
+    new Promise(resolve => {
+      resolve(tx.hasValidSignature());
     })
-    .then(vrf => tx.sign(sender.secretKey(sHash)))
-    .then(signed => expect(tx.hasValidSignature()).toBeTruthy())
-    .then(correct => {
-      expect(
-        verify({
-          pubKey: sender.publicKey,
-          msg: tx.hash,
-          sig: tx.sig
-        })
-      ).toBeTruthy();
-      expect(tx.isValid()).toBeTruthy();
-    })
-    .catch(err => console.log('This went wrong:', err.toString()));
+      .then(bool => {
+        expect(bool).toBeFalsy();
+        return expect(
+          verify({
+            pubKey: sender.publicKey,
+            msg: tx.hash,
+            sig: tx.sig
+          })
+        ).toBeFalsy();
+      })
+      /* eslint-disable no-unused-vars */
+      .then(vrf => tx.sign(sender.secretKey(sHash)))
+      .then(signed => expect(tx.hasValidSignature()).toBeTruthy())
+      .then(correct => {
+        /* eslint-enable no-unused-vars */
+        expect(
+          verify({
+            pubKey: sender.publicKey,
+            msg: tx.hash,
+            sig: tx.sig
+          })
+        ).toBeTruthy();
+        expect(tx.isValid()).toBeTruthy();
+      })
+      .catch(err => console.log('This went wrong:', err.toString()))
+  );
 });
 
 test('Changing', () => {

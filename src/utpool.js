@@ -8,7 +8,7 @@
 const clone = require('lodash/clone');
 
 /** @private */
-let prvProps = new WeakMap();
+const prvProps = new WeakMap();
 
 /**
  * @class UTPool
@@ -43,7 +43,7 @@ class UTPool {
   addUT(addr, amount) {
     if (typeof amount !== 'number')
       throw new TypeError(`The UT amount needs to be a number not ${amount}`);
-    let pool = prvProps.get(this).pool;
+    const pool = prvProps.get(this).pool;
     /* eslint-disable security/detect-object-injection */
     if (pool[addr]) {
       if (typeof pool[addr] !== 'number') pool[addr] = Number(pool[addr]);

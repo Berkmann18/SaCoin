@@ -133,10 +133,9 @@ const checkPassword = password => {
 
   //Determine if mandatory requirements have been met and set image indicators accordingly
   const arrChars = [password.length, uppercase, lowercase, num, symbol];
-  const arrCharsIds = ['nLength', 'nAlphaUC', 'nAlphaLC', 'nNumber', 'nSymbol'];
+  if (password.length >= MIN_PW_LEN) reqChar++;
   for (let c = 0; c < arrChars.length; c++) {
-    const minVal = arrCharsIds[c] === 'nLength' ? MIN_PW_LEN : 1;
-    if (arrChars[c] >= minVal) reqChar++;
+    if (arrChars[c] >= 1) reqChar++;
   }
 
   const minReqChars = password.length >= MIN_PW_LEN ? 3 : 4;

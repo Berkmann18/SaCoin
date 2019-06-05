@@ -6,13 +6,13 @@ const Wallet = require('../src/wallet'),
   TransactionError = require('../src/error').TransactionError,
   Transaction = require('../src/transaction');
 
-let bankPair = require('../src/crypto').genKey();
+const bankPair = require('../src/crypto').genKey();
 BANK.pk = bankPair.pk;
 BANK.sk = bankPair.sk;
 BANK.wallet = new Wallet(new Chain(), 'sxcBank', bankPair, BANK.address);
 
 test('Init', () => {
-  let chain = new Chain({
+  const chain = new Chain({
       difficulty: 1,
       utpool: BANK.pool
     }),
@@ -86,7 +86,7 @@ test('Init', () => {
 });
 
 test('Integration 1/2', () => {
-  let utp = new UTPool(),
+  const utp = new UTPool(),
     chain = new Chain({
       difficulty: 2,
       utpool: utp
@@ -109,7 +109,7 @@ test('Integration 1/2', () => {
   expect(() => chain.addTransaction(tx)).toThrowError(
     `Transaction already pending: ${tx.toString()}`
   );
-  let txs = w0.getTransactions(),
+  const txs = w0.getTransactions(),
     txs1 = w1.getTransactions();
   expect('in' in txs).toBeTruthy();
   expect('out' in txs).toBeTruthy();
@@ -120,7 +120,7 @@ test('Integration 1/2', () => {
 });
 
 test('Integration 2/2', () => {
-  let chain = new Chain(),
+  const chain = new Chain(),
     xch = 5,
     pw0 = 'z',
     h0 = SHA256(pw0);
@@ -130,7 +130,7 @@ test('Integration 2/2', () => {
   expect(chain.miningReward).toBe(12.5);
   expect(chain.currency).toBe('XSC');
 
-  let w0 = new Wallet(chain, pw0),
+  const w0 = new Wallet(chain, pw0),
     w1 = new Wallet(chain, 'o'),
     tx = new Transaction({
       fromAddr: w0.address,
@@ -145,8 +145,8 @@ test('Integration 2/2', () => {
   chain.addTransaction(tx);
 
   chain.minePendingTransactions(w1);
-  let txs = w0.getTransactions(),
-    txs1 = w1.getTransactions();
+  const txs = w0.getTransactions();
+  // txs1 = w1.getTransactions(); @TODO test that
   expect('in' in txs).toBeTruthy();
   expect('out' in txs).toBeTruthy();
   expect(txs.in).toEqual([tx]);

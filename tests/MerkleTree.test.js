@@ -32,13 +32,13 @@ test('Simple verification', () => {
 });
 
 test('With Transactions', () => {
-  let chain = new Chain();
-  let w0 = new Wallet(chain, '0'),
+  const chain = new Chain();
+  const w0 = new Wallet(chain, '0'),
     w1 = new Wallet(chain, '1'),
     w2 = new Wallet(chain, '2');
   [w0, w1, w2].forEach(wlt => chain.utpool.addUT(wlt.address, 10));
 
-  let txs = [
+  const txs = [
     new Transaction({
       fromAddr: w0.address,
       fromPubKey: w0.publicKey,
@@ -58,15 +58,15 @@ test('With Transactions', () => {
   expect(txs[1].isValid()).toBeTruthy();
 
   const leaves = txs.map(SHA256);
-  let tree = new MerkleTree(leaves, SHA3);
+  const tree = new MerkleTree(leaves, SHA3);
   expect(tree.getLayers().length).toBe(2);
   const proofs = txs.map(tx => {
-    let leaf = bufferify(SHA256(tx));
+    const leaf = bufferify(SHA256(tx));
     return tree.getProof(leaf);
   });
-  let root = tree.getRoot();
+  const root = tree.getRoot();
   /* eslint-disable security/detect-object-injection */
-  let vrfs = proofs.map((proof, i) => tree.verify(proof, leaves[i], root));
+  const vrfs = proofs.map((proof, i) => tree.verify(proof, leaves[i], root));
   /* eslint-enable security/detect-object-injection */
   expect(vrfs).toEqual(new Array(txs.length).fill(true));
 });

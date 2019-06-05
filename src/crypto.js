@@ -5,7 +5,7 @@
  * @module
  */
 
-const {KEYUTIL, Signature, crypto, RSAKey} = require('jsrsasign');
+const {KEYUTIL, Signature, crypto} = require('jsrsasign');
 
 /**
  * @description A key.
@@ -35,7 +35,7 @@ const KEY_CONFIGS = {
  * @return {{pk: Key, sk: Key}} Key pair
  */
 const genKey = (opts = KEY_CONFIGS.EC256r1) => {
-  let kp = KEYUTIL.generateKeypair(opts.type, opts.name);
+  const kp = KEYUTIL.generateKeypair(opts.type, opts.name);
   return {pk: kp.pubKeyObj, sk: kp.prvKeyObj};
 };
 
@@ -48,7 +48,7 @@ const genKey = (opts = KEY_CONFIGS.EC256r1) => {
  * @return {void|string} (byteLen / 2)-bite signature
  */
 const sign = (sk, msg, bitLen = 512, alg = 'ECDSA') => {
-  let sig = new Signature({alg: `SHA${bitLen}with${alg}`});
+  const sig = new Signature({alg: `SHA${bitLen}with${alg}`});
   sig.init(sk);
   return sig.signString(msg);
 };
@@ -64,7 +64,7 @@ const sign = (sk, msg, bitLen = 512, alg = 'ECDSA') => {
  * @return {void|boolean} Signature validity
  */
 const verify = ({pubKey, msg, sig, bitLen = 512, alg = 'ECDSA'} = {}) => {
-  let tag = new Signature({alg: `SHA${bitLen}with${alg}`});
+  const tag = new Signature({alg: `SHA${bitLen}with${alg}`});
   tag.init(pubKey);
   tag.updateString(msg);
   return tag.verify(sig);
@@ -94,7 +94,7 @@ const decrypt = (sk, cipher, alg = 'RSA') => crypto.Cipher.decrypt(cipher, sk, a
  * @return {Key} clone
  */
 const cloneKey = key => {
-  let clone = KEYUTIL.getKey(KEYUTIL.getJWKFromKey(key));
+  const clone = KEYUTIL.getKey(KEYUTIL.getJWKFromKey(key));
   if (key.isPublic !== clone.isPublic) clone.isPublic = key.isPublic;
   return clone;
 };
