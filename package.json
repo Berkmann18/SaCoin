@@ -17,10 +17,11 @@
     "semantic-release": "semantic-release",
     "lint:md": "remark . .github -i ./.remarkignore",
     "lint": "npm run lint:js && npm run lint:md",
-    "prepare": "snyk protect",
+    "prepare": "npm run snyk-protect; snyk protect",
     "contribs:add": "all-contributors add",
     "contribs:generate": "all-contributors generate",
-    "contribs:check": "all-contributors check"
+    "contribs:check": "all-contributors check",
+    "snyk-protect": "snyk protect"
   },
   "repository": {
     "type": "git",
@@ -51,7 +52,8 @@
     "jsrsasign": "^8.0.12",
     "lodash": "^4.17.10",
     "merkletreejs": "0.0.22",
-    "nclr": "^2.0.0"
+    "nclr": "^2.0.0",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^3.0.1",
@@ -70,8 +72,7 @@
     "remark-cli": "^6.0.0",
     "remark-preset-lint-consistent": "^2.0.2",
     "remark-preset-lint-recommended": "^3.0.2",
-    "semantic-release": "^15.13.12",
-    "snyk": "^1.117.1"
+    "semantic-release": "^15.13.12"
   },
   "jest": {
     "collectCoverage": true,
@@ -115,5 +116,6 @@
       "remark",
       "git add"
     ]
-  }
+  },
+  "snyk": true
 }
