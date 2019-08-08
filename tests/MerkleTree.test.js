@@ -1,4 +1,4 @@
-const MerkleTree = require('merkletreejs'),
+const {MerkleTree} = require('merkletreejs'),
   { SHA256, SHA3, enc } = require('crypto-js');
 const Transaction = require('../src/transaction'),
   Wallet = require('../src/wallet'),

@@ -208,6 +208,7 @@ class Blockchain {
       const incorrectPadding = (!currentBlock.hash.startsWith(pad) || !prevBlock.hash.startsWith(pad)),
         incorrectHash = currentBlock.hash !== currentBlock.calculateHash(),
         incorrectFollow = currentBlock.prevHash !== prevBlock.hash;
+      /* istanbul ignore next */
       if (incorrectPadding || incorrectHash || incorrectFollow) return false; //It should be impossible for this branch to return
     }
     return true;

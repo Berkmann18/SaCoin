@@ -146,9 +146,10 @@ class Wallet {
    * @memberof Wallet
    */
   secretKey(pwd) {
-    if (_getAttempt(this.address) >= ATTEMPT_THRESHOLD) throw Error('Secret key recovery attempt threshold exceeded.');
+    const attempt = _getAttempt(this.address);
+    if (attempt >= ATTEMPT_THRESHOLD) throw Error('Secret key recovery attempt threshold exceeded.');
     if (pwd.toString() !== prvProps.get(this).password.toString()) {
-      _setAttempt(this.address, 1 + _getAttempt(this.address));
+      _setAttempt(this.address, 1 + attempt);
       throw Error(`A secret key recovery was attempted on the address ${this.address} with ${_getAttempt(this.address)} attempts`);
     }
     return prvProps.get(this).keyPair.sk;
@@ -226,9 +227,9 @@ class Wallet {
    * @memberof Wallet
    */
   getTransactions(blockchain = this.blockchain) {
-    let txs = {
-      'in': [],
-      'out': []
+    const txs = {
+      in: [],
+      out: []
     };
     for (const block of blockchain.chain) {
       for (const tx of block.transactions) {

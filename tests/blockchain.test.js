@@ -55,6 +55,7 @@ test('Cont.', () => {
   expect(() => SXC.addBlock(block)).not.toThrowError(BlockError);
   expect(SXC.getBlock(0).isValid()).toBeTruthy();
   expect(SXC.getBlock(1).isValid()).toBeTruthy();
+  expect(() => SXC.getBlock('1')).toThrowError(TypeError);
   expect(() => SXC.getBlock(2)).toThrowError(OutOfBoundsError);
   expect(SXC.isValid()).toBeTruthy();
   expect(SXC.size).toBe(2);
