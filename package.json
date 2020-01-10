@@ -57,8 +57,8 @@
   },
   "devDependencies": {
     "@semantic-release/changelog": "^3.0.4",
-    "@semantic-release/git": "^7.0.16",
-    "@semantic-release/npm": "^5.1.13",
+    "@semantic-release/git": "^8.0.0",
+    "@semantic-release/npm": "^6.0.0",
     "all-contributors-cli": "^6.7.0",
     "conventional-changelog-eslint": "^3.0.1",
     "cz-adapter-eslint": "^0.3.0",
@@ -74,7 +74,7 @@
     "remark-cli": "^7.0.0",
     "remark-preset-lint-consistent": "^2.0.3",
     "remark-preset-lint-recommended": "^3.0.3",
-    "semantic-release": "^15.13.18",
+    "semantic-release": "^16.0.0",
     "snyk": "^1.192.4"
   },
   "jest": {
