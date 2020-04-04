@@ -1,3 +1,34 @@
+## [1.0.4](https://github.com/Berkmann18/SaCoin/compare/v1.0.3...v1.0.4) (2020-04-04)
+
+
+### fix
+
+* package.json & package-lock.json to reduce vulnerabilities ([e2838a4](https://github.com/Berkmann18/SaCoin/commit/e2838a4fbd7e26908775c294cbb5822889ac4459))
+
+### Fix
+
+* Vulnerability fix ([443c15d](https://github.com/Berkmann18/SaCoin/commit/443c15d56255abf0be3357c76011880134d6e2b9))
+
+### Upgrade
+
+* Bump @semantic-release/changelog from 5.0.0 to 5.0.1 ([f4c5a8b](https://github.com/Berkmann18/SaCoin/commit/f4c5a8bad3e711e62e7eb514e2999f14c69a39c3))
+* Bump all-contributors-cli from 6.14.0 to 6.14.1 ([dbb81d1](https://github.com/Berkmann18/SaCoin/commit/dbb81d1cab41867f0c7e5204d6a7ccd94f87476f))
+* Bump documentation from 12.1.4 to 12.2.0 ([80ded0b](https://github.com/Berkmann18/SaCoin/commit/80ded0b88953bc68b919e84ad00e884217f60c63))
+* Bump eslint-plugin-node from 11.0.0 to 11.1.0 ([036f76f](https://github.com/Berkmann18/SaCoin/commit/036f76f3b5e6a88138580cd8e3ab98d5db54638e))
+* Bump jest from 25.1.0 to 25.2.0 ([06b830d](https://github.com/Berkmann18/SaCoin/commit/06b830da3d8ac780acbc058adc74dc91cddad0f3))
+* Bump jest from 25.2.0 to 25.2.3 ([0212c64](https://github.com/Berkmann18/SaCoin/commit/0212c64f5d5d0fc94f5a377af66856e746c75d62))
+* Bump jest from 25.2.3 to 25.2.4 ([b4f30b4](https://github.com/Berkmann18/SaCoin/commit/b4f30b453037addca07f3ebce4f0766f3b98bd89))
+* Bump jest from 25.2.4 to 25.2.6 ([3315e2b](https://github.com/Berkmann18/SaCoin/commit/3315e2b9a40de3db0c82924e5370164e9e1942de))
+* Bump jsrsasign from 8.0.12 to 8.0.13 ([4061a2b](https://github.com/Berkmann18/SaCoin/commit/4061a2bf1cfb08d912edb181f0146cdc5715f064))
+* Bump lint-staged from 10.0.10 to 10.1.0 ([41278c3](https://github.com/Berkmann18/SaCoin/commit/41278c35047030c4d91fec2b8d4cde3fa58721b9))
+* Bump lint-staged from 10.0.9 to 10.0.10 ([5d1fd50](https://github.com/Berkmann18/SaCoin/commit/5d1fd50495cbbdb240d00b211747ebd0a2619081))
+* Bump lint-staged from 10.1.0 to 10.1.1 ([f2e0f10](https://github.com/Berkmann18/SaCoin/commit/f2e0f10619ec1dd73e16c6dc5bc0e737ba790fec))
+* Bump nclr from 2.2.3 to 2.2.4 ([163de45](https://github.com/Berkmann18/SaCoin/commit/163de45356181d60e5fe8c7dd33d9ab610602a9d))
+* Bump remark-cli from 7.0.1 to 8.0.0 ([2ed8254](https://github.com/Berkmann18/SaCoin/commit/2ed8254fae218c9dc9a8fa8bfdabbb749c9bf577))
+* Bump remark-preset-lint-consistent from 2.0.4 to 3.0.0 ([ac76c7b](https://github.com/Berkmann18/SaCoin/commit/ac76c7bca03ad9137bdd140a6c030af7083dc648))
+* Bump remark-preset-lint-recommended from 3.0.4 to 4.0.0 ([c09655e](https://github.com/Berkmann18/SaCoin/commit/c09655eb0d0e91d443d09ef80d4c741b534c28ae))
+* Bump snyk from 1.304.0 to 1.305.0 ([db87d54](https://github.com/Berkmann18/SaCoin/commit/db87d54139a9ad12ee11bb69dfc1cd9642a54a3e))
+
 ## [1.0.3](https://github.com/Berkmann18/SaCoin/compare/v1.0.2...v1.0.3) (2020-03-25)
 
 
