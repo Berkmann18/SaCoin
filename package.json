@@ -18,11 +18,12 @@
     "semantic-release": "semantic-release",
     "lint:md": "remark . .github -i ./.remarkignore",
     "lint": "npm run lint:js && npm run lint:md",
-    "prepare": "snyk protect",
+    "prepare": "npm run snyk-protect && snyk protect",
     "contribs:add": "all-contributors add",
     "contribs:generate": "all-contributors generate",
     "contribs:check": "all-contributors check",
-    "fmt": "prettier --config .prettierrc.json --ignore-path .prettierignore --write"
+    "fmt": "prettier --config .prettierrc.json --ignore-path .prettierignore --write",
+    "snyk-protect": "snyk protect"
   },
   "repository": {
     "type": "git",
@@ -53,7 +54,8 @@
     "jsrsasign": "^8.0.13",
     "lodash": "^4.17.13",
     "merkletreejs": "^0.1.6",
-    "nclr": "^2.2.2"
+    "nclr": "^2.2.2",
+    "snyk": "^1.316.1"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^5.0.0",
@@ -74,8 +76,7 @@
     "remark-cli": "^8.0.0",
     "remark-preset-lint-consistent": "^3.0.0",
     "remark-preset-lint-recommended": "^4.0.0",
-    "semantic-release": "^17.0.1",
-    "snyk": "^1.192.4"
+    "semantic-release": "^17.0.1"
   },
   "jest": {
     "collectCoverage": true,
@@ -120,5 +121,6 @@
       "remark",
       "git add"
     ]
-  }
+  },
+  "snyk": true
 }
