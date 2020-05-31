@@ -1,3 +1,82 @@
+## [1.0.5](https://github.com/Berkmann18/SaCoin/compare/v1.0.4...v1.0.5) (2020-05-31)
+
+
+### Chore
+
+* Added FUNDING.yml ([5eaaf16](https://github.com/Berkmann18/SaCoin/commit/5eaaf169d8384abc5e36fba108f6a09dce858767))
+* Updated Snyk config ([f08eb4f](https://github.com/Berkmann18/SaCoin/commit/f08eb4fe070f2a3d3f24e8a2a6ce10e9f1725ebd))
+
+### fix
+
+* package.json, package-lock.json & .snyk to reduce vulnerabilities ([b97686f](https://github.com/Berkmann18/SaCoin/commit/b97686f147cc85dc522ba04448b3e731ad4133f8))
+* package.json, package-lock.json & .snyk to reduce vulnerabilities ([6f99a64](https://github.com/Berkmann18/SaCoin/commit/6f99a64a5ae69b1618b8b70e5f04de522eac38f2))
+* package.json, package-lock.json & .snyk to reduce vulnerabilities ([b396b45](https://github.com/Berkmann18/SaCoin/commit/b396b45ae260835d9ffbdfc7ddedd8e5d9650ca3))
+
+### Fix
+
+* Security ([45dc167](https://github.com/Berkmann18/SaCoin/commit/45dc16746e47da533af20d3ce071779c92fe22a0))
+
+### Upgrade
+
+* [Security] Bump minimist from 1.2.0 to 1.2.5 ([a7238a5](https://github.com/Berkmann18/SaCoin/commit/a7238a597a274cdb5b7b5c1874f9398242550f1b))
+* Bump all-contributors-cli from 6.14.1 to 6.14.2 ([639dee6](https://github.com/Berkmann18/SaCoin/commit/639dee604bbe57d7e9fdee4a205df1c71edca0e0))
+* Bump all-contributors-cli from 6.14.2 to 6.15.0 ([d7b83de](https://github.com/Berkmann18/SaCoin/commit/d7b83de9f6d30da2cbc4f95a598cbc4085eb4cd9))
+* Bump conventional-changelog-eslint from 3.0.4 to 3.0.8 ([73e4422](https://github.com/Berkmann18/SaCoin/commit/73e4422aa104c603de2e567163b195bfa0e7cc63))
+* Bump documentation from 12.2.0 to 12.3.0 ([99ab38b](https://github.com/Berkmann18/SaCoin/commit/99ab38bf832754f9fd0ad8658d7c73878b219ab3))
+* Bump documentation from 12.3.0 to 13.0.0 ([d470e76](https://github.com/Berkmann18/SaCoin/commit/d470e76ce82a2c216ec8bff31a31f854055d399c))
+* Bump eslint from 6.8.0 to 7.0.0 ([6fac539](https://github.com/Berkmann18/SaCoin/commit/6fac53950f1ca187d9f3ea108a4fb1431ac2105c))
+* Bump eslint from 7.0.0 to 7.1.0 ([03c9a57](https://github.com/Berkmann18/SaCoin/commit/03c9a578ce5141b8ef3f25e17593ec3f3596929e))
+* Bump husky from 4.2.3 to 4.2.5 ([e7e82ec](https://github.com/Berkmann18/SaCoin/commit/e7e82ec79cbb0f2c09e1aa92c62b9a85a0a647af))
+* Bump jest from 25.2.6 to 25.2.7 ([5367552](https://github.com/Berkmann18/SaCoin/commit/53675521f07572ba6b3da7dff9ae9a1d40ab176a))
+* Bump jest from 25.2.7 to 25.3.0 ([6761e0f](https://github.com/Berkmann18/SaCoin/commit/6761e0fc03e70a295a858a06c9b9c7af8548649c))
+* Bump jest from 25.3.0 to 25.5.0 ([7cede36](https://github.com/Berkmann18/SaCoin/commit/7cede36cba6e6d93b2d3ac086d317249b73ffcad))
+* Bump jest from 25.5.0 to 25.5.2 ([b65f198](https://github.com/Berkmann18/SaCoin/commit/b65f198c03b1fc048e485c2eba741a10abff4721))
+* Bump jest from 25.5.2 to 25.5.3 ([b31867a](https://github.com/Berkmann18/SaCoin/commit/b31867ad546d32093268339c5d3ad1ac65a103c8))
+* Bump jest from 25.5.3 to 25.5.4 ([dd96b8b](https://github.com/Berkmann18/SaCoin/commit/dd96b8b5baea9f099fa6ee2827a6b3f5eef88345))
+* Bump jest from 25.5.4 to 26.0.0 ([e4da9d7](https://github.com/Berkmann18/SaCoin/commit/e4da9d72a2d2d6c98cfa20b1f43e940029e25442))
+* Bump jest from 26.0.0 to 26.0.1 ([05d3308](https://github.com/Berkmann18/SaCoin/commit/05d33083bfa3b996f4bcc729fe3d332d848e8ab3))
+* Bump jsrsasign from 8.0.13 to 8.0.15 ([075d737](https://github.com/Berkmann18/SaCoin/commit/075d7379506e570f4d1921b68975098328667557))
+* Bump lint-staged from 10.1.1 to 10.1.2 ([cda0953](https://github.com/Berkmann18/SaCoin/commit/cda09534e57b92e62c0cda086e4826f7b52cb3f3))
+* Bump lint-staged from 10.1.2 to 10.1.3 ([7e8887e](https://github.com/Berkmann18/SaCoin/commit/7e8887eb51624172e25dea57597e9405ad2ad311))
+* Bump lint-staged from 10.1.3 to 10.1.7 ([5e06383](https://github.com/Berkmann18/SaCoin/commit/5e0638334ebf1846b6cc4ad3f4e4dac087d0c372))
+* Bump lint-staged from 10.1.7 to 10.2.0 ([bfeb1d4](https://github.com/Berkmann18/SaCoin/commit/bfeb1d4e381336a88b1433f068ac6a5bc2629371))
+* Bump lint-staged from 10.2.0 to 10.2.2 ([165d0ab](https://github.com/Berkmann18/SaCoin/commit/165d0ab8429dc10f2c695ee9f52c74cf8653892f))
+* Bump lint-staged from 10.2.2 to 10.2.4 ([2580468](https://github.com/Berkmann18/SaCoin/commit/258046892151bbe3d19d4c8078614c8b0f0e3b25))
+* Bump lint-staged from 10.2.4 to 10.2.5 ([dc633f2](https://github.com/Berkmann18/SaCoin/commit/dc633f2baf6793ca2eb27ec47495681a48eeb6e7))
+* Bump lint-staged from 10.2.5 to 10.2.6 ([fbaa59a](https://github.com/Berkmann18/SaCoin/commit/fbaa59a7079b4ac145266ee642ad36a1724bad59))
+* Bump lint-staged from 10.2.6 to 10.2.7 ([7c76ee1](https://github.com/Berkmann18/SaCoin/commit/7c76ee15180ea2c77009742a37b02892b8734611))
+* Bump nclr from 2.2.4 to 2.2.5 ([8af924b](https://github.com/Berkmann18/SaCoin/commit/8af924bd0fbae88306a6de6ae36d205a6bd6ee4a))
+* Bump prettier from 1.19.1 to 2.0.3 ([180dbaa](https://github.com/Berkmann18/SaCoin/commit/180dbaa1ebf5563f784c33b639f4d1beaf219485))
+* Bump prettier from 2.0.3 to 2.0.4 ([b1a8efa](https://github.com/Berkmann18/SaCoin/commit/b1a8efa62545ad6523646c0c4c44ce05dde6bef7))
+* Bump prettier from 2.0.4 to 2.0.5 ([9f152f4](https://github.com/Berkmann18/SaCoin/commit/9f152f46da8ffffecc0e8d88494efe672de578d1))
+* Bump semantic-release from 17.0.4 to 17.0.6 ([c45787e](https://github.com/Berkmann18/SaCoin/commit/c45787ebbf1310ad34978fb4a0a8ce1dafb5a5e1))
+* Bump semantic-release from 17.0.6 to 17.0.7 ([23e8d8a](https://github.com/Berkmann18/SaCoin/commit/23e8d8a13a0de414ac84b32f6a591eb236ab2d2a))
+* Bump semantic-release from 17.0.7 to 17.0.8 ([f660aa1](https://github.com/Berkmann18/SaCoin/commit/f660aa1ab5624ca3f105e92f80d4e68919020d83))
+* Bump snyk from 1.305.0 to 1.305.1 ([d0b12a3](https://github.com/Berkmann18/SaCoin/commit/d0b12a3ebe0822223f7b6730c4867dde91206851))
+* Bump snyk from 1.305.1 to 1.306.0 ([eca4340](https://github.com/Berkmann18/SaCoin/commit/eca43404e4343a36d22c6a936f7868252e4deab9))
+* Bump snyk from 1.306.0 to 1.307.0 ([c5661e3](https://github.com/Berkmann18/SaCoin/commit/c5661e3ac082810f52460083f676524f94c725a8))
+* Bump snyk from 1.307.0 to 1.309.0 ([e3efda1](https://github.com/Berkmann18/SaCoin/commit/e3efda1abc6e7affbe797153ecd7b33d1ff7a1fb))
+* Bump snyk from 1.309.0 to 1.310.0 ([2520e68](https://github.com/Berkmann18/SaCoin/commit/2520e68c666cef47e3bf522531641e7e1c432ab0))
+* Bump snyk from 1.310.0 to 1.311.0 ([b5536d1](https://github.com/Berkmann18/SaCoin/commit/b5536d1e7cefeec875ec5b3785b58f817b3a7805))
+* Bump snyk from 1.311.0 to 1.313.1 ([42cfab2](https://github.com/Berkmann18/SaCoin/commit/42cfab27c9d6c5d44c3c907892bc786be49a464f))
+* Bump snyk from 1.313.1 to 1.314.0 ([ea17156](https://github.com/Berkmann18/SaCoin/commit/ea1715655f88488cb5adb80469b5fe80714f1b68))
+* Bump snyk from 1.314.0 to 1.315.1 ([c04045f](https://github.com/Berkmann18/SaCoin/commit/c04045f47d728cd5d201cace997e77e0b6ad8e17))
+* Bump snyk from 1.315.1 to 1.316.1 ([c58993c](https://github.com/Berkmann18/SaCoin/commit/c58993c2c06803b7f35a12beaf1ad536251c1d71))
+* Bump snyk from 1.316.1 to 1.317.0 ([df65b53](https://github.com/Berkmann18/SaCoin/commit/df65b535aaa2ca85c55f2c98e6b609a879f5c241))
+* Bump snyk from 1.317.0 to 1.319.0 ([c0cd98a](https://github.com/Berkmann18/SaCoin/commit/c0cd98af69915fa9429681d916a91bdb44970604))
+* Bump snyk from 1.319.0 to 1.319.1 ([2b63f3d](https://github.com/Berkmann18/SaCoin/commit/2b63f3de2e68686bbc87565f704066c35482a4aa))
+* Bump snyk from 1.319.1 to 1.319.2 ([ecacee0](https://github.com/Berkmann18/SaCoin/commit/ecacee0767304edfe22a1cc4068db3bcfb488de1))
+* Bump snyk from 1.319.2 to 1.320.2 ([581e8c7](https://github.com/Berkmann18/SaCoin/commit/581e8c7e9f48e2024cbb2822c8519411dd36b437))
+* Bump snyk from 1.320.2 to 1.320.3 ([dcb2c2c](https://github.com/Berkmann18/SaCoin/commit/dcb2c2c52b18744ca3fe3230b816ba9c9d208893))
+* Bump snyk from 1.320.3 to 1.321.0 ([735a279](https://github.com/Berkmann18/SaCoin/commit/735a2790943e7a6ffc3f6df795980c532b4e66f0))
+* Bump snyk from 1.321.0 to 1.323.0 ([9f57d61](https://github.com/Berkmann18/SaCoin/commit/9f57d61b33870f0455c03cd38b2814b9dc3d516c))
+* Bump snyk from 1.323.0 to 1.323.1 ([5e5389f](https://github.com/Berkmann18/SaCoin/commit/5e5389f78f504b68bfacc21fd79d57e5f08dca67))
+* Bump snyk from 1.323.1 to 1.323.2 ([524c502](https://github.com/Berkmann18/SaCoin/commit/524c502a4436d9756026ba3ea3e9b9052b5401a1))
+* Bump snyk from 1.323.2 to 1.327.0 ([de87dce](https://github.com/Berkmann18/SaCoin/commit/de87dce1390e4152e4a06f0c37be80efa9146929))
+* Bump snyk from 1.327.0 to 1.329.0 ([a37ed56](https://github.com/Berkmann18/SaCoin/commit/a37ed561a435777e39bbaf40592597d24a408dec))
+* Bump snyk from 1.329.0 to 1.330.2 ([307a13a](https://github.com/Berkmann18/SaCoin/commit/307a13a4f26b753f6cf97fa5369f5da6f874953f))
+* Bump snyk from 1.330.2 to 1.332.0 ([dfd10a5](https://github.com/Berkmann18/SaCoin/commit/dfd10a5cb72e10597db6acfded79afcdde2a75c8))
+
 ## [1.0.4](https://github.com/Berkmann18/SaCoin/compare/v1.0.3...v1.0.4) (2020-04-04)
 
 
