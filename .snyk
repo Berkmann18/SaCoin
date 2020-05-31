@@ -5,4 +5,4 @@ ignore: {}
 patch:
   SNYK-JS-LODASH-567746:
     - lodash:
-        patched: '2020-05-01T03:53:48.202Z'
+        patched: '2020-05-31T16:38:24.946Z'
