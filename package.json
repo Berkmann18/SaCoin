@@ -54,8 +54,7 @@
     "jsrsasign": "^8.0.24",
     "lodash": "^4.17.20",
     "merkletreejs": "^0.2.8",
-    "nclr": "^2.2.2",
-    "snyk": "^1.387.1"
+    "nclr": "^2.2.2"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^5.0.0",
