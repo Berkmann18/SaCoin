@@ -55,7 +55,7 @@
     "lodash": "^4.17.21",
     "merkletreejs": "^0.2.10",
     "nclr": "^2.2.2",
-    "snyk": "^1.685.0"
+    "snyk": "^1.1064.0"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^5.0.0",
@@ -77,7 +77,7 @@
     "remark-preset-lint-consistent": "^3.0.0",
     "remark-preset-lint-recommended": "^4.0.0",
     "semantic-release": "^19.0.3",
-    "snyk": "^1.685.0"
+    "snyk": "^1.1064.0"
   },
   "jest": {
     "collectCoverage": true,
