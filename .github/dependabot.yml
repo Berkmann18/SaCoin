@@ -1,0 +1,25 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  target-branch: dev
+  reviewers:
+  - Berkmann18
+  labels:
+  - dependencies
+  - "Priority: Low"
+  ignore:
+  - dependency-name: snyk
+    versions:
+    - 1.526.0
+    - 1.563.0
+    - 1.564.0
+    - 1.566.0
+    - 1.570.0
+  - dependency-name: merkletreejs
+    versions:
+    - 0.2.15
+    - 0.2.16
